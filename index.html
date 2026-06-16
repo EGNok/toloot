@@ -2,83 +2,102 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Evitar zoom indeseado y scroll elástico en móviles -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Pixel Barter - Intercambio Retro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Nueva paleta basada en la imagen (Maplestory / RPG UI) */
-            --bg-color: #ffffff;
-            --panel-bg: #e8eaf6;
-            --primary: #f48fb1;
-            --primary-dark: #d81b60;
-            --secondary: #c5cae9;
-            --border-color: #1a237e;
-            --text-main: #1a237e;
-            --text-light: #5c6bc0;
-            --grid-line: #9fa8da;
+            /* Nueva paleta (Inspiración en la imagen) */
+            --bg-color: #1a1c1b;      /* Fondo muy oscuro (casi negro) */
+            --panel-bg: #AC9B78;      /* Beige / Arena (Paneles principales) */
+            --panel-light: #c2b496;   /* Beige más claro para inputs/fondos de celdas */
+            --primary: #68533A;       /* Marrón (Botones, Acentos) */
+            --primary-dark: #4d3d2a;  /* Marrón oscuro para hover/active */
+            --secondary: #424846;     /* Pizarra / Gris Oscuro (Headers, Nav, Bordes secundarios) */
+            --border-color: #111211;  /* Negro/Gris muy oscuro para bordes pixel art fuertes */
+            --text-main: #111211;     /* Texto oscuro para paneles claros */
+            --text-light: #AC9B78;    /* Texto claro (Beige) para paneles oscuros */
+            --grid-line: rgba(66, 72, 70, 0.4); 
+        }
+
+        /* Prevención de desbordamientos globales */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            /* 100dvh soluciona problemas con la barra de navegación dinámica de iOS/Android */
+            height: 100dvh; 
+            overflow: hidden; 
+            overscroll-behavior-y: none;
         }
 
         body {
             font-family: 'VT323', monospace;
             background-color: var(--bg-color);
             color: var(--text-main);
-            overflow: hidden;
             touch-action: none;
         }
 
+        /* Estilos Retro Pixel */
         .pixel-border {
             background-color: var(--panel-bg);
             border: 3px solid var(--border-color);
-            box-shadow: 2px 2px 0px rgba(26, 35, 126, 0.2); 
-            border-radius: 4px;
+            box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.3); 
+            border-radius: 2px;
         }
         
         .pixel-btn {
             background-color: var(--primary);
-            color: white;
-            border: 2px solid var(--border-color);
-            border-radius: 4px;
-            box-shadow: inset -2px -2px 0px rgba(0,0,0,0.2), inset 2px 2px 0px rgba(255,255,255,0.4);
+            color: var(--panel-bg);
+            border: 3px solid var(--border-color);
+            border-radius: 2px;
+            box-shadow: inset -2px -2px 0px rgba(0,0,0,0.3), inset 2px 2px 0px rgba(255,255,255,0.2);
             transition: all 0.1s;
             cursor: pointer;
+            text-shadow: 1px 1px 0px #000;
         }
         
         .pixel-btn:active {
-            box-shadow: inset 2px 2px 0px rgba(0,0,0,0.3);
-            transform: translate(1px, 1px);
+            box-shadow: inset 2px 2px 0px rgba(0,0,0,0.5);
+            transform: translate(2px, 2px);
+            background-color: var(--primary-dark);
         }
 
         .pixel-input {
-            background-color: #ffffff;
+            background-color: var(--panel-light);
             border: 2px solid var(--border-color);
             color: var(--text-main);
             border-radius: 2px;
-            box-shadow: inset 2px 2px 0px rgba(0,0,0,0.1);
+            box-shadow: inset 2px 2px 0px rgba(0,0,0,0.15);
         }
         .pixel-input:focus {
             outline: none;
             border-color: var(--primary);
-            box-shadow: inset 2px 2px 0px rgba(244, 143, 177, 0.3);
+            box-shadow: inset 2px 2px 0px rgba(104, 83, 58, 0.4);
         }
 
+        /* Layout de Vistas contenido dentro del Main */
         .view-section {
             display: none;
-            height: calc(100vh - 64px);
+            width: 100%;
+            height: 100%;
             overflow-y: auto;
             overflow-x: hidden;
-            padding-bottom: 2rem;
-            background-color: #ffffff;
+            background-color: var(--bg-color);
+            /* Espacio extra al final para que el scroll no quede pegado */
+            padding-bottom: 2rem; 
         }
         .view-section.active {
             display: block;
         }
 
+        /* Feed System */
         .feed-container {
             height: 100%;
             scroll-snap-type: y mandatory;
-            overflow-y: scroll;
+            overflow-y: auto;
             scrollbar-width: none;
         }
         .feed-container::-webkit-scrollbar { display: none; }
@@ -86,8 +105,8 @@
             height: 100%;
             scroll-snap-align: start;
             position: relative;
-            background-color: #f8f9fa;
-            border-bottom: 3px solid var(--border-color);
+            background-color: var(--secondary);
+            border-bottom: 4px solid var(--border-color);
         }
         .feed-photos {
             display: flex;
@@ -102,36 +121,36 @@
             scroll-snap-align: center;
             height: 100%;
             object-fit: contain;
-            background-color: #ffffff;
-            border: 2px solid var(--border-color);
+            background-color: #111;
             box-sizing: border-box;
-            padding: 10px;
         }
 
+        /* Inventario */
         .inventory-view {
             touch-action: none;
             overflow-y: auto;
-            background-color: #ffffff;
             background-image: radial-gradient(var(--secondary) 1px, transparent 1px);
             background-size: 20px 20px;
         }
         .re-grid {
             display: grid;
-            background-color: var(--panel-bg);
+            background-color: var(--panel-light);
             border: 3px solid var(--border-color);
             position: relative;
-            border-radius: 4px;
             margin: 0 auto;
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.2);
+            /* Asegurar que no se desborde del contenedor flex */
+            max-width: 100%; 
         }
         .re-cell {
             border-right: 2px solid var(--grid-line);
             border-bottom: 2px solid var(--grid-line);
             box-sizing: border-box;
-            background-color: #ffffff;
+            background-color: var(--panel-light);
         }
         .re-item {
             position: absolute;
-            background-color: rgba(244, 143, 177, 0.2);
+            background-color: rgba(104, 83, 58, 0.2); /* Primary transparent */
             border: 2px solid var(--primary);
             display: flex;
             flex-direction: column;
@@ -142,10 +161,10 @@
             touch-action: none;
             transition: transform 0.1s;
         }
-        .re-item:active { cursor: grabbing; background-color: rgba(244, 143, 177, 0.4); }
+        .re-item:active { cursor: grabbing; background-color: rgba(104, 83, 58, 0.4); }
         .re-item img {
-            width: 90%;
-            height: 90%;
+            width: 85%;
+            height: 85%;
             object-fit: contain;
             pointer-events: none;
             image-rendering: pixelated;
@@ -156,77 +175,81 @@
             pointer-events: none;
             z-index: 1000;
             opacity: 0.9;
-            box-shadow: 4px 4px 0px rgba(26, 35, 126, 0.3);
-            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.4);
+            background-color: var(--panel-bg);
             border: 3px solid var(--border-color);
         }
 
+        /* Navbar Inferior */
         .nav-btn {
-            background-color: var(--secondary);
-            color: var(--text-main);
-            border: 2px solid var(--border-color);
+            background-color: var(--bg-color);
+            color: var(--text-light);
+            border: 3px solid var(--border-color);
             border-bottom: none;
-            border-radius: 8px 8px 0 0;
-            margin: 0 2px;
-            transition: background-color 0.2s;
+            border-radius: 6px 6px 0 0;
+            margin: 0 4px;
+            transition: all 0.2s;
         }
         .nav-btn.active-tab {
-            background-color: var(--primary);
-            color: white;
+            background-color: var(--panel-bg);
+            color: var(--text-main);
             border-color: var(--border-color);
             transform: translateY(-2px);
-            box-shadow: 0 -2px 0px rgba(0,0,0,0.1);
+            box-shadow: inset 0 2px 0 rgba(255,255,255,0.2);
         }
 
         .header-title {
             color: var(--text-main);
-            background-color: white;
-            padding: 2px 8px;
+            background-color: var(--panel-bg);
+            padding: 2px 10px;
             border: 2px solid var(--border-color);
-            border-radius: 4px;
+            border-radius: 2px;
             display: inline-block;
         }
 
-        ::-webkit-scrollbar { width: 12px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; border-left: 2px solid var(--border-color); }
-        ::-webkit-scrollbar-thumb { background: var(--primary); border: 2px solid var(--border-color); }
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: var(--bg-color); border-left: 2px solid var(--border-color); }
+        ::-webkit-scrollbar-thumb { background: var(--secondary); border: 2px solid var(--border-color); }
     </style>
 </head>
-<body class="flex flex-col h-screen w-screen relative">
+<!-- Se usa h-[100dvh] para ajustarse correctamente en móviles -->
+<body class="flex flex-col h-[100dvh] w-full overflow-hidden relative">
 
-    <!-- Navbar Superior -->
-    <header class="h-14 bg-[#e8eaf6] border-b-4 border-[#1a237e] flex items-center justify-between px-4 z-10 shrink-0">
-        <h1 class="text-3xl text-[#1a237e] tracking-widest font-bold bg-white px-2 py-1 border-2 border-[#1a237e] rounded">PIXEL BARTER</h1>
-        <div id="userPointsDisplay" class="bg-white border-2 border-[#1a237e] rounded px-3 py-1 text-[#1a237e] text-xl font-bold hidden flex items-center">
-            <span class="mr-1">Lv.</span><span id="hdrPoints" class="text-[#d81b60] bg-[#f48fb1] text-white px-1 rounded">0</span>
+    <!-- Navbar Superior (Fija) -->
+    <header class="h-14 shrink-0 bg-[var(--secondary)] border-b-4 border-[var(--border-color)] flex items-center justify-between px-4 z-10 w-full shadow-md">
+        <h1 class="text-3xl text-[var(--text-main)] tracking-widest font-bold bg-[var(--panel-bg)] px-2 py-1 border-2 border-[var(--border-color)] rounded-sm">
+            PIXEL BARTER
+        </h1>
+        <div id="userPointsDisplay" class="bg-[var(--panel-bg)] border-2 border-[var(--border-color)] rounded px-3 py-1 text-[var(--text-main)] text-xl font-bold hidden flex items-center shadow-inner">
+            <span class="mr-1">Lv.</span><span id="hdrPoints" class="text-[var(--panel-bg)] bg-[var(--primary)] px-1 rounded-sm">0</span>
         </div>
     </header>
 
-    <!-- Main Content Area -->
-    <main class="flex-1 relative bg-white">
+    <!-- Main Content Area (Ocupa el espacio restante dinámicamente) -->
+    <main class="flex-1 w-full relative overflow-hidden flex flex-col">
         
         <!-- PANTALLA: FEED -->
-        <div id="view-feed" class="view-section active w-full h-full p-0">
-            <div id="feedContainer" class="feed-container">
+        <div id="view-feed" class="view-section active">
+            <div id="feedContainer" class="feed-container w-full">
                 <!-- Posts cargados dinamicamente -->
             </div>
-            <div id="feedEmpty" class="hidden h-full flex flex-col items-center justify-center text-center p-8 bg-white">
-                <div class="pixel-border p-6 bg-[#e8eaf6] inline-block mb-4">
-                    <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=emptybox" class="w-24 h-24 mx-auto opacity-50">
+            <div id="feedEmpty" class="hidden h-full flex flex-col items-center justify-center text-center p-8 bg-[var(--bg-color)]">
+                <div class="pixel-border p-6 bg-[var(--panel-bg)] inline-block mb-4 shadow-lg">
+                    <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=emptybox" class="w-24 h-24 mx-auto opacity-70">
                 </div>
-                <p class="text-2xl text-[#1a237e] bg-[#f48fb1] text-white px-4 py-2 border-2 border-[#1a237e] rounded inline-block">El mercado está vacío.</p>
-                <p class="mt-4 text-[#5c6bc0] text-xl">¡Ve a tu mochila y publica objetos!</p>
+                <p class="text-2xl text-[var(--panel-bg)] bg-[var(--primary)] px-4 py-2 border-2 border-[var(--border-color)] rounded inline-block shadow-md">El mercado está vacío.</p>
+                <p class="mt-4 text-[var(--text-light)] text-xl">¡Ve a tu mochila y publica objetos!</p>
             </div>
         </div>
 
         <!-- PANTALLA: BUSCAR -->
-        <div id="view-search" class="view-section w-full h-full p-4">
-            <div class="max-w-md mx-auto">
-                <div class="flex items-center mb-6 mt-2">
-                    <h2 class="text-2xl header-title mr-4 font-bold">BUSCAR ITEM</h2>
+        <div id="view-search" class="view-section">
+            <div class="max-w-md mx-auto w-full px-4 pt-4">
+                <div class="flex items-center mb-6">
+                    <h2 class="text-2xl header-title font-bold shadow-md">BUSCAR ITEM</h2>
                 </div>
                 
-                <div class="pixel-border p-4 mb-6">
+                <div class="pixel-border p-3 mb-6 bg-[var(--panel-bg)]">
                     <input type="text" id="searchInput" placeholder="Nombre o estado..." class="w-full p-3 font-pixel text-xl pixel-input">
                 </div>
                 
@@ -237,46 +260,52 @@
         </div>
 
         <!-- PANTALLA: MOCHILA (INVENTARIO) -->
-        <div id="view-backpack" class="view-section inventory-view w-full h-full p-3 flex flex-col">
-            <div class="max-w-xl mx-auto w-full flex-1 flex flex-col space-y-6">
+        <div id="view-backpack" class="view-section inventory-view">
+            <div class="max-w-xl mx-auto w-full px-3 py-4 flex flex-col space-y-6">
                 
                 <!-- Panel Superior: Controles -->
-                <div class="flex justify-between items-center pixel-border p-3">
+                <div class="flex justify-between items-center pixel-border p-3 bg-[var(--panel-bg)]">
                     <div class="flex space-x-2">
-                        <span class="bg-[#1a237e] text-white px-2 py-1 border border-[#1a237e] text-lg">EQUIP</span>
-                        <span class="bg-[#f48fb1] text-white px-2 py-1 border border-[#1a237e] text-lg font-bold">USE</span>
+                        <span class="bg-[var(--secondary)] text-[var(--panel-bg)] px-2 py-1 border-2 border-[var(--border-color)] text-lg">EQUIP</span>
+                        <span class="bg-[var(--primary)] text-[var(--panel-bg)] px-2 py-1 border-2 border-[var(--border-color)] text-lg font-bold">USE</span>
                     </div>
-                    <button onclick="openAddItemModal()" class="px-4 py-1 text-xl font-bold pixel-btn">
-                        + NUEVO ITEM
+                    <button onclick="openAddItemModal()" class="px-4 py-2 text-xl font-bold pixel-btn whitespace-nowrap">
+                        + NUEVO
                     </button>
                 </div>
                 
                 <!-- Dialog box style instruction -->
-                <div class="bg-[#1a237e] text-white p-3 border-2 border-[#1a237e] rounded relative mx-2">
-                    <div class="absolute -top-3 left-4 w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-b-[10px] border-b-[#1a237e]"></div>
-                    <p class="text-lg leading-tight">Arrastra objetos entre mochilas.<br>Objetos más grandes dan más puntos.</p>
+                <div class="bg-[var(--secondary)] text-[var(--panel-bg)] p-3 border-2 border-[var(--border-color)] rounded-sm relative mx-2 shadow-md">
+                    <div class="absolute -top-3 left-4 w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-b-[10px] border-b-[var(--border-color)]"></div>
+                    <div class="absolute -top-2 left-[18px] w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[8px] border-b-[var(--secondary)]"></div>
+                    <p class="text-lg leading-tight">Arrastra objetos entre mochilas.<br>Objetos más grandes dan más EXP.</p>
                 </div>
 
                 <!-- Mochila Privada -->
-                <div class="flex-1 flex flex-col">
-                    <div class="flex items-center mb-2">
-                        <span class="bg-white border-2 border-[#1a237e] text-[#1a237e] px-2 font-bold rounded">INVENTARIO (Oculto)</span>
+                <div class="flex flex-col w-full overflow-hidden">
+                    <div class="flex items-center mb-1">
+                        <span class="bg-[var(--panel-bg)] border-2 border-[var(--border-color)] text-[var(--text-main)] px-2 py-1 font-bold rounded-sm shadow-sm">INVENTARIO (Oculto)</span>
                     </div>
-                    <div class="pixel-border p-2 bg-white pb-6">
-                         <div id="grid-private" class="re-grid flex-1 border-[#9fa8da]" data-grid="private"></div>
+                    <div class="pixel-border p-2 bg-[var(--panel-bg)] pb-6 w-full flex justify-center">
+                        <!-- El ID parent es importante para calcular el max-width dinámico -->
+                         <div id="grid-private-container" class="w-full flex justify-center overflow-hidden">
+                             <div id="grid-private" class="re-grid" data-grid="private"></div>
+                         </div>
                     </div>
                 </div>
 
                 <!-- Mochila Pública -->
-                <div class="flex-1 flex flex-col mt-4">
-                    <div class="flex justify-between items-end mb-2">
-                        <span class="bg-white border-2 border-[#1a237e] text-[#1a237e] px-2 font-bold rounded">MOSTRADOR (Público)</span>
-                        <div class="bg-white border-2 border-[#1a237e] px-2 text-[#1a237e]">
+                <div class="flex flex-col w-full overflow-hidden mt-4">
+                    <div class="flex justify-between items-end mb-1">
+                        <span class="bg-[var(--panel-bg)] border-2 border-[var(--border-color)] text-[var(--text-main)] px-2 py-1 font-bold rounded-sm shadow-sm">MOSTRADOR (Público)</span>
+                        <div class="bg-[var(--secondary)] border-2 border-[var(--border-color)] px-2 py-1 text-[var(--panel-bg)] shadow-sm">
                             EXP: <span id="publicScoreTxt" class="font-bold">0</span>
                         </div>
                     </div>
-                    <div class="pixel-border p-2 bg-[#f8f9fa] pb-6">
-                        <div id="grid-public" class="re-grid flex-1 border-[#1a237e]" data-grid="public"></div>
+                    <div class="pixel-border p-2 bg-[var(--panel-bg)] pb-6 w-full flex justify-center">
+                        <div id="grid-public-container" class="w-full flex justify-center overflow-hidden">
+                            <div id="grid-public" class="re-grid" data-grid="public"></div>
+                        </div>
                     </div>
                 </div>
 
@@ -284,39 +313,41 @@
         </div>
 
         <!-- PANTALLA: PERFIL -->
-        <div id="view-profile" class="view-section w-full h-full p-4">
-            <div class="max-w-md mx-auto pixel-border p-6 mt-4">
-                <div class="flex items-center justify-between border-b-2 border-[#1a237e] pb-2 mb-6">
-                    <h2 class="text-2xl font-bold text-[#1a237e]">ESTADO PERSONAJE</h2>
-                    <span class="bg-[#1a237e] text-white px-2 py-1 rounded text-sm">STATUS</span>
-                </div>
-                
-                <div class="flex justify-center mb-6 relative">
-                    <div class="pixel-border bg-white p-2 border-[#1a237e]">
-                        <img id="profilePreview" src="https://api.dicebear.com/7.x/pixel-art/svg?seed=fallback" class="w-32 h-32 object-contain bg-white">
+        <div id="view-profile" class="view-section">
+            <div class="max-w-md mx-auto w-full px-4 pt-4">
+                <div class="pixel-border p-5 bg-[var(--panel-bg)] w-full shadow-lg">
+                    <div class="flex items-center justify-between border-b-4 border-[var(--secondary)] pb-2 mb-6">
+                        <h2 class="text-2xl font-bold text-[var(--text-main)]">ESTADO PERFIL</h2>
+                        <span class="bg-[var(--secondary)] text-[var(--panel-bg)] px-2 py-1 rounded-sm text-sm border-2 border-[var(--border-color)]">STATUS</span>
                     </div>
-                </div>
+                    
+                    <div class="flex justify-center mb-6 relative">
+                        <div class="border-4 border-[var(--border-color)] bg-[var(--panel-light)] p-2 shadow-inner">
+                            <img id="profilePreview" src="https://api.dicebear.com/7.x/pixel-art/svg?seed=fallback" class="w-32 h-32 object-contain bg-[var(--panel-light)]">
+                        </div>
+                    </div>
 
-                <div class="space-y-4">
-                    <div class="flex items-center bg-white border-2 border-[#1a237e] rounded p-1">
-                        <label class="w-24 text-[#1a237e] font-bold px-2 border-r-2 border-[#1a237e]">Nombre</label>
-                        <input type="text" id="profName" class="flex-1 p-1 font-pixel text-xl focus:outline-none text-[#1a237e]">
-                    </div>
-                    
-                    <div class="flex items-center bg-white border-2 border-[#1a237e] rounded p-1">
-                        <label class="w-24 text-[#1a237e] font-bold px-2 border-r-2 border-[#1a237e] text-sm leading-tight">URL Foto</label>
-                        <input type="text" id="profPic" placeholder="https://..." class="flex-1 p-1 font-pixel text-xl focus:outline-none text-[#1a237e]">
-                    </div>
-                    
-                    <div class="border-2 border-[#1a237e] rounded bg-white overflow-hidden">
-                        <div class="bg-[#e8eaf6] border-b-2 border-[#1a237e] px-2 py-1 font-bold text-[#1a237e]">¿Qué buscas?</div>
-                        <textarea id="profStatus" rows="3" class="w-full p-2 font-pixel text-xl focus:outline-none text-[#1a237e]" placeholder="Busco items..."></textarea>
-                    </div>
-                    
-                    <div class="pt-4 flex justify-end">
-                        <button onclick="saveProfile()" class="px-6 py-2 text-xl font-bold pixel-btn">
-                            APLICAR
-                        </button>
+                    <div class="space-y-4">
+                        <div class="flex items-center bg-[var(--panel-light)] border-2 border-[var(--border-color)] rounded-sm p-1 shadow-inner">
+                            <label class="w-20 text-[var(--text-main)] font-bold px-2 border-r-2 border-[var(--border-color)]">Nombre</label>
+                            <input type="text" id="profName" class="flex-1 p-2 font-pixel text-xl focus:outline-none bg-transparent text-[var(--text-main)]">
+                        </div>
+                        
+                        <div class="flex items-center bg-[var(--panel-light)] border-2 border-[var(--border-color)] rounded-sm p-1 shadow-inner">
+                            <label class="w-20 text-[var(--text-main)] font-bold px-2 border-r-2 border-[var(--border-color)] text-sm leading-tight">URL Foto</label>
+                            <input type="text" id="profPic" placeholder="https://..." class="flex-1 p-2 font-pixel text-xl focus:outline-none bg-transparent text-[var(--text-main)]">
+                        </div>
+                        
+                        <div class="border-2 border-[var(--border-color)] rounded-sm overflow-hidden shadow-inner bg-[var(--panel-light)]">
+                            <div class="bg-[var(--secondary)] border-b-2 border-[var(--border-color)] px-2 py-1 font-bold text-[var(--panel-bg)]">¿Qué buscas?</div>
+                            <textarea id="profStatus" rows="3" class="w-full p-2 font-pixel text-xl focus:outline-none bg-transparent text-[var(--text-main)]" placeholder="Busco items..."></textarea>
+                        </div>
+                        
+                        <div class="pt-4 flex justify-end">
+                            <button onclick="saveProfile()" class="px-6 py-2 text-xl font-bold pixel-btn">
+                                APLICAR CAMBIOS
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -324,8 +355,8 @@
 
     </main>
 
-    <!-- Barra de Navegación Inferior -->
-    <nav class="h-16 bg-[#e8eaf6] border-t-4 border-[#1a237e] flex justify-around items-end px-2 pt-2 shrink-0 z-10">
+    <!-- Barra de Navegación Inferior (Fija) -->
+    <nav class="h-16 shrink-0 bg-[var(--secondary)] border-t-4 border-[var(--border-color)] flex justify-around items-end px-2 pt-2 w-full shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] relative z-10">
         <button onclick="switchTab('feed')" class="nav-btn flex-1 h-12 flex flex-col items-center justify-center active-tab" data-tab="feed">
             <span class="text-lg font-bold tracking-wide">MUNDO</span>
         </button>
@@ -341,38 +372,36 @@
     </nav>
 
     <!-- Modal: Agregar Objeto -->
-    <div id="addItemModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex justify-center items-center p-4">
-        <div class="pixel-border bg-[#e8eaf6] w-full max-w-md relative p-0 overflow-hidden">
+    <div id="addItemModal" class="fixed inset-0 bg-black bg-opacity-70 z-50 hidden flex justify-center items-center p-4">
+        <div class="pixel-border bg-[var(--panel-bg)] w-full max-w-sm relative p-0 overflow-hidden shadow-2xl">
             <!-- Header Ventana -->
-            <div class="bg-[#1a237e] text-white flex justify-between items-center px-2 py-1 border-b-2 border-[#1a237e]">
-                <span class="font-bold">CREAR ITEM</span>
-                <button onclick="closeAddItemModal()" class="bg-red-500 border border-white w-6 h-6 flex items-center justify-center text-sm hover:bg-red-400">X</button>
+            <div class="bg-[var(--secondary)] text-[var(--panel-bg)] flex justify-between items-center px-3 py-2 border-b-4 border-[var(--border-color)]">
+                <span class="font-bold text-xl">CREAR ITEM</span>
+                <button onclick="closeAddItemModal()" class="bg-red-600 border-2 border-[var(--border-color)] w-8 h-8 flex items-center justify-center font-bold text-white shadow-[inset_2px_2px_0_rgba(255,255,255,0.3)] active:transform active:translate-y-1">X</button>
             </div>
             
             <div class="p-4 space-y-4">
                 <div>
-                    <label class="text-[#1a237e] font-bold text-sm bg-white border-2 border-b-0 border-[#1a237e] px-2 rounded-t inline-block ml-2">Nombre del Objeto</label>
-                    <input type="text" id="newItemName" class="w-full p-2 font-pixel text-xl pixel-input rounded-tl-none">
+                    <label class="text-[var(--text-main)] font-bold text-sm bg-[var(--panel-light)] border-2 border-b-0 border-[var(--border-color)] px-2 rounded-t-sm inline-block ml-2 relative z-10">Nombre del Objeto</label>
+                    <input type="text" id="newItemName" class="w-full p-2 font-pixel text-xl pixel-input rounded-tl-none relative -mt-[2px]">
                 </div>
                 
                 <!-- Sección de Cámara / Base64 -->
-                <div class="border-2 border-[#1a237e] p-2 bg-white rounded flex flex-col items-center">
-                    <label class="text-[#1a237e] font-bold block mb-2 w-full border-b-2 border-[#e8eaf6] pb-1">Foto del Objeto</label>
+                <div class="border-2 border-[var(--border-color)] p-3 bg-[var(--panel-light)] rounded-sm flex flex-col items-center shadow-inner">
+                    <label class="text-[var(--text-main)] font-bold block mb-2 w-full border-b-2 border-[var(--border-color)] pb-1">Foto del Objeto</label>
                     
-                    <!-- Input oculto que abre la cámara o selector de archivos -->
                     <input type="file" id="cameraInput" accept="image/*" capture="environment" class="hidden" onchange="handlePhotoCapture(event)">
                     
-                    <button onclick="document.getElementById('cameraInput').click()" class="w-full py-2 mb-2 text-lg font-bold pixel-btn bg-[#5c6bc0]">
-                        📸 TOMAR FOTO / SUBIR
+                    <button onclick="document.getElementById('cameraInput').click()" class="w-full py-2 mb-2 text-lg font-bold pixel-btn flex items-center justify-center">
+                        <span class="mr-2">📸</span> TOMAR / SUBIR FOTO
                     </button>
                     
-                    <!-- Preview de la foto convertida a Base64 -->
-                    <img id="newItemPicPreview" class="hidden w-full h-40 object-contain border-2 border-[#1a237e] bg-[#f8f9fa] mt-2">
+                    <img id="newItemPicPreview" class="hidden w-full h-32 object-contain border-2 border-[var(--border-color)] bg-black mt-2 p-1">
                 </div>
                 
-                <div class="border-2 border-[#1a237e] p-2 bg-white rounded">
-                    <label class="text-[#1a237e] font-bold block mb-2 border-b-2 border-[#e8eaf6] pb-1">Tamaño en Rejilla</label>
-                    <select id="newItemSize" class="w-full p-2 font-pixel text-xl pixel-input bg-[#e8eaf6]">
+                <div class="border-2 border-[var(--border-color)] p-3 bg-[var(--panel-light)] rounded-sm shadow-inner">
+                    <label class="text-[var(--text-main)] font-bold block mb-2 border-b-2 border-[var(--border-color)] pb-1">Tamaño en Rejilla</label>
+                    <select id="newItemSize" class="w-full p-2 font-pixel text-xl pixel-input bg-white">
                         <option value="1,1">Pequeño (1x1) - 10 EXP</option>
                         <option value="1,2">Alargado (1x2) - 20 EXP</option>
                         <option value="2,2">Cuadrado (2x2) - 40 EXP</option>
@@ -381,7 +410,7 @@
                 </div>
                 
                 <div class="flex justify-end pt-2">
-                    <button onclick="submitNewItem()" class="px-6 py-2 text-xl font-bold pixel-btn">
+                    <button onclick="submitNewItem()" class="w-full py-3 text-xl font-bold pixel-btn shadow-lg">
                         GUARDAR EN ITEM
                     </button>
                 </div>
@@ -390,28 +419,28 @@
     </div>
 
     <!-- Login Overlay -->
-    <div id="loginOverlay" class="fixed inset-0 bg-[#e8eaf6] z-[100] flex flex-col items-center justify-center text-[#1a237e] hidden">
-        <div class="pixel-border p-8 bg-white max-w-sm w-[90%] text-center">
-            <h1 class="text-4xl font-bold mb-6 tracking-widest bg-[#1a237e] text-white py-2 border-2 border-[#1a237e]">PIXEL BARTER</h1>
-            <p class="text-xl mb-8">Inicia sesión para comenzar a intercambiar items.</p>
-            <button onclick="loginWithGoogle()" class="w-full px-6 py-3 text-2xl font-bold pixel-btn bg-white text-[#1a237e] hover:bg-[#e8eaf6] flex items-center justify-center">
-                <svg class="w-6 h-6 mr-2" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path></svg>
+    <div id="loginOverlay" class="fixed inset-0 bg-[var(--bg-color)] z-[100] flex flex-col items-center justify-center text-[var(--text-main)] hidden px-4">
+        <div class="pixel-border p-8 bg-[var(--panel-bg)] max-w-sm w-full text-center shadow-2xl">
+            <h1 class="text-4xl font-bold mb-6 tracking-widest bg-[var(--secondary)] text-[var(--panel-bg)] py-3 border-4 border-[var(--border-color)] shadow-inner">PIXEL BARTER</h1>
+            <p class="text-xl mb-8 font-bold">Inicia sesión para comenzar el intercambio.</p>
+            <button onclick="loginWithGoogle()" class="w-full px-4 py-4 text-2xl font-bold pixel-btn flex items-center justify-center bg-[var(--panel-light)] text-[var(--text-main)]">
+                <svg class="w-8 h-8 mr-3" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path></svg>
                 Entrar con Google
             </button>
         </div>
     </div>
 
     <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="fixed inset-0 bg-white z-[110] flex flex-col items-center justify-center text-[#1a237e]">
-        <div class="pixel-border p-6 text-center animate-pulse">
+    <div id="loadingOverlay" class="fixed inset-0 bg-[var(--bg-color)] z-[110] flex flex-col items-center justify-center text-[var(--text-main)]">
+        <div class="pixel-border p-6 text-center animate-pulse bg-[var(--panel-bg)] shadow-2xl">
             <h1 class="text-4xl font-bold mb-2">CONECTANDO...</h1>
-            <p class="text-xl">Iniciando sistema</p>
+            <p class="text-xl font-bold">Iniciando sistema</p>
         </div>
     </div>
 
     <!-- Custom Alert Box -->
-    <div id="msgBox" class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-[#1a237e] border-2 border-white px-4 py-2 z-[120] hidden shadow-lg transition-opacity duration-300 rounded max-w-[80%]">
-        <p id="msgText" class="text-white text-xl"></p>
+    <div id="msgBox" class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-[var(--secondary)] border-4 border-[var(--border-color)] px-4 py-2 z-[120] hidden shadow-lg transition-opacity duration-300 rounded-sm max-w-[90%] w-max">
+        <p id="msgText" class="text-[var(--panel-bg)] text-xl font-bold"></p>
     </div>
 
     <!-- FIREBASE & APP LOGIC -->
@@ -420,7 +449,7 @@
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, getDoc, onSnapshot, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Firebase config del usuario
+        // Firebase config
         const firebaseConfig = {
             apiKey: "AIzaSyBjlyxlJroTZzYb6Oc3rHe5SUULxcpe5fI",
             authDomain: "toloot.firebaseapp.com",
@@ -430,7 +459,7 @@
             appId: "1:702218699864:web:ec868e0ff84b444f7e362d"
         };
 
-        const appId = 'toloot-app'; // Identificador para la ruta de la base de datos
+        const appId = 'toloot-app'; 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
@@ -438,7 +467,7 @@
         // App State
         let currentUser = null;
         let myProfile = { displayName: 'Nuevo', photoURL: '', status: '', publicScore: 0 };
-        let currentPhotoBase64 = null; // Almacenará la foto comprimida en texto
+        let currentPhotoBase64 = null; 
         
         let inventory = { private: [], public: [] };
         let allPublicItems = []; 
@@ -453,8 +482,8 @@
         window.showMessage = (text, isError = false) => {
             const box = document.getElementById('msgBox');
             const txt = document.getElementById('msgText');
-            txt.innerText = "• " + text;
-            box.style.borderColor = isError ? '#f44336' : '#ffffff';
+            txt.innerText = "► " + text;
+            box.style.borderColor = isError ? '#cc0000' : 'var(--border-color)';
             box.style.display = 'block';
             box.style.opacity = '1';
             setTimeout(() => {
@@ -476,12 +505,15 @@
             activeBtn.classList.add('active-tab', 'h-12');
             activeBtn.classList.remove('h-10', 'opacity-80');
 
-            if (tabId === 'backpack') setTimeout(resizeGrids, 100); 
-            else if (tabId === 'feed') renderFeed();
+            if (tabId === 'backpack') {
+                // Dar tiempo al navegador para renderizar el bloque antes de calcular ancho
+                setTimeout(resizeGrids, 50); 
+            } else if (tabId === 'feed') {
+                renderFeed();
+            }
         };
 
         // --- Authentication Flow ---
-        // Se ejecuta al cargar la página
         const initAuth = async () => {
             document.getElementById('loadingOverlay').style.display = 'none';
         };
@@ -508,7 +540,7 @@
             }
         });
 
-        // --- Manejo y Compresión de Imagen a Base64 ---
+        // --- Manejo y Compresión de Imagen ---
         window.handlePhotoCapture = (event) => {
             const file = event.target.files[0];
             if (!file) return;
@@ -517,24 +549,16 @@
             reader.onload = (e) => {
                 const img = new Image();
                 img.onload = () => {
-                    // Crear un canvas para redimensionar y comprimir la imagen
                     const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 600; // Ancho máximo para optimizar peso en Firestore
-                    const MAX_HEIGHT = 600;
+                    const MAX_WIDTH = 500; 
+                    const MAX_HEIGHT = 500;
                     let width = img.width;
                     let height = img.height;
 
-                    // Calcular nuevas proporciones
                     if (width > height) {
-                        if (width > MAX_WIDTH) {
-                            height *= MAX_WIDTH / width;
-                            width = MAX_WIDTH;
-                        }
+                        if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
                     } else {
-                        if (height > MAX_HEIGHT) {
-                            width *= MAX_HEIGHT / height;
-                            height = MAX_HEIGHT;
-                        }
+                        if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
                     }
 
                     canvas.width = width;
@@ -542,10 +566,8 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
 
-                    // Convertir a JPEG con calidad al 70%
-                    currentPhotoBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                    currentPhotoBase64 = canvas.toDataURL('image/jpeg', 0.6);
                     
-                    // Mostrar preview
                     const preview = document.getElementById('newItemPicPreview');
                     preview.src = currentPhotoBase64;
                     preview.classList.remove('hidden');
@@ -644,18 +666,26 @@
             }, (e) => console.error("Error public:", e));
         }
 
-        // --- Grid Logic ---
+        // --- Grid Logic Fixed for Overflows ---
         function resizeGrids() {
-            const gPriv = document.getElementById('grid-private');
-            const width = gPriv.clientWidth;
-            cellWidth = Math.floor(width / GRID_COLS); 
+            const gPrivContainer = document.getElementById('grid-private-container');
+            if(!gPrivContainer) return;
+            
+            // Calculamos en base al contenedor padre disponible, restando padding seguro
+            let availableWidth = gPrivContainer.clientWidth;
+            if(availableWidth <= 0) return; // Oculto
+            
+            // Limitar ancho en PC para que no se vea gigante
+            if (availableWidth > 450) availableWidth = 450; 
+            
+            cellWidth = Math.floor(availableWidth / GRID_COLS); 
             cellHeight = cellWidth; 
             
             document.querySelectorAll('.re-grid').forEach(g => {
                 g.style.gridTemplateColumns = `repeat(${GRID_COLS}, ${cellWidth}px)`;
                 g.style.gridTemplateRows = `repeat(${GRID_ROWS}, ${cellHeight}px)`;
-                g.style.height = `${cellHeight * GRID_ROWS}px`;
                 g.style.width = `${cellWidth * GRID_COLS}px`; 
+                g.style.height = `${cellHeight * GRID_ROWS}px`;
                 
                 g.innerHTML = '';
                 for(let i=0; i<GRID_COLS*GRID_ROWS; i++) {
@@ -666,6 +696,7 @@
             });
             renderGrids();
         }
+
         window.addEventListener('resize', () => {
             if(document.getElementById('view-backpack').classList.contains('active')) resizeGrids();
         });
@@ -675,11 +706,14 @@
 
             const renderItems = (items, gridId) => {
                 const container = document.getElementById(gridId);
+                if(!container) return;
+                
                 container.querySelectorAll('.re-item').forEach(el => el.remove());
 
                 items.forEach(item => {
                     const div = document.createElement('div');
-                    div.className = 're-item';
+                    div.className = 're-item shadow-md';
+                    // Margen interno de 1px para el drag visual
                     div.style.width = `${(item.w * cellWidth) - 2}px`;
                     div.style.height = `${(item.h * cellHeight) - 2}px`;
                     div.style.left = `${item.x * cellWidth + 1}px`;
@@ -703,7 +737,7 @@
             renderItems(inventory.public, 'grid-public');
         }
 
-        // Custom Drag Implementation
+        // Custom Drag
         let isDragging = false;
         let dragItemData = null;
         let dragClone = null;
@@ -722,27 +756,36 @@
 
             target.style.opacity = '0.3';
             const rect = target.getBoundingClientRect();
-            dragOffset.x = e.clientX - rect.left;
-            dragOffset.y = e.clientY - rect.top;
+            
+            // Fix coordinates mapping taking touch vs mouse
+            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+            
+            dragOffset.x = clientX - rect.left;
+            dragOffset.y = clientY - rect.top;
 
             dragClone = target.cloneNode(true);
             dragClone.className = 're-item drag-clone';
             dragClone.style.opacity = '0.9';
             dragClone.style.width = `${rect.width}px`;
             dragClone.style.height = `${rect.height}px`;
-            dragClone.style.left = `${e.clientX - dragOffset.x}px`;
-            dragClone.style.top = `${e.clientY - dragOffset.y}px`;
+            dragClone.style.left = `${clientX - dragOffset.x}px`;
+            dragClone.style.top = `${clientY - dragOffset.y}px`;
             document.body.appendChild(dragClone);
 
-            document.addEventListener('pointermove', handleDragMove);
+            document.addEventListener('pointermove', handleDragMove, {passive: false});
             document.addEventListener('pointerup', handleDragEnd);
+            document.addEventListener('touchend', handleDragEnd);
         }
 
         function handleDragMove(e) {
             if (!isDragging || !dragClone) return;
-            dragClone.style.left = `${e.clientX - dragOffset.x}px`;
-            dragClone.style.top = `${e.clientY - dragOffset.y}px`;
-            e.preventDefault(); 
+            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+            
+            dragClone.style.left = `${clientX - dragOffset.x}px`;
+            dragClone.style.top = `${clientY - dragOffset.y}px`;
+            e.preventDefault(); // Detiene scroll del body mientras arrastras
         }
 
         async function handleDragEnd(e) {
@@ -750,11 +793,16 @@
             isDragging = false;
             document.removeEventListener('pointermove', handleDragMove);
             document.removeEventListener('pointerup', handleDragEnd);
+            document.removeEventListener('touchend', handleDragEnd);
+
+            const clientX = e.clientX || (e.changedTouches && e.changedTouches[0].clientX);
+            const clientY = e.clientY || (e.changedTouches && e.changedTouches[0].clientY);
 
             dragClone.remove();
             dragClone = null;
 
-            const els = document.elementsFromPoint(e.clientX, e.clientY);
+            // Elementos debajo del punto donde se soltó
+            const els = document.elementsFromPoint(clientX, clientY);
             let targetGridElem = els.find(el => el.classList.contains('re-grid'));
 
             renderGrids();
@@ -764,8 +812,8 @@
             const targetGridType = targetGridElem.dataset.grid;
             const gridRect = targetGridElem.getBoundingClientRect();
             
-            const dropRelativeX = (e.clientX - dragOffset.x) - gridRect.left;
-            const dropRelativeY = (e.clientY - dragOffset.y) - gridRect.top;
+            const dropRelativeX = (clientX - dragOffset.x) - gridRect.left;
+            const dropRelativeY = (clientY - dragOffset.y) - gridRect.top;
             
             let cellX = Math.round(dropRelativeX / cellWidth);
             let cellY = Math.round(dropRelativeY / cellHeight);
@@ -843,7 +891,7 @@
 
             const [w, h] = sizeStr.split(',').map(Number);
             const points = (w * h) * 10;
-            const photos = [currentPhotoBase64]; // Guardamos el texto base64
+            const photos = [currentPhotoBase64];
 
             let foundSpot = false;
             let targetX = 0, targetY = 0;
@@ -905,7 +953,7 @@
             feedItems.forEach(item => {
                 const user = allUsers[item.uid] || { displayName: 'Anónimo', status: '', photoURL: '' };
                 const post = document.createElement('div');
-                post.className = 'feed-item';
+                post.className = 'feed-item w-full';
                 
                 let photosHTML = '';
                 if(item.photos && item.photos.length > 0) {
@@ -915,23 +963,23 @@
                 }
 
                 post.innerHTML = `
-                    <div class="relative w-full h-full flex flex-col">
-                        <div class="feed-photos flex-1 mb-24">
+                    <div class="relative w-full h-full flex flex-col bg-[var(--bg-color)]">
+                        <div class="feed-photos flex-1 mb-28 w-full">
                             ${photosHTML}
                         </div>
                         
-                        <div class="absolute bottom-4 left-4 right-4 bg-[#1a237e] text-white p-3 border-4 border-white rounded shadow-lg">
+                        <div class="absolute bottom-4 left-4 right-4 bg-[var(--secondary)] text-[var(--panel-bg)] p-3 border-4 border-[var(--border-color)] rounded-sm shadow-xl">
                             <div class="flex items-start">
-                                <div class="bg-white p-1 rounded border-2 border-[#1a237e] mr-3 mt-[-20px]">
-                                    <img src="${user.photoURL}" class="w-12 h-12 object-contain bg-[#e8eaf6]">
+                                <div class="bg-[var(--panel-light)] p-1 rounded-sm border-2 border-[var(--border-color)] mr-3 mt-[-24px] shadow-md">
+                                    <img src="${user.photoURL}" class="w-12 h-12 object-contain bg-[var(--panel-light)]">
                                 </div>
-                                <div class="flex-1">
-                                    <div class="flex justify-between items-baseline border-b border-[#5c6bc0] pb-1 mb-1">
-                                        <h3 class="text-xl font-bold text-white">${user.displayName}</h3>
-                                        <span class="text-sm bg-[#f48fb1] px-1 rounded text-white">Lv.${user.publicScore||0}</span>
+                                <div class="flex-1 overflow-hidden">
+                                    <div class="flex justify-between items-baseline border-b-2 border-[var(--border-color)] pb-1 mb-1">
+                                        <h3 class="text-xl font-bold text-white truncate">${user.displayName}</h3>
+                                        <span class="text-sm bg-[var(--primary)] px-1 border border-[var(--border-color)] rounded-sm text-[var(--panel-bg)] font-bold ml-2 shrink-0">Lv.${user.publicScore||0}</span>
                                     </div>
-                                    <h2 class="text-2xl text-[#f48fb1] font-bold">${item.name}</h2>
-                                    <p class="text-sm text-[#c5cae9] mt-1 line-clamp-2">"Busco: ${user.status || 'Ofertas...'}"</p>
+                                    <h2 class="text-2xl text-[var(--panel-bg)] font-bold truncate">${item.name}</h2>
+                                    <p class="text-sm text-[var(--panel-light)] mt-1 line-clamp-2 leading-tight">"Busco: ${user.status || 'Ofertas...'}"</p>
                                 </div>
                             </div>
                         </div>
@@ -949,7 +997,7 @@
             const container = document.getElementById('searchResults');
             
             if(!queryTxt) {
-                container.innerHTML = '<p class="col-span-2 text-center text-[#5c6bc0] mt-8 text-xl">Ingresa un término para buscar.</p>';
+                container.innerHTML = '<p class="col-span-2 text-center text-[var(--text-light)] mt-8 text-xl">Ingresa un término para buscar.</p>';
                 return;
             }
 
@@ -962,20 +1010,20 @@
 
             container.innerHTML = '';
             if(results.length === 0) {
-                container.innerHTML = '<p class="col-span-2 text-center text-[#5c6bc0] mt-8 text-xl">Ningún item encontrado.</p>';
+                container.innerHTML = '<p class="col-span-2 text-center text-[var(--text-light)] mt-8 text-xl font-bold">Ningún item encontrado.</p>';
                 return;
             }
 
             results.forEach(item => {
                 const user = allUsers[item.uid];
                 const div = document.createElement('div');
-                div.className = 'bg-white border-2 border-[#1a237e] p-2 flex flex-col text-left rounded hover:bg-[#e8eaf6] transition-colors';
+                div.className = 'bg-[var(--panel-bg)] border-4 border-[var(--border-color)] p-2 flex flex-col text-left rounded-sm hover:bg-[var(--panel-light)] transition-colors shadow-md';
                 div.innerHTML = `
-                    <div class="bg-white border-2 border-[#1a237e] mb-2 p-1">
-                        <img src="${item.photos[0] || ''}" class="w-full h-20 object-contain">
+                    <div class="bg-black border-2 border-[var(--border-color)] mb-2 p-1">
+                        <img src="${item.photos[0] || ''}" class="w-full h-24 object-contain">
                     </div>
-                    <h4 class="text-[#1a237e] font-bold text-lg truncate w-full">${item.name}</h4>
-                    <span class="text-xs text-[#d81b60] font-bold mt-1 block">Por: ${user ? user.displayName : 'Unknown'}</span>
+                    <h4 class="text-[var(--text-main)] font-bold text-lg truncate w-full">${item.name}</h4>
+                    <span class="text-sm text-[var(--primary)] font-bold mt-1 block truncate">Por: ${user ? user.displayName : 'Unknown'}</span>
                 `;
                 container.appendChild(div);
             });
