@@ -2,32 +2,29 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <!-- Evitar zoom indeseado y scroll elástico en móviles -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Pixel Barter - Intercambio Retro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Nueva paleta (Inspiración en la imagen) */
-            --bg-color: #1a1c1b;      /* Fondo muy oscuro (casi negro) */
-            --panel-bg: #AC9B78;      /* Beige / Arena (Paneles principales) */
-            --panel-light: #c2b496;   /* Beige más claro para inputs/fondos de celdas */
-            --primary: #68533A;       /* Marrón (Botones, Acentos) */
-            --primary-dark: #4d3d2a;  /* Marrón oscuro para hover/active */
-            --secondary: #424846;     /* Pizarra / Gris Oscuro (Headers, Nav, Bordes secundarios) */
-            --border-color: #111211;  /* Negro/Gris muy oscuro para bordes pixel art fuertes */
-            --text-main: #111211;     /* Texto oscuro para paneles claros */
-            --text-light: #AC9B78;    /* Texto claro (Beige) para paneles oscuros */
+            /* Paleta Beige/RPG Retro */
+            --bg-color: #1a1c1b;      
+            --panel-bg: #AC9B78;      
+            --panel-light: #c2b496;   
+            --primary: #68533A;       
+            --primary-dark: #4d3d2a;  
+            --secondary: #424846;     
+            --border-color: #111211;  
+            --text-main: #111211;     
+            --text-light: #AC9B78;    
             --grid-line: rgba(66, 72, 70, 0.4); 
         }
 
-        /* Prevención de desbordamientos globales */
         html, body {
             margin: 0;
             padding: 0;
             width: 100%;
-            /* 100dvh soluciona problemas con la barra de navegación dinámica de iOS/Android */
             height: 100dvh; 
             overflow: hidden; 
             overscroll-behavior-y: none;
@@ -64,6 +61,13 @@
             transform: translate(2px, 2px);
             background-color: var(--primary-dark);
         }
+        
+        .pixel-btn-danger {
+            background-color: #b91c1c;
+        }
+        .pixel-btn-danger:active {
+            background-color: #991b1b;
+        }
 
         .pixel-input {
             background-color: var(--panel-light);
@@ -78,7 +82,7 @@
             box-shadow: inset 2px 2px 0px rgba(104, 83, 58, 0.4);
         }
 
-        /* Layout de Vistas contenido dentro del Main */
+        /* Layout de Vistas */
         .view-section {
             display: none;
             width: 100%;
@@ -86,11 +90,16 @@
             overflow-y: auto;
             overflow-x: hidden;
             background-color: var(--bg-color);
-            /* Espacio extra al final para que el scroll no quede pegado */
             padding-bottom: 2rem; 
         }
         .view-section.active {
             display: block;
+        }
+        /* Específico para la mochila, usa flex para el sistema de cajón */
+        #view-backpack.active {
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 0;
         }
 
         /* Feed System */
@@ -128,7 +137,6 @@
         /* Inventario */
         .inventory-view {
             touch-action: none;
-            overflow-y: auto;
             background-image: radial-gradient(var(--secondary) 1px, transparent 1px);
             background-size: 20px 20px;
         }
@@ -139,7 +147,6 @@
             position: relative;
             margin: 0 auto;
             box-shadow: inset 2px 2px 5px rgba(0,0,0,0.2);
-            /* Asegurar que no se desborde del contenedor flex */
             max-width: 100%; 
         }
         .re-cell {
@@ -150,7 +157,7 @@
         }
         .re-item {
             position: absolute;
-            background-color: rgba(104, 83, 58, 0.2); /* Primary transparent */
+            background-color: rgba(104, 83, 58, 0.2); 
             border: 2px solid var(--primary);
             display: flex;
             flex-direction: column;
@@ -212,7 +219,6 @@
         ::-webkit-scrollbar-thumb { background: var(--secondary); border: 2px solid var(--border-color); }
     </style>
 </head>
-<!-- Se usa h-[100dvh] para ajustarse correctamente en móviles -->
 <body class="flex flex-col h-[100dvh] w-full overflow-hidden relative">
 
     <!-- Navbar Superior (Fija) -->
@@ -225,7 +231,7 @@
         </div>
     </header>
 
-    <!-- Main Content Area (Ocupa el espacio restante dinámicamente) -->
+    <!-- Main Content Area -->
     <main class="flex-1 w-full relative overflow-hidden flex flex-col">
         
         <!-- PANTALLA: FEED -->
@@ -259,56 +265,51 @@
             </div>
         </div>
 
-        <!-- PANTALLA: MOCHILA (INVENTARIO) -->
-        <div id="view-backpack" class="view-section inventory-view">
-            <div class="max-w-xl mx-auto w-full px-3 py-4 flex flex-col space-y-6">
-                
-                <!-- Panel Superior: Controles -->
-                <div class="flex justify-between items-center pixel-border p-3 bg-[var(--panel-bg)]">
-                    <div class="flex space-x-2">
-                        <span class="bg-[var(--secondary)] text-[var(--panel-bg)] px-2 py-1 border-2 border-[var(--border-color)] text-lg">EQUIP</span>
-                        <span class="bg-[var(--primary)] text-[var(--panel-bg)] px-2 py-1 border-2 border-[var(--border-color)] text-lg font-bold">USE</span>
-                    </div>
-                    <button onclick="openAddItemModal()" class="px-4 py-2 text-xl font-bold pixel-btn whitespace-nowrap">
-                        + NUEVO
-                    </button>
-                </div>
-                
-                <!-- Dialog box style instruction -->
-                <div class="bg-[var(--secondary)] text-[var(--panel-bg)] p-3 border-2 border-[var(--border-color)] rounded-sm relative mx-2 shadow-md">
-                    <div class="absolute -top-3 left-4 w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-b-[10px] border-b-[var(--border-color)]"></div>
-                    <div class="absolute -top-2 left-[18px] w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[8px] border-b-[var(--secondary)]"></div>
-                    <p class="text-lg leading-tight">Arrastra objetos entre mochilas.<br>Objetos más grandes dan más EXP.</p>
-                </div>
-
-                <!-- Mochila Privada -->
-                <div class="flex flex-col w-full overflow-hidden">
-                    <div class="flex items-center mb-1">
-                        <span class="bg-[var(--panel-bg)] border-2 border-[var(--border-color)] text-[var(--text-main)] px-2 py-1 font-bold rounded-sm shadow-sm">INVENTARIO (Oculto)</span>
-                    </div>
-                    <div class="pixel-border p-2 bg-[var(--panel-bg)] pb-6 w-full flex justify-center">
-                        <!-- El ID parent es importante para calcular el max-width dinámico -->
-                         <div id="grid-private-container" class="w-full flex justify-center overflow-hidden">
-                             <div id="grid-private" class="re-grid" data-grid="private"></div>
-                         </div>
-                    </div>
-                </div>
-
-                <!-- Mochila Pública -->
-                <div class="flex flex-col w-full overflow-hidden mt-4">
-                    <div class="flex justify-between items-end mb-1">
+        <!-- PANTALLA: MOCHILA (INVENTARIO DESPLEGABLE) -->
+        <div id="view-backpack" class="view-section inventory-view p-0">
+            <!-- ÁREA SUPERIOR: Mochila Pública (Siempre Visible) -->
+            <div class="flex-1 overflow-y-auto px-3 py-4 flex flex-col relative w-full pb-8" id="public-area">
+                <div class="max-w-xl mx-auto w-full">
+                    <div class="flex justify-between items-end mb-2">
                         <span class="bg-[var(--panel-bg)] border-2 border-[var(--border-color)] text-[var(--text-main)] px-2 py-1 font-bold rounded-sm shadow-sm">MOSTRADOR (Público)</span>
                         <div class="bg-[var(--secondary)] border-2 border-[var(--border-color)] px-2 py-1 text-[var(--panel-bg)] shadow-sm">
-                            EXP: <span id="publicScoreTxt" class="font-bold">0</span>
+                            EXP Global: <span id="publicScoreTxt" class="font-bold">0</span>
                         </div>
                     </div>
+                    
+                    <div class="flex justify-between items-center pixel-border p-2 bg-[var(--panel-bg)] mb-3">
+                        <span class="text-[var(--text-main)] font-bold text-sm hidden sm:block">Los items aquí aparecen en el mundo.</span>
+                        <button onclick="openAddItemModal()" class="px-4 py-2 text-xl font-bold pixel-btn whitespace-nowrap w-full sm:w-auto">
+                            + NUEVO ITEM
+                        </button>
+                    </div>
+
                     <div class="pixel-border p-2 bg-[var(--panel-bg)] pb-6 w-full flex justify-center">
                         <div id="grid-public-container" class="w-full flex justify-center overflow-hidden">
                             <div id="grid-public" class="re-grid" data-grid="public"></div>
                         </div>
                     </div>
                 </div>
+            </div>
 
+            <!-- HANDLE DEL CAJÓN DESPLEGABLE -->
+            <div id="drawer-handle" class="w-full h-8 bg-[var(--secondary)] cursor-ns-resize flex items-center justify-center shrink-0 border-y-4 border-[var(--border-color)] touch-none relative z-20 shadow-[0_-2px_10px_rgba(0,0,0,0.5)]">
+                <div class="w-20 h-2 bg-[var(--panel-bg)] rounded-full pointer-events-none opacity-80"></div>
+            </div>
+
+            <!-- ÁREA INFERIOR: Cajón de Inventario Privado -->
+            <div id="private-area" class="h-[30vh] overflow-y-auto p-3 bg-[var(--panel-light)] shrink-0 flex flex-col relative w-full pb-6 z-10 shadow-[inset_0_4px_6px_rgba(0,0,0,0.2)]">
+                <div class="max-w-xl mx-auto w-full">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="bg-[var(--bg-color)] border-2 border-[var(--border-color)] text-[var(--panel-light)] px-2 py-1 font-bold rounded-sm shadow-sm">INVENTARIO (Oculto)</span>
+                        <span class="text-sm font-bold text-[var(--primary)] text-right leading-tight">▲ Arrastra de aquí al <br>mostrador para publicar ▲</span>
+                    </div>
+                    <div class="pixel-border p-2 bg-[var(--bg-color)] pb-6 w-full flex justify-center shadow-inner">
+                         <div id="grid-private-container" class="w-full flex justify-center overflow-hidden">
+                             <div id="grid-private" class="re-grid" data-grid="private"></div>
+                         </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -343,9 +344,16 @@
                             <textarea id="profStatus" rows="3" class="w-full p-2 font-pixel text-xl focus:outline-none bg-transparent text-[var(--text-main)]" placeholder="Busco items..."></textarea>
                         </div>
                         
-                        <div class="pt-4 flex justify-end">
-                            <button onclick="saveProfile()" class="px-6 py-2 text-xl font-bold pixel-btn">
+                        <div class="pt-2 flex justify-end">
+                            <button onclick="saveProfile()" class="px-6 py-2 text-xl font-bold pixel-btn w-full">
                                 APLICAR CAMBIOS
+                            </button>
+                        </div>
+
+                        <!-- Botón de Cerrar Sesión -->
+                        <div class="pt-6 mt-6 border-t-4 border-dashed border-[var(--secondary)]">
+                            <button onclick="logout()" class="px-6 py-3 text-xl font-bold pixel-btn pixel-btn-danger w-full">
+                                SALIR / CERRAR SESIÓN
                             </button>
                         </div>
                     </div>
@@ -356,7 +364,7 @@
     </main>
 
     <!-- Barra de Navegación Inferior (Fija) -->
-    <nav class="h-16 shrink-0 bg-[var(--secondary)] border-t-4 border-[var(--border-color)] flex justify-around items-end px-2 pt-2 w-full shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] relative z-10">
+    <nav class="h-16 shrink-0 bg-[var(--secondary)] border-t-4 border-[var(--border-color)] flex justify-around items-end px-2 pt-2 w-full shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] relative z-30">
         <button onclick="switchTab('feed')" class="nav-btn flex-1 h-12 flex flex-col items-center justify-center active-tab" data-tab="feed">
             <span class="text-lg font-bold tracking-wide">MUNDO</span>
         </button>
@@ -386,7 +394,6 @@
                     <input type="text" id="newItemName" class="w-full p-2 font-pixel text-xl pixel-input rounded-tl-none relative -mt-[2px]">
                 </div>
                 
-                <!-- Sección de Cámara / Base64 -->
                 <div class="border-2 border-[var(--border-color)] p-3 bg-[var(--panel-light)] rounded-sm flex flex-col items-center shadow-inner">
                     <label class="text-[var(--text-main)] font-bold block mb-2 w-full border-b-2 border-[var(--border-color)] pb-1">Foto del Objeto</label>
                     
@@ -411,7 +418,7 @@
                 
                 <div class="flex justify-end pt-2">
                     <button onclick="submitNewItem()" class="w-full py-3 text-xl font-bold pixel-btn shadow-lg">
-                        GUARDAR EN ITEM
+                        GUARDAR EN ITEM (Privado)
                     </button>
                 </div>
             </div>
@@ -446,7 +453,7 @@
     <!-- FIREBASE & APP LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, getDoc, onSnapshot, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Firebase config
@@ -506,12 +513,57 @@
             activeBtn.classList.remove('h-10', 'opacity-80');
 
             if (tabId === 'backpack') {
-                // Dar tiempo al navegador para renderizar el bloque antes de calcular ancho
                 setTimeout(resizeGrids, 50); 
             } else if (tabId === 'feed') {
                 renderFeed();
             }
         };
+
+        // --- Lógica del Drawer Desplegable ---
+        const handle = document.getElementById('drawer-handle');
+        const privateArea = document.getElementById('private-area');
+        let isResizingDrawer = false;
+        let startY, startHeight;
+
+        const startResize = (e) => {
+            isResizingDrawer = true;
+            startY = e.clientY || (e.touches && e.touches[0].clientY);
+            startHeight = privateArea.getBoundingClientRect().height;
+            document.body.style.cursor = 'ns-resize';
+        };
+
+        const doResize = (e) => {
+            if (!isResizingDrawer) return;
+            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+            const dy = clientY - startY;
+            
+            // Subir el mouse/dedo incrementa la altura
+            let newHeight = startHeight - dy;
+            
+            // Límites (Min/Max height)
+            const maxH = window.innerHeight * 0.70; // Max 70% de pantalla
+            const minH = 60; // Min altura para que no desaparezca
+            if (newHeight > maxH) newHeight = maxH;
+            if (newHeight < minH) newHeight = minH;
+            
+            privateArea.style.height = `${newHeight}px`;
+            e.preventDefault(); // Evita scroll de la pagina al arrastrar el handle
+        };
+
+        const stopResize = () => {
+            if (isResizingDrawer) {
+                isResizingDrawer = false;
+                document.body.style.cursor = '';
+            }
+        };
+
+        handle.addEventListener('pointerdown', startResize);
+        document.addEventListener('pointermove', doResize, {passive: false});
+        document.addEventListener('pointerup', stopResize);
+        // Soporte adicional para touchs estrictos
+        handle.addEventListener('touchstart', startResize);
+        document.addEventListener('touchmove', doResize, {passive: false});
+        document.addEventListener('touchend', stopResize);
 
         // --- Authentication Flow ---
         const initAuth = async () => {
@@ -528,6 +580,18 @@
             }
         };
 
+        window.logout = async () => {
+            try {
+                await signOut(auth);
+                // Resetear estado local
+                inventory = { private: [], public: [] };
+                renderGrids();
+                switchTab('feed');
+            } catch (error) {
+                showMessage("Error al cerrar sesión", true);
+            }
+        };
+
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
@@ -536,6 +600,7 @@
                 await ensureUserProfile(user.uid);
                 startRealtimeListeners();
             } else {
+                currentUser = null;
                 document.getElementById('loginOverlay').classList.remove('hidden');
             }
         });
@@ -666,16 +731,16 @@
             }, (e) => console.error("Error public:", e));
         }
 
-        // --- Grid Logic Fixed for Overflows ---
+        // --- Grid Logic Unified para Drag&Drop Perfilado ---
         function resizeGrids() {
-            const gPrivContainer = document.getElementById('grid-private-container');
-            if(!gPrivContainer) return;
+            const container = document.getElementById('view-backpack');
+            if(!container) return;
             
-            // Calculamos en base al contenedor padre disponible, restando padding seguro
-            let availableWidth = gPrivContainer.clientWidth;
-            if(availableWidth <= 0) return; // Oculto
+            // Calculamos ancho de celda unificado para ambos grids basados en el contenedor padre
+            let availableWidth = container.clientWidth - 32; // Restamos margen seguro aprox
+            if(availableWidth <= 0) return;
             
-            // Limitar ancho en PC para que no se vea gigante
+            // Límite en PC
             if (availableWidth > 450) availableWidth = 450; 
             
             cellWidth = Math.floor(availableWidth / GRID_COLS); 
@@ -713,7 +778,6 @@
                 items.forEach(item => {
                     const div = document.createElement('div');
                     div.className = 're-item shadow-md';
-                    // Margen interno de 1px para el drag visual
                     div.style.width = `${(item.w * cellWidth) - 2}px`;
                     div.style.height = `${(item.h * cellHeight) - 2}px`;
                     div.style.left = `${item.x * cellWidth + 1}px`;
@@ -738,14 +802,14 @@
         }
 
         // Custom Drag
-        let isDragging = false;
+        let isDraggingItem = false;
         let dragItemData = null;
         let dragClone = null;
         let dragOffset = { x: 0, y: 0 };
 
         function handleDragStart(e) {
             if (e.button !== 0 && e.type !== 'touchstart' && e.pointerType !== 'mouse' && e.pointerType !== 'touch') return;
-            isDragging = true;
+            isDraggingItem = true;
             
             const target = e.currentTarget;
             const itemId = target.dataset.id;
@@ -757,7 +821,6 @@
             target.style.opacity = '0.3';
             const rect = target.getBoundingClientRect();
             
-            // Fix coordinates mapping taking touch vs mouse
             const clientX = e.clientX || (e.touches && e.touches[0].clientX);
             const clientY = e.clientY || (e.touches && e.touches[0].clientY);
             
@@ -773,27 +836,27 @@
             dragClone.style.top = `${clientY - dragOffset.y}px`;
             document.body.appendChild(dragClone);
 
-            document.addEventListener('pointermove', handleDragMove, {passive: false});
-            document.addEventListener('pointerup', handleDragEnd);
-            document.addEventListener('touchend', handleDragEnd);
+            document.addEventListener('pointermove', handleItemDragMove, {passive: false});
+            document.addEventListener('pointerup', handleItemDragEnd);
+            document.addEventListener('touchend', handleItemDragEnd);
         }
 
-        function handleDragMove(e) {
-            if (!isDragging || !dragClone) return;
+        function handleItemDragMove(e) {
+            if (!isDraggingItem || !dragClone) return;
             const clientX = e.clientX || (e.touches && e.touches[0].clientX);
             const clientY = e.clientY || (e.touches && e.touches[0].clientY);
             
             dragClone.style.left = `${clientX - dragOffset.x}px`;
             dragClone.style.top = `${clientY - dragOffset.y}px`;
-            e.preventDefault(); // Detiene scroll del body mientras arrastras
+            e.preventDefault(); 
         }
 
-        async function handleDragEnd(e) {
-            if (!isDragging) return;
-            isDragging = false;
-            document.removeEventListener('pointermove', handleDragMove);
-            document.removeEventListener('pointerup', handleDragEnd);
-            document.removeEventListener('touchend', handleDragEnd);
+        async function handleItemDragEnd(e) {
+            if (!isDraggingItem) return;
+            isDraggingItem = false;
+            document.removeEventListener('pointermove', handleItemDragMove);
+            document.removeEventListener('pointerup', handleItemDragEnd);
+            document.removeEventListener('touchend', handleItemDragEnd);
 
             const clientX = e.clientX || (e.changedTouches && e.changedTouches[0].clientX);
             const clientY = e.clientY || (e.changedTouches && e.changedTouches[0].clientY);
@@ -801,7 +864,6 @@
             dragClone.remove();
             dragClone = null;
 
-            // Elementos debajo del punto donde se soltó
             const els = document.elementsFromPoint(clientX, clientY);
             let targetGridElem = els.find(el => el.classList.contains('re-grid'));
 
@@ -821,7 +883,7 @@
             if (isValidDrop(targetGridType, dragItemData, cellX, cellY)) {
                 await moveItem(dragItemData, targetGridType, cellX, cellY);
             } else {
-                showMessage("Espacio ocupado", true);
+                showMessage("Espacio ocupado o fuera de límites", true);
             }
         }
 
@@ -854,9 +916,11 @@
                     if (wasPublic) {
                         await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'publicItems', itemData.id));
                         await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'privateItems', itemData.id), newItemData);
+                        showMessage("Retirado al Inventario");
                     } else {
                         await deleteDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'privateItems', itemData.id));
                         await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'publicItems', itemData.id), newItemData);
+                        showMessage("¡Publicado en el mundo!");
                     }
                 } else {
                     if (wasPublic) {
@@ -908,7 +972,7 @@
             }
 
             if(!foundSpot) {
-                return showMessage("Inventario lleno", true);
+                return showMessage("Inventario lleno, libera espacio", true);
             }
 
             const item = {
@@ -921,7 +985,7 @@
                 await addDoc(collection(db, 'artifacts', appId, 'users', currentUser.uid, 'privateItems'), item);
                 closeAddItemModal();
                 document.getElementById('newItemName').value = '';
-                showMessage("Objeto creado");
+                showMessage("Nuevo Objeto Creado (Privado)");
             } catch (e) {
                 console.error(e);
                 showMessage("Error de red (Foto muy pesada?)", true);
