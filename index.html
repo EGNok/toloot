@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <style>
         :root {
+            /* Paleta Beige/RPG Retro */
             --bg-color: #1a1c1b;      
             --panel-bg: #AC9B78;      
             --panel-light: #c2b496;   
@@ -34,110 +35,428 @@
             background-color: var(--bg-color);
             color: var(--text-main);
             touch-action: none;
-            font-size: 1.1rem; /* Base un poco más grande */
         }
 
-        /* Escalado de elementos para móviles */
-        .pixel-border { background-color: var(--panel-bg); border: 3px solid var(--border-color); box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.3); border-radius: 4px; }
-        .pixel-btn { background-color: var(--primary); color: var(--panel-bg); border: 3px solid var(--border-color); border-radius: 4px; box-shadow: inset -2px -2px 0px rgba(0,0,0,0.3), inset 2px 2px 0px rgba(255,255,255,0.2); transition: all 0.1s; cursor: pointer; text-shadow: 1px 1px 0px #000; padding: 12px; font-size: 1.25rem; }
-        .pixel-btn:active { box-shadow: inset 2px 2px 0px rgba(0,0,0,0.5); transform: translate(2px, 2px); background-color: var(--primary-dark); }
-        .pixel-input { background-color: var(--panel-light); border: 2px solid var(--border-color); color: var(--text-main); border-radius: 2px; box-shadow: inset 2px 2px 0px rgba(0,0,0,0.15); padding: 12px; font-size: 1.25rem; width: 100%; }
-
-        .view-section { display: none; width: 100%; height: 100%; overflow-y: auto; overflow-x: hidden; background-color: var(--bg-color); }
-        .view-section.active { display: block; }
+        /* Estilos Retro Pixel */
+        .pixel-border {
+            background-color: var(--panel-bg);
+            border: 3px solid var(--border-color);
+            box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.3); 
+            border-radius: 2px;
+        }
         
-        #view-backpack.active { display: flex; flex-direction: column; }
+        .pixel-btn {
+            background-color: var(--primary);
+            color: var(--panel-bg);
+            border: 3px solid var(--border-color);
+            border-radius: 2px;
+            box-shadow: inset -2px -2px 0px rgba(0,0,0,0.3), inset 2px 2px 0px rgba(255,255,255,0.2);
+            transition: all 0.1s;
+            cursor: pointer;
+            text-shadow: 1px 1px 0px #000;
+        }
+        
+        .pixel-btn:active {
+            box-shadow: inset 2px 2px 0px rgba(0,0,0,0.5);
+            transform: translate(2px, 2px);
+            background-color: var(--primary-dark);
+        }
+        
+        .pixel-btn-danger {
+            background-color: #b91c1c;
+        }
+        .pixel-btn-danger:active {
+            background-color: #991b1b;
+        }
 
-        .feed-container { height: 100%; scroll-snap-type: y mandatory; overflow-y: auto; scrollbar-width: none; }
-        .feed-item { height: 100%; scroll-snap-align: start; position: relative; background-color: var(--secondary); border-bottom: 4px solid var(--border-color); }
+        .pixel-input {
+            background-color: var(--panel-light);
+            border: 2px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 2px;
+            box-shadow: inset 2px 2px 0px rgba(0,0,0,0.15);
+        }
+        .pixel-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: inset 2px 2px 0px rgba(104, 83, 58, 0.4);
+        }
 
-        .re-grid { display: grid; background-color: var(--panel-light); border: 3px solid var(--border-color); position: relative; margin: 0 auto; box-shadow: inset 2px 2px 5px rgba(0,0,0,0.2); max-width: 100%; }
-        .re-cell { border-right: 2px solid var(--grid-line); border-bottom: 2px solid var(--grid-line); background-color: var(--panel-light); }
-        .re-item { position: absolute; background-color: rgba(104, 83, 58, 0.2); border: 2px solid var(--primary); display: flex; align-items: center; justify-content: center; cursor: grab; user-select: none; touch-action: none; }
+        /* Layout de Vistas */
+        .view-section {
+            display: none;
+            width: 100%;
+            height: 100%;
+            overflow-y: auto;
+            overflow-x: hidden;
+            background-color: var(--bg-color);
+            padding-bottom: 2rem; 
+        }
+        .view-section.active {
+            display: block;
+        }
+        /* Específico para la mochila, usa flex para el sistema de cajón */
+        #view-backpack.active {
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 0;
+        }
 
-        .nav-btn { background-color: var(--bg-color); color: var(--text-light); border: 3px solid var(--border-color); border-bottom: none; border-radius: 8px 8px 0 0; margin: 0 2px; }
-        .nav-btn.active-tab { background-color: var(--panel-bg); color: var(--text-main); border-color: var(--border-color); transform: translateY(-2px); }
+        /* Feed System */
+        .feed-container {
+            height: 100%;
+            scroll-snap-type: y mandatory;
+            overflow-y: auto;
+            scrollbar-width: none;
+        }
+        .feed-container::-webkit-scrollbar { display: none; }
+        .feed-item {
+            height: 100%;
+            scroll-snap-align: start;
+            position: relative;
+            background-color: var(--secondary);
+            border-bottom: 4px solid var(--border-color);
+        }
+        .feed-photos {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            height: 100%;
+            scrollbar-width: none;
+        }
+        .feed-photos::-webkit-scrollbar { display: none; }
+        .feed-photo {
+            flex: 0 0 100%;
+            scroll-snap-align: center;
+            height: 100%;
+            object-fit: contain;
+            background-color: #111;
+            box-sizing: border-box;
+        }
 
-        ::-webkit-scrollbar { width: 12px; }
-        ::-webkit-scrollbar-track { background: var(--bg-color); }
+        /* Inventario */
+        .inventory-view {
+            touch-action: none;
+            background-image: radial-gradient(var(--secondary) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .re-grid {
+            display: grid;
+            background-color: var(--panel-light);
+            border: 3px solid var(--border-color);
+            position: relative;
+            margin: 0 auto;
+            box-shadow: inset 2px 2px 5px rgba(0,0,0,0.2);
+            max-width: 100%; 
+        }
+        .re-cell {
+            border-right: 2px solid var(--grid-line);
+            border-bottom: 2px solid var(--grid-line);
+            box-sizing: border-box;
+            background-color: var(--panel-light);
+        }
+        .re-item {
+            position: absolute;
+            background-color: rgba(104, 83, 58, 0.2); 
+            border: 2px solid var(--primary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: grab;
+            user-select: none;
+            touch-action: none;
+            transition: transform 0.1s;
+        }
+        .re-item:active { cursor: grabbing; background-color: rgba(104, 83, 58, 0.4); }
+        .re-item img {
+            width: 85%;
+            height: 85%;
+            object-fit: contain;
+            pointer-events: none;
+            image-rendering: pixelated;
+        }
+
+        .drag-clone {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0.9;
+            box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.4);
+            background-color: var(--panel-bg);
+            border: 3px solid var(--border-color);
+        }
+
+        /* Navbar Inferior */
+        .nav-btn {
+            background-color: var(--bg-color);
+            color: var(--text-light);
+            border: 3px solid var(--border-color);
+            border-bottom: none;
+            border-radius: 6px 6px 0 0;
+            margin: 0 4px;
+            transition: all 0.2s;
+        }
+        .nav-btn.active-tab {
+            background-color: var(--panel-bg);
+            color: var(--text-main);
+            border-color: var(--border-color);
+            transform: translateY(-2px);
+            box-shadow: inset 0 2px 0 rgba(255,255,255,0.2);
+        }
+
+        .header-title {
+            color: var(--text-main);
+            background-color: var(--panel-bg);
+            padding: 2px 10px;
+            border: 2px solid var(--border-color);
+            border-radius: 2px;
+            display: inline-block;
+        }
+
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: var(--bg-color); border-left: 2px solid var(--border-color); }
         ::-webkit-scrollbar-thumb { background: var(--secondary); border: 2px solid var(--border-color); }
     </style>
 </head>
-<body class="flex flex-col h-[100dvh] w-full overflow-hidden">
+<body class="flex flex-col h-[100dvh] w-full overflow-hidden relative">
 
-    <header class="h-16 shrink-0 bg-[var(--secondary)] border-b-4 border-[var(--border-color)] flex items-center justify-between px-4 z-10 shadow-md">
-        <h1 class="text-2xl font-bold bg-[var(--panel-bg)] px-3 py-1 border-2 border-[var(--border-color)] rounded-sm">PIXEL BARTER</h1>
-        <div id="userPointsDisplay" class="bg-[var(--panel-bg)] border-2 border-[var(--border-color)] rounded px-3 py-1 text-xl font-bold hidden shadow-inner">
-            Lv.<span id="hdrPoints" class="bg-[var(--primary)] text-[var(--panel-bg)] px-1 rounded-sm ml-1">0</span>
+    <!-- Navbar Superior (Fija) -->
+    <header class="h-14 shrink-0 bg-[var(--secondary)] border-b-4 border-[var(--border-color)] flex items-center justify-between px-4 z-10 w-full shadow-md">
+        <h1 class="text-3xl text-[var(--text-main)] tracking-widest font-bold bg-[var(--panel-bg)] px-2 py-1 border-2 border-[var(--border-color)] rounded-sm">
+            PIXEL BARTER
+        </h1>
+        <div id="userPointsDisplay" class="bg-[var(--panel-bg)] border-2 border-[var(--border-color)] rounded px-3 py-1 text-[var(--text-main)] text-xl font-bold hidden flex items-center shadow-inner">
+            <span class="mr-1">Lv.</span><span id="hdrPoints" class="text-[var(--panel-bg)] bg-[var(--primary)] px-1 rounded-sm">0</span>
         </div>
     </header>
 
+    <!-- Main Content Area -->
     <main class="flex-1 w-full relative overflow-hidden flex flex-col">
         
+        <!-- PANTALLA: FEED -->
         <div id="view-feed" class="view-section active">
-            <div id="feedContainer" class="feed-container"></div>
-        </div>
-
-        <div id="view-search" class="view-section p-4">
-            <div class="max-w-lg mx-auto">
-                <input type="text" id="searchInput" placeholder="Buscar nombre o estado..." class="pixel-input mb-6">
-                <div id="searchResults" class="grid grid-cols-2 gap-4"></div>
+            <div id="feedContainer" class="feed-container w-full">
+                <!-- Posts cargados dinamicamente -->
+            </div>
+            <div id="feedEmpty" class="hidden h-full flex flex-col items-center justify-center text-center p-8 bg-[var(--bg-color)]">
+                <div class="pixel-border p-6 bg-[var(--panel-bg)] inline-block mb-4 shadow-lg">
+                    <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=emptybox" class="w-24 h-24 mx-auto opacity-70">
+                </div>
+                <p class="text-2xl text-[var(--panel-bg)] bg-[var(--primary)] px-4 py-2 border-2 border-[var(--border-color)] rounded inline-block shadow-md">El mercado está vacío.</p>
+                <p class="mt-4 text-[var(--text-light)] text-xl">¡Ve a tu mochila y publica objetos!</p>
             </div>
         </div>
 
-        <div id="view-backpack" class="view-section inventory-view">
-            <div class="flex-1 overflow-y-auto px-4 py-4 flex flex-col w-full" id="public-area">
-                <div class="max-w-lg mx-auto w-full">
-                    <button onclick="openAddItemModal()" class="w-full pixel-btn mb-4 font-bold text-2xl">+ NUEVO ITEM</button>
-                    <div id="grid-public-container" class="w-full flex justify-center"><div id="grid-public" class="re-grid" data-grid="public"></div></div>
+        <!-- PANTALLA: BUSCAR -->
+        <div id="view-search" class="view-section">
+            <div class="max-w-md mx-auto w-full px-4 pt-4">
+                <div class="flex items-center mb-6">
+                    <h2 class="text-2xl header-title font-bold shadow-md">BUSCAR ITEM</h2>
+                </div>
+                
+                <div class="pixel-border p-3 mb-6 bg-[var(--panel-bg)]">
+                    <input type="text" id="searchInput" placeholder="Nombre o estado..." class="w-full p-3 font-pixel text-xl pixel-input">
+                </div>
+                
+                <div id="searchResults" class="grid grid-cols-2 gap-4">
+                    <!-- Resultados dinamicos -->
                 </div>
             </div>
-            <div id="drawer-handle" class="w-full h-10 bg-[var(--secondary)] cursor-ns-resize flex items-center justify-center border-y-4 border-[var(--border-color)] touch-none z-20">
-                <div class="w-16 h-3 bg-[var(--panel-bg)] rounded-full"></div>
-            </div>
-            <div id="private-area" class="h-[30vh] overflow-y-auto p-4 bg-[var(--panel-light)] shrink-0 z-10">
-                <div class="max-w-lg mx-auto w-full">
-                    <p class="text-center font-bold mb-2">INVENTARIO PRIVADO (Arrastra arriba)</p>
-                    <div id="grid-private-container" class="w-full flex justify-center"><div id="grid-private" class="re-grid" data-grid="private"></div></div>
-                </div>
-            </div>
         </div>
 
-        <div id="view-profile" class="view-section p-4">
-            <div class="max-w-lg mx-auto pixel-border p-6 shadow-xl">
-                <div class="flex justify-center mb-6">
-                    <div class="border-4 border-[var(--border-color)] bg-white p-2">
-                        <img id="profilePreview" src="https://api.dicebear.com/7.x/pixel-art/svg?seed=fallback" class="w-32 h-32 object-contain">
+        <!-- PANTALLA: MOCHILA (INVENTARIO DESPLEGABLE) -->
+        <div id="view-backpack" class="view-section inventory-view p-0">
+            <!-- ÁREA SUPERIOR: Mochila Pública (Siempre Visible) -->
+            <div class="flex-1 overflow-y-auto px-3 py-4 flex flex-col relative w-full pb-8" id="public-area">
+                <div class="max-w-xl mx-auto w-full">
+                    <div class="flex justify-between items-end mb-2">
+                        <span class="bg-[var(--panel-bg)] border-2 border-[var(--border-color)] text-[var(--text-main)] px-2 py-1 font-bold rounded-sm shadow-sm">MOSTRADOR (Público)</span>
+                        <div class="bg-[var(--secondary)] border-2 border-[var(--border-color)] px-2 py-1 text-[var(--panel-bg)] shadow-sm">
+                            EXP Global: <span id="publicScoreTxt" class="font-bold">0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between items-center pixel-border p-2 bg-[var(--panel-bg)] mb-3">
+                        <span class="text-[var(--text-main)] font-bold text-sm hidden sm:block">Los items aquí aparecen en el mundo.</span>
+                        <button onclick="openAddItemModal()" class="px-4 py-2 text-xl font-bold pixel-btn whitespace-nowrap w-full sm:w-auto">
+                            + NUEVO ITEM
+                        </button>
+                    </div>
+
+                    <div class="pixel-border p-2 bg-[var(--panel-bg)] pb-6 w-full flex justify-center">
+                        <div id="grid-public-container" class="w-full flex justify-center overflow-hidden">
+                            <div id="grid-public" class="re-grid" data-grid="public"></div>
+                        </div>
                     </div>
                 </div>
-                <!-- Input archivo para foto -->
-                <input type="file" id="profilePicInput" accept="image/*" class="hidden" onchange="handleProfilePhotoChange(event)">
-                <button onclick="document.getElementById('profilePicInput').click()" class="w-full pixel-btn mb-6">CAMBIAR FOTO</button>
+            </div>
 
-                <div class="space-y-4">
-                    <input type="text" id="profName" placeholder="Nombre" class="pixel-input">
-                    <textarea id="profStatus" rows="3" placeholder="¿Qué buscas?" class="pixel-input"></textarea>
-                    <button onclick="saveProfile()" class="w-full pixel-btn text-2xl">APLICAR CAMBIOS</button>
-                    <button onclick="logout()" class="w-full pixel-btn pixel-btn-danger text-2xl">SALIR / CERRAR SESIÓN</button>
+            <!-- HANDLE DEL CAJÓN DESPLEGABLE -->
+            <div id="drawer-handle" class="w-full h-8 bg-[var(--secondary)] cursor-ns-resize flex items-center justify-center shrink-0 border-y-4 border-[var(--border-color)] touch-none relative z-20 shadow-[0_-2px_10px_rgba(0,0,0,0.5)]">
+                <div class="w-20 h-2 bg-[var(--panel-bg)] rounded-full pointer-events-none opacity-80"></div>
+            </div>
+
+            <!-- ÁREA INFERIOR: Cajón de Inventario Privado -->
+            <div id="private-area" class="h-[30vh] overflow-y-auto p-3 bg-[var(--panel-light)] shrink-0 flex flex-col relative w-full pb-6 z-10 shadow-[inset_0_4px_6px_rgba(0,0,0,0.2)]">
+                <div class="max-w-xl mx-auto w-full">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="bg-[var(--bg-color)] border-2 border-[var(--border-color)] text-[var(--panel-light)] px-2 py-1 font-bold rounded-sm shadow-sm">INVENTARIO (Oculto)</span>
+                        <span class="text-sm font-bold text-[var(--primary)] text-right leading-tight">▲ Arrastra de aquí al <br>mostrador para publicar ▲</span>
+                    </div>
+                    <div class="pixel-border p-2 bg-[var(--bg-color)] pb-6 w-full flex justify-center shadow-inner">
+                         <div id="grid-private-container" class="w-full flex justify-center overflow-hidden">
+                             <div id="grid-private" class="re-grid" data-grid="private"></div>
+                         </div>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <!-- PANTALLA: PERFIL -->
+        <div id="view-profile" class="view-section">
+            <div class="max-w-md mx-auto w-full px-4 pt-4">
+                <div class="pixel-border p-5 bg-[var(--panel-bg)] w-full shadow-lg">
+                    <div class="flex items-center justify-between border-b-4 border-[var(--secondary)] pb-2 mb-6">
+                        <h2 class="text-2xl font-bold text-[var(--text-main)]">ESTADO PERFIL</h2>
+                        <span class="bg-[var(--secondary)] text-[var(--panel-bg)] px-2 py-1 rounded-sm text-sm border-2 border-[var(--border-color)]">STATUS</span>
+                    </div>
+                    
+                    <div class="flex justify-center mb-6 relative">
+                        <div class="border-4 border-[var(--border-color)] bg-[var(--panel-light)] p-2 shadow-inner">
+                            <img id="profilePreview" src="https://api.dicebear.com/7.x/pixel-art/svg?seed=fallback" class="w-32 h-32 object-contain bg-[var(--panel-light)]">
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="flex items-center bg-[var(--panel-light)] border-2 border-[var(--border-color)] rounded-sm p-1 shadow-inner">
+                            <label class="w-20 text-[var(--text-main)] font-bold px-2 border-r-2 border-[var(--border-color)]">Nombre</label>
+                            <input type="text" id="profName" class="flex-1 p-2 font-pixel text-xl focus:outline-none bg-transparent text-[var(--text-main)]">
+                        </div>
+                        
+                        <div class="flex items-center bg-[var(--panel-light)] border-2 border-[var(--border-color)] rounded-sm p-1 shadow-inner">
+                            <label class="w-20 text-[var(--text-main)] font-bold px-2 border-r-2 border-[var(--border-color)] text-sm leading-tight">URL Foto</label>
+                            <input type="text" id="profPic" placeholder="https://..." class="flex-1 p-2 font-pixel text-xl focus:outline-none bg-transparent text-[var(--text-main)]">
+                        </div>
+                        
+                        <div class="border-2 border-[var(--border-color)] rounded-sm overflow-hidden shadow-inner bg-[var(--panel-light)]">
+                            <div class="bg-[var(--secondary)] border-b-2 border-[var(--border-color)] px-2 py-1 font-bold text-[var(--panel-bg)]">¿Qué buscas?</div>
+                            <textarea id="profStatus" rows="3" class="w-full p-2 font-pixel text-xl focus:outline-none bg-transparent text-[var(--text-main)]" placeholder="Busco items..."></textarea>
+                        </div>
+                        
+                        <div class="pt-2 flex justify-end">
+                            <button onclick="saveProfile()" class="px-6 py-2 text-xl font-bold pixel-btn w-full">
+                                APLICAR CAMBIOS
+                            </button>
+                        </div>
+
+                        <!-- Botón de Cerrar Sesión -->
+                        <div class="pt-6 mt-6 border-t-4 border-dashed border-[var(--secondary)]">
+                            <button onclick="logout()" class="px-6 py-3 text-xl font-bold pixel-btn pixel-btn-danger w-full">
+                                SALIR / CERRAR SESIÓN
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </main>
 
-    <nav class="h-16 shrink-0 bg-[var(--secondary)] border-t-4 border-[var(--border-color)] flex justify-around items-end pt-2 z-30">
-        <button onclick="switchTab('feed')" class="nav-btn flex-1 h-12 active-tab" data-tab="feed">MUNDO</button>
-        <button onclick="switchTab('search')" class="nav-btn flex-1 h-10" data-tab="search">BUSCAR</button>
-        <button onclick="switchTab('backpack')" class="nav-btn flex-1 h-10" data-tab="backpack">ITEM</button>
-        <button onclick="switchTab('profile')" class="nav-btn flex-1 h-10" data-tab="profile">ESTAD</button>
+    <!-- Barra de Navegación Inferior (Fija) -->
+    <nav class="h-16 shrink-0 bg-[var(--secondary)] border-t-4 border-[var(--border-color)] flex justify-around items-end px-2 pt-2 w-full shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] relative z-30">
+        <button onclick="switchTab('feed')" class="nav-btn flex-1 h-12 flex flex-col items-center justify-center active-tab" data-tab="feed">
+            <span class="text-lg font-bold tracking-wide">MUNDO</span>
+        </button>
+        <button onclick="switchTab('search')" class="nav-btn flex-1 h-10 flex flex-col items-center justify-center opacity-80" data-tab="search">
+            <span class="text-lg font-bold tracking-wide">BUSCAR</span>
+        </button>
+        <button onclick="switchTab('backpack')" class="nav-btn flex-1 h-10 flex flex-col items-center justify-center opacity-80" data-tab="backpack">
+            <span class="text-lg font-bold tracking-wide">ITEM</span>
+        </button>
+        <button onclick="switchTab('profile')" class="nav-btn flex-1 h-10 flex flex-col items-center justify-center opacity-80" data-tab="profile">
+            <span class="text-lg font-bold tracking-wide">ESTAD</span>
+        </button>
     </nav>
 
-    <!-- Modal y overlays omitidos por brevedad visual, funcionan igual que antes -->
+    <!-- Modal: Agregar Objeto -->
+    <div id="addItemModal" class="fixed inset-0 bg-black bg-opacity-70 z-50 hidden flex justify-center items-center p-4">
+        <div class="pixel-border bg-[var(--panel-bg)] w-full max-w-sm relative p-0 overflow-hidden shadow-2xl">
+            <!-- Header Ventana -->
+            <div class="bg-[var(--secondary)] text-[var(--panel-bg)] flex justify-between items-center px-3 py-2 border-b-4 border-[var(--border-color)]">
+                <span class="font-bold text-xl">CREAR ITEM</span>
+                <button onclick="closeAddItemModal()" class="bg-red-600 border-2 border-[var(--border-color)] w-8 h-8 flex items-center justify-center font-bold text-white shadow-[inset_2px_2px_0_rgba(255,255,255,0.3)] active:transform active:translate-y-1">X</button>
+            </div>
+            
+            <div class="p-4 space-y-4">
+                <div>
+                    <label class="text-[var(--text-main)] font-bold text-sm bg-[var(--panel-light)] border-2 border-b-0 border-[var(--border-color)] px-2 rounded-t-sm inline-block ml-2 relative z-10">Nombre del Objeto</label>
+                    <input type="text" id="newItemName" class="w-full p-2 font-pixel text-xl pixel-input rounded-tl-none relative -mt-[2px]">
+                </div>
+                
+                <div class="border-2 border-[var(--border-color)] p-3 bg-[var(--panel-light)] rounded-sm flex flex-col items-center shadow-inner">
+                    <label class="text-[var(--text-main)] font-bold block mb-2 w-full border-b-2 border-[var(--border-color)] pb-1">Foto del Objeto</label>
+                    
+                    <input type="file" id="cameraInput" accept="image/*" capture="environment" class="hidden" onchange="handlePhotoCapture(event)">
+                    
+                    <button onclick="document.getElementById('cameraInput').click()" class="w-full py-2 mb-2 text-lg font-bold pixel-btn flex items-center justify-center">
+                        <span class="mr-2">📸</span> TOMAR / SUBIR FOTO
+                    </button>
+                    
+                    <img id="newItemPicPreview" class="hidden w-full h-32 object-contain border-2 border-[var(--border-color)] bg-black mt-2 p-1">
+                </div>
+                
+                <div class="border-2 border-[var(--border-color)] p-3 bg-[var(--panel-light)] rounded-sm shadow-inner">
+                    <label class="text-[var(--text-main)] font-bold block mb-2 border-b-2 border-[var(--border-color)] pb-1">Tamaño en Rejilla</label>
+                    <select id="newItemSize" class="w-full p-2 font-pixel text-xl pixel-input bg-white">
+                        <option value="1,1">Pequeño (1x1) - 10 EXP</option>
+                        <option value="1,2">Alargado (1x2) - 20 EXP</option>
+                        <option value="2,2">Cuadrado (2x2) - 40 EXP</option>
+                        <option value="2,3">Grande (2x3) - 60 EXP</option>
+                    </select>
+                </div>
+                
+                <div class="flex justify-end pt-2">
+                    <button onclick="submitNewItem()" class="w-full py-3 text-xl font-bold pixel-btn shadow-lg">
+                        GUARDAR EN ITEM (Privado)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Overlay -->
+    <div id="loginOverlay" class="fixed inset-0 bg-[var(--bg-color)] z-[100] flex flex-col items-center justify-center text-[var(--text-main)] hidden px-4">
+        <div class="pixel-border p-8 bg-[var(--panel-bg)] max-w-sm w-full text-center shadow-2xl">
+            <h1 class="text-4xl font-bold mb-6 tracking-widest bg-[var(--secondary)] text-[var(--panel-bg)] py-3 border-4 border-[var(--border-color)] shadow-inner">PIXEL BARTER</h1>
+            <p class="text-xl mb-8 font-bold">Inicia sesión para comenzar el intercambio.</p>
+            <button onclick="loginWithGoogle()" class="w-full px-4 py-4 text-2xl font-bold pixel-btn flex items-center justify-center bg-[var(--panel-light)] text-[var(--text-main)]">
+                <svg class="w-8 h-8 mr-3" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path></svg>
+                Entrar con Google
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-[var(--bg-color)] z-[110] flex flex-col items-center justify-center text-[var(--text-main)]">
+        <div class="pixel-border p-6 text-center animate-pulse bg-[var(--panel-bg)] shadow-2xl">
+            <h1 class="text-4xl font-bold mb-2">CONECTANDO...</h1>
+            <p class="text-xl font-bold">Iniciando sistema</p>
+        </div>
+    </div>
+
+    <!-- Custom Alert Box -->
+    <div id="msgBox" class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-[var(--secondary)] border-4 border-[var(--border-color)] px-4 py-2 z-[120] hidden shadow-lg transition-opacity duration-300 rounded-sm max-w-[90%] w-max">
+        <p id="msgText" class="text-[var(--panel-bg)] text-xl font-bold"></p>
+    </div>
+
+    <!-- FIREBASE & APP LOGIC -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, collection, doc, setDoc, getDoc, onSnapshot, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Configuración Firebase (la tuya)
+        // Firebase config
         const firebaseConfig = {
             apiKey: "AIzaSyBjlyxlJroTZzYb6Oc3rHe5SUULxcpe5fI",
             authDomain: "toloot.firebaseapp.com",
@@ -146,64 +465,637 @@
             messagingSenderId: "702218699864",
             appId: "1:702218699864:web:ec868e0ff84b444f7e362d"
         };
+
         const appId = 'toloot-app'; 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
+        // App State
         let currentUser = null;
         let myProfile = { displayName: 'Nuevo', photoURL: '', status: '', publicScore: 0 };
-        let profilePhotoBase64 = null;
+        let currentPhotoBase64 = null; 
+        
+        let inventory = { private: [], public: [] };
+        let allPublicItems = []; 
+        let allUsers = {}; 
 
-        // Helper de Compresión (usado para items y ahora para perfil)
-        const compressImage = (file, callback) => {
+        const GRID_COLS = 5; 
+        const GRID_ROWS = 6; 
+        let cellWidth = 0;
+        let cellHeight = 0;
+
+        // --- UI Utilities ---
+        window.showMessage = (text, isError = false) => {
+            const box = document.getElementById('msgBox');
+            const txt = document.getElementById('msgText');
+            txt.innerText = "► " + text;
+            box.style.borderColor = isError ? '#cc0000' : 'var(--border-color)';
+            box.style.display = 'block';
+            box.style.opacity = '1';
+            setTimeout(() => {
+                box.style.opacity = '0';
+                setTimeout(() => box.style.display = 'none', 300);
+            }, 3000);
+        };
+
+        window.switchTab = (tabId) => {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(el => {
+                el.classList.remove('active-tab', 'h-12');
+                el.classList.add('h-10', 'opacity-80');
+            });
+
+            document.getElementById(`view-${tabId}`).classList.add('active');
+            
+            const activeBtn = document.querySelector(`[data-tab="${tabId}"]`);
+            activeBtn.classList.add('active-tab', 'h-12');
+            activeBtn.classList.remove('h-10', 'opacity-80');
+
+            if (tabId === 'backpack') {
+                setTimeout(resizeGrids, 50); 
+            } else if (tabId === 'feed') {
+                renderFeed();
+            }
+        };
+
+        // --- Lógica del Drawer Desplegable ---
+        const handle = document.getElementById('drawer-handle');
+        const privateArea = document.getElementById('private-area');
+        let isResizingDrawer = false;
+        let startY, startHeight;
+
+        const startResize = (e) => {
+            isResizingDrawer = true;
+            startY = e.clientY || (e.touches && e.touches[0].clientY);
+            startHeight = privateArea.getBoundingClientRect().height;
+            document.body.style.cursor = 'ns-resize';
+        };
+
+        const doResize = (e) => {
+            if (!isResizingDrawer) return;
+            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+            const dy = clientY - startY;
+            
+            // Subir el mouse/dedo incrementa la altura
+            let newHeight = startHeight - dy;
+            
+            // Límites (Min/Max height)
+            const maxH = window.innerHeight * 0.70; // Max 70% de pantalla
+            const minH = 60; // Min altura para que no desaparezca
+            if (newHeight > maxH) newHeight = maxH;
+            if (newHeight < minH) newHeight = minH;
+            
+            privateArea.style.height = `${newHeight}px`;
+            e.preventDefault(); // Evita scroll de la pagina al arrastrar el handle
+        };
+
+        const stopResize = () => {
+            if (isResizingDrawer) {
+                isResizingDrawer = false;
+                document.body.style.cursor = '';
+            }
+        };
+
+        handle.addEventListener('pointerdown', startResize);
+        document.addEventListener('pointermove', doResize, {passive: false});
+        document.addEventListener('pointerup', stopResize);
+        // Soporte adicional para touchs estrictos
+        handle.addEventListener('touchstart', startResize);
+        document.addEventListener('touchmove', doResize, {passive: false});
+        document.addEventListener('touchend', stopResize);
+
+        // --- Authentication Flow ---
+        const initAuth = async () => {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        };
+
+        window.loginWithGoogle = async () => {
+            const provider = new GoogleAuthProvider();
+            try {
+                await signInWithPopup(auth, provider);
+            } catch (error) {
+                console.error("Error en login:", error);
+                showMessage("Error al iniciar sesión", true);
+            }
+        };
+
+        window.logout = async () => {
+            try {
+                await signOut(auth);
+                // Resetear estado local
+                inventory = { private: [], public: [] };
+                renderGrids();
+                switchTab('feed');
+            } catch (error) {
+                showMessage("Error al cerrar sesión", true);
+            }
+        };
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                document.getElementById('loginOverlay').classList.add('hidden');
+                document.getElementById('loadingOverlay').style.display = 'none';
+                await ensureUserProfile(user.uid);
+                startRealtimeListeners();
+            } else {
+                currentUser = null;
+                document.getElementById('loginOverlay').classList.remove('hidden');
+            }
+        });
+
+        // --- Manejo y Compresión de Imagen ---
+        window.handlePhotoCapture = (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
             const reader = new FileReader();
             reader.onload = (e) => {
                 const img = new Image();
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
-                    const MAX_SIZE = 400;
-                    let w = img.width, h = img.height;
-                    if(w > h) { h *= MAX_SIZE/w; w = MAX_SIZE; } else { w *= MAX_SIZE/h; h = MAX_SIZE; }
-                    canvas.width = w; canvas.height = h;
-                    canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                    callback(canvas.toDataURL('image/jpeg', 0.5));
+                    const MAX_WIDTH = 500; 
+                    const MAX_HEIGHT = 500;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                    } else {
+                        if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    currentPhotoBase64 = canvas.toDataURL('image/jpeg', 0.6);
+                    
+                    const preview = document.getElementById('newItemPicPreview');
+                    preview.src = currentPhotoBase64;
+                    preview.classList.remove('hidden');
                 };
                 img.src = e.target.result;
             };
             reader.readAsDataURL(file);
         };
 
-        window.handleProfilePhotoChange = (e) => {
-            if(e.target.files[0]) {
-                compressImage(e.target.files[0], (b64) => {
-                    profilePhotoBase64 = b64;
-                    document.getElementById('profilePreview').src = b64;
-                });
-            }
-        };
+        // --- Data Layer ---
+        async function ensureUserProfile(uid) {
+            const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', uid);
+            try {
+                const snap = await getDoc(userRef);
+                if (snap.exists()) {
+                    myProfile = snap.data();
+                } else {
+                    myProfile.displayName = currentUser.displayName || 'Usuario';
+                    myProfile.photoURL = currentUser.photoURL || `https://api.dicebear.com/7.x/pixel-art/svg?seed=${uid}`;
+                    await setDoc(userRef, myProfile);
+                }
+                updateProfileUI();
+            } catch (e) { console.error("Error loading profile", e); }
+        }
 
         window.saveProfile = async () => {
             if(!currentUser) return;
-            myProfile.displayName = document.getElementById('profName').value;
-            myProfile.photoURL = profilePhotoBase64 || myProfile.photoURL;
-            myProfile.status = document.getElementById('profStatus').value;
-            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', currentUser.uid), myProfile);
-            alert("Perfil guardado");
+            const name = document.getElementById('profName').value;
+            const pic = document.getElementById('profPic').value || myProfile.photoURL;
+            const status = document.getElementById('profStatus').value;
+
+            myProfile.displayName = name;
+            myProfile.photoURL = pic;
+            myProfile.status = status;
+
+            try {
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', currentUser.uid), myProfile);
+                updateProfileUI();
+                showMessage("Perfil guardado");
+            } catch (e) {
+                showMessage("Error al guardar", true);
+            }
         };
 
-        // El resto de la lógica (ResizeGrids, Drag&Drop, Firebase Listeners) permanece igual pero optimizada con el nuevo CSS.
-        // ... (se mantiene la lógica anterior) ...
-        
-        // --- Logout ---
-        window.logout = () => signOut(auth).then(() => location.reload());
-        
-        // Iniciar resizegrids y listeners al cargar
-        onAuthStateChanged(auth, user => { 
-            currentUser = user; 
-            if(user) { /* Cargar datos */ } 
-            else { document.getElementById('loginOverlay').classList.remove('hidden'); }
+        function updateProfileUI() {
+            document.getElementById('profName').value = myProfile.displayName || '';
+            document.getElementById('profPic').value = myProfile.photoURL || '';
+            document.getElementById('profStatus').value = myProfile.status || '';
+            document.getElementById('profilePreview').src = myProfile.photoURL || `https://api.dicebear.com/7.x/pixel-art/svg?seed=fallback`;
+            document.getElementById('hdrPoints').innerText = myProfile.publicScore || 0;
+            document.getElementById('publicScoreTxt').innerText = myProfile.publicScore || 0;
+            document.getElementById('userPointsDisplay').classList.remove('hidden');
+        }
+
+        function startRealtimeListeners() {
+            if(!currentUser) return;
+
+            const privateRef = collection(db, 'artifacts', appId, 'users', currentUser.uid, 'privateItems');
+            onSnapshot(privateRef, (snapshot) => {
+                inventory.private = [];
+                snapshot.forEach(doc => inventory.private.push({ ...doc.data(), id: doc.id }));
+                renderGrids();
+            }, (e) => console.error("Error private:", e));
+
+            const usersRef = collection(db, 'artifacts', appId, 'public', 'data', 'users');
+            onSnapshot(usersRef, (snapshot) => {
+                allUsers = {};
+                snapshot.forEach(doc => allUsers[doc.id] = doc.data());
+                renderFeed();
+            }, (e) => console.error("Error users:", e));
+
+            const publicRef = collection(db, 'artifacts', appId, 'public', 'data', 'publicItems');
+            onSnapshot(publicRef, (snapshot) => {
+                allPublicItems = [];
+                inventory.public = [];
+                let myScore = 0;
+
+                snapshot.forEach(doc => {
+                    const item = { ...doc.data(), id: doc.id };
+                    allPublicItems.push(item);
+                    
+                    if (item.uid === currentUser.uid) {
+                        inventory.public.push(item);
+                        myScore += item.points || 0;
+                    }
+                });
+
+                if (myScore !== myProfile.publicScore) {
+                    myProfile.publicScore = myScore;
+                    setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', currentUser.uid), { publicScore: myScore }, { merge: true });
+                }
+
+                renderGrids();
+                renderFeed();
+                renderSearch();
+            }, (e) => console.error("Error public:", e));
+        }
+
+        // --- Grid Logic Unified para Drag&Drop Perfilado ---
+        function resizeGrids() {
+            const container = document.getElementById('view-backpack');
+            if(!container) return;
+            
+            // Calculamos ancho de celda unificado para ambos grids basados en el contenedor padre
+            let availableWidth = container.clientWidth - 32; // Restamos margen seguro aprox
+            if(availableWidth <= 0) return;
+            
+            // Límite en PC
+            if (availableWidth > 450) availableWidth = 450; 
+            
+            cellWidth = Math.floor(availableWidth / GRID_COLS); 
+            cellHeight = cellWidth; 
+            
+            document.querySelectorAll('.re-grid').forEach(g => {
+                g.style.gridTemplateColumns = `repeat(${GRID_COLS}, ${cellWidth}px)`;
+                g.style.gridTemplateRows = `repeat(${GRID_ROWS}, ${cellHeight}px)`;
+                g.style.width = `${cellWidth * GRID_COLS}px`; 
+                g.style.height = `${cellHeight * GRID_ROWS}px`;
+                
+                g.innerHTML = '';
+                for(let i=0; i<GRID_COLS*GRID_ROWS; i++) {
+                    const cell = document.createElement('div');
+                    cell.className = 're-cell';
+                    g.appendChild(cell);
+                }
+            });
+            renderGrids();
+        }
+
+        window.addEventListener('resize', () => {
+            if(document.getElementById('view-backpack').classList.contains('active')) resizeGrids();
         });
+
+        function renderGrids() {
+            if (cellWidth === 0) return;
+
+            const renderItems = (items, gridId) => {
+                const container = document.getElementById(gridId);
+                if(!container) return;
+                
+                container.querySelectorAll('.re-item').forEach(el => el.remove());
+
+                items.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 're-item shadow-md';
+                    div.style.width = `${(item.w * cellWidth) - 2}px`;
+                    div.style.height = `${(item.h * cellHeight) - 2}px`;
+                    div.style.left = `${item.x * cellWidth + 1}px`;
+                    div.style.top = `${item.y * cellHeight + 1}px`;
+                    div.dataset.id = item.id;
+                    div.dataset.grid = gridId === 'grid-private' ? 'private' : 'public';
+                    
+                    if(item.photos && item.photos[0]) {
+                        const img = document.createElement('img');
+                        img.src = item.photos[0];
+                        img.onerror = () => img.src = 'https://api.dicebear.com/7.x/icons/svg?seed=error';
+                        div.appendChild(img);
+                    }
+                    
+                    div.addEventListener('pointerdown', handleDragStart);
+                    container.appendChild(div);
+                });
+            };
+
+            renderItems(inventory.private, 'grid-private');
+            renderItems(inventory.public, 'grid-public');
+        }
+
+        // Custom Drag
+        let isDraggingItem = false;
+        let dragItemData = null;
+        let dragClone = null;
+        let dragOffset = { x: 0, y: 0 };
+
+        function handleDragStart(e) {
+            if (e.button !== 0 && e.type !== 'touchstart' && e.pointerType !== 'mouse' && e.pointerType !== 'touch') return;
+            isDraggingItem = true;
+            
+            const target = e.currentTarget;
+            const itemId = target.dataset.id;
+            const sourceGridType = target.dataset.grid;
+            
+            dragItemData = (sourceGridType === 'private' ? inventory.private : inventory.public).find(i => i.id === itemId);
+            if(!dragItemData) return;
+
+            target.style.opacity = '0.3';
+            const rect = target.getBoundingClientRect();
+            
+            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+            
+            dragOffset.x = clientX - rect.left;
+            dragOffset.y = clientY - rect.top;
+
+            dragClone = target.cloneNode(true);
+            dragClone.className = 're-item drag-clone';
+            dragClone.style.opacity = '0.9';
+            dragClone.style.width = `${rect.width}px`;
+            dragClone.style.height = `${rect.height}px`;
+            dragClone.style.left = `${clientX - dragOffset.x}px`;
+            dragClone.style.top = `${clientY - dragOffset.y}px`;
+            document.body.appendChild(dragClone);
+
+            document.addEventListener('pointermove', handleItemDragMove, {passive: false});
+            document.addEventListener('pointerup', handleItemDragEnd);
+            document.addEventListener('touchend', handleItemDragEnd);
+        }
+
+        function handleItemDragMove(e) {
+            if (!isDraggingItem || !dragClone) return;
+            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+            
+            dragClone.style.left = `${clientX - dragOffset.x}px`;
+            dragClone.style.top = `${clientY - dragOffset.y}px`;
+            e.preventDefault(); 
+        }
+
+        async function handleItemDragEnd(e) {
+            if (!isDraggingItem) return;
+            isDraggingItem = false;
+            document.removeEventListener('pointermove', handleItemDragMove);
+            document.removeEventListener('pointerup', handleItemDragEnd);
+            document.removeEventListener('touchend', handleItemDragEnd);
+
+            const clientX = e.clientX || (e.changedTouches && e.changedTouches[0].clientX);
+            const clientY = e.clientY || (e.changedTouches && e.changedTouches[0].clientY);
+
+            dragClone.remove();
+            dragClone = null;
+
+            const els = document.elementsFromPoint(clientX, clientY);
+            let targetGridElem = els.find(el => el.classList.contains('re-grid'));
+
+            renderGrids();
+
+            if (!targetGridElem) return;
+
+            const targetGridType = targetGridElem.dataset.grid;
+            const gridRect = targetGridElem.getBoundingClientRect();
+            
+            const dropRelativeX = (clientX - dragOffset.x) - gridRect.left;
+            const dropRelativeY = (clientY - dragOffset.y) - gridRect.top;
+            
+            let cellX = Math.round(dropRelativeX / cellWidth);
+            let cellY = Math.round(dropRelativeY / cellHeight);
+
+            if (isValidDrop(targetGridType, dragItemData, cellX, cellY)) {
+                await moveItem(dragItemData, targetGridType, cellX, cellY);
+            } else {
+                showMessage("Espacio ocupado o fuera de límites", true);
+            }
+        }
+
+        function isValidDrop(targetGridType, itemData, targetX, targetY) {
+            const w = itemData.w;
+            const h = itemData.h;
+
+            if (targetX < 0 || targetY < 0 || targetX + w > GRID_COLS || targetY + h > GRID_ROWS) return false;
+
+            const targetItems = targetGridType === 'private' ? inventory.private : inventory.public;
+            
+            for (let item of targetItems) {
+                if (item.id === itemData.id) continue;
+                if (targetX < item.x + item.w && targetX + w > item.x && targetY < item.y + item.h && targetY + h > item.y) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        async function moveItem(itemData, targetGridType, newX, newY) {
+            const oldGridType = inventory.private.find(i => i.id === itemData.id) ? 'private' : 'public';
+            const wasPublic = oldGridType === 'public';
+
+            const newItemData = { ...itemData, x: newX, y: newY };
+            delete newItemData.id;
+
+            try {
+                if (oldGridType !== targetGridType) {
+                    if (wasPublic) {
+                        await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'publicItems', itemData.id));
+                        await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'privateItems', itemData.id), newItemData);
+                        showMessage("Retirado al Inventario");
+                    } else {
+                        await deleteDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'privateItems', itemData.id));
+                        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'publicItems', itemData.id), newItemData);
+                        showMessage("¡Publicado en el mundo!");
+                    }
+                } else {
+                    if (wasPublic) {
+                        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'publicItems', itemData.id), newItemData, { merge: true });
+                    } else {
+                        await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'privateItems', itemData.id), newItemData, { merge: true });
+                    }
+                }
+            } catch (error) {
+                console.error("Error moving item", error);
+                showMessage("Error de red", true);
+                renderGrids();
+            }
+        }
+
+        // --- Add Item Logic ---
+        window.openAddItemModal = () => {
+            currentPhotoBase64 = null;
+            document.getElementById('newItemPicPreview').classList.add('hidden');
+            document.getElementById('cameraInput').value = '';
+            document.getElementById('addItemModal').classList.remove('hidden');
+        };
+        window.closeAddItemModal = () => document.getElementById('addItemModal').classList.add('hidden');
+
+        window.submitNewItem = async () => {
+            if(!currentUser) return;
+            const name = document.getElementById('newItemName').value.trim();
+            const sizeStr = document.getElementById('newItemSize').value;
+            
+            if(!name) return showMessage("El nombre es requerido", true);
+            if(!currentPhotoBase64) return showMessage("Debes subir una foto", true);
+
+            const [w, h] = sizeStr.split(',').map(Number);
+            const points = (w * h) * 10;
+            const photos = [currentPhotoBase64];
+
+            let foundSpot = false;
+            let targetX = 0, targetY = 0;
+            
+            for(let y=0; y<=GRID_ROWS-h; y++) {
+                for(let x=0; x<=GRID_COLS-w; x++) {
+                    if(isValidDrop('private', {id:'temp', w, h}, x, y)) {
+                        targetX = x; targetY = y;
+                        foundSpot = true;
+                        break;
+                    }
+                }
+                if(foundSpot) break;
+            }
+
+            if(!foundSpot) {
+                return showMessage("Inventario lleno, libera espacio", true);
+            }
+
+            const item = {
+                uid: currentUser.uid,
+                name, photos, w, h, x: targetX, y: targetY, points,
+                createdAt: new Date().toISOString()
+            };
+
+            try {
+                await addDoc(collection(db, 'artifacts', appId, 'users', currentUser.uid, 'privateItems'), item);
+                closeAddItemModal();
+                document.getElementById('newItemName').value = '';
+                showMessage("Nuevo Objeto Creado (Privado)");
+            } catch (e) {
+                console.error(e);
+                showMessage("Error de red (Foto muy pesada?)", true);
+            }
+        };
+
+        // --- Feed Logic ---
+        function renderFeed() {
+            const container = document.getElementById('feedContainer');
+            const emptyState = document.getElementById('feedEmpty');
+            
+            let feedItems = allPublicItems.filter(item => item.uid !== currentUser.uid);
+
+            if (feedItems.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            emptyState.classList.add('hidden');
+
+            feedItems.sort((a, b) => {
+                const scoreA = allUsers[a.uid]?.publicScore || 0;
+                const scoreB = allUsers[b.uid]?.publicScore || 0;
+                if(scoreA !== scoreB) return scoreB - scoreA;
+                return b.points - a.points;
+            });
+
+            container.innerHTML = '';
+            feedItems.forEach(item => {
+                const user = allUsers[item.uid] || { displayName: 'Anónimo', status: '', photoURL: '' };
+                const post = document.createElement('div');
+                post.className = 'feed-item w-full';
+                
+                let photosHTML = '';
+                if(item.photos && item.photos.length > 0) {
+                    item.photos.forEach(base64Str => {
+                        photosHTML += `<img src="${base64Str}" class="feed-photo">`;
+                    });
+                }
+
+                post.innerHTML = `
+                    <div class="relative w-full h-full flex flex-col bg-[var(--bg-color)]">
+                        <div class="feed-photos flex-1 mb-28 w-full">
+                            ${photosHTML}
+                        </div>
+                        
+                        <div class="absolute bottom-4 left-4 right-4 bg-[var(--secondary)] text-[var(--panel-bg)] p-3 border-4 border-[var(--border-color)] rounded-sm shadow-xl">
+                            <div class="flex items-start">
+                                <div class="bg-[var(--panel-light)] p-1 rounded-sm border-2 border-[var(--border-color)] mr-3 mt-[-24px] shadow-md">
+                                    <img src="${user.photoURL}" class="w-12 h-12 object-contain bg-[var(--panel-light)]">
+                                </div>
+                                <div class="flex-1 overflow-hidden">
+                                    <div class="flex justify-between items-baseline border-b-2 border-[var(--border-color)] pb-1 mb-1">
+                                        <h3 class="text-xl font-bold text-white truncate">${user.displayName}</h3>
+                                        <span class="text-sm bg-[var(--primary)] px-1 border border-[var(--border-color)] rounded-sm text-[var(--panel-bg)] font-bold ml-2 shrink-0">Lv.${user.publicScore||0}</span>
+                                    </div>
+                                    <h2 class="text-2xl text-[var(--panel-bg)] font-bold truncate">${item.name}</h2>
+                                    <p class="text-sm text-[var(--panel-light)] mt-1 line-clamp-2 leading-tight">"Busco: ${user.status || 'Ofertas...'}"</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(post);
+            });
+        }
+
+        // --- Search Logic ---
+        document.getElementById('searchInput').addEventListener('input', renderSearch);
+
+        function renderSearch() {
+            const queryTxt = document.getElementById('searchInput').value.toLowerCase();
+            const container = document.getElementById('searchResults');
+            
+            if(!queryTxt) {
+                container.innerHTML = '<p class="col-span-2 text-center text-[var(--text-light)] mt-8 text-xl">Ingresa un término para buscar.</p>';
+                return;
+            }
+
+            const results = allPublicItems.filter(item => {
+                const user = allUsers[item.uid];
+                const matchName = item.name.toLowerCase().includes(queryTxt);
+                const matchStatus = user && user.status && user.status.toLowerCase().includes(queryTxt);
+                return matchName || matchStatus;
+            });
+
+            container.innerHTML = '';
+            if(results.length === 0) {
+                container.innerHTML = '<p class="col-span-2 text-center text-[var(--text-light)] mt-8 text-xl font-bold">Ningún item encontrado.</p>';
+                return;
+            }
+
+            results.forEach(item => {
+                const user = allUsers[item.uid];
+                const div = document.createElement('div');
+                div.className = 'bg-[var(--panel-bg)] border-4 border-[var(--border-color)] p-2 flex flex-col text-left rounded-sm hover:bg-[var(--panel-light)] transition-colors shadow-md';
+                div.innerHTML = `
+                    <div class="bg-black border-2 border-[var(--border-color)] mb-2 p-1">
+                        <img src="${item.photos[0] || ''}" class="w-full h-24 object-contain">
+                    </div>
+                    <h4 class="text-[var(--text-main)] font-bold text-lg truncate w-full">${item.name}</h4>
+                    <span class="text-sm text-[var(--primary)] font-bold mt-1 block truncate">Por: ${user ? user.displayName : 'Unknown'}</span>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Boot
+        initAuth();
+
     </script>
 </body>
 </html>
