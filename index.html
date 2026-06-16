@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pixel Barter - Intercambio Retro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Nueva paleta basada en la imagen (Maplestory / RPG UI) */
+            --bg-color: #ffffff;
+            --panel-bg: #e8eaf6;
+            --primary: #f48fb1;
+            --primary-dark: #d81b60;
+            --secondary: #c5cae9;
+            --border-color: #1a237e;
+            --text-main: #1a237e;
+            --text-light: #5c6bc0;
+            --grid-line: #9fa8da;
+        }
+
+        body {
+            font-family: 'VT323', monospace;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow: hidden;
+            touch-action: none;
+        }
+
+        .pixel-border {
+            background-color: var(--panel-bg);
+            border: 3px solid var(--border-color);
+            box-shadow: 2px 2px 0px rgba(26, 35, 126, 0.2); 
+            border-radius: 4px;
+        }
+        
+        .pixel-btn {
+            background-color: var(--primary);
+            color: white;
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            box-shadow: inset -2px -2px 0px rgba(0,0,0,0.2), inset 2px 2px 0px rgba(255,255,255,0.4);
+            transition: all 0.1s;
+            cursor: pointer;
+        }
+        
+        .pixel-btn:active {
+            box-shadow: inset 2px 2px 0px rgba(0,0,0,0.3);
+            transform: translate(1px, 1px);
+        }
+
+        .pixel-input {
+            background-color: #ffffff;
+            border: 2px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 2px;
+            box-shadow: inset 2px 2px 0px rgba(0,0,0,0.1);
+        }
+        .pixel-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: inset 2px 2px 0px rgba(244, 143, 177, 0.3);
+        }
+
+        .view-section {
+            display: none;
+            height: calc(100vh - 64px);
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-bottom: 2rem;
+            background-color: #ffffff;
+        }
+        .view-section.active {
+            display: block;
+        }
+
+        .feed-container {
+            height: 100%;
+            scroll-snap-type: y mandatory;
+            overflow-y: scroll;
+            scrollbar-width: none;
+        }
+        .feed-container::-webkit-scrollbar { display: none; }
+        .feed-item {
+            height: 100%;
+            scroll-snap-align: start;
+            position: relative;
+            background-color: #f8f9fa;
+            border-bottom: 3px solid var(--border-color);
+        }
+        .feed-photos {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            height: 100%;
+            scrollbar-width: none;
+        }
+        .feed-photos::-webkit-scrollbar { display: none; }
+        .feed-photo {
+            flex: 0 0 100%;
+            scroll-snap-align: center;
+            height: 100%;
+            object-fit: contain;
+            background-color: #ffffff;
+            border: 2px solid var(--border-color);
+            box-sizing: border-box;
+            padding: 10px;
+        }
+
+        .inventory-view {
+            touch-action: none;
+            overflow-y: auto;
+            background-color: #ffffff;
+            background-image: radial-gradient(var(--secondary) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .re-grid {
+            display: grid;
+            background-color: var(--panel-bg);
+            border: 3px solid var(--border-color);
+            position: relative;
+            border-radius: 4px;
+            margin: 0 auto;
+        }
+        .re-cell {
+            border-right: 2px solid var(--grid-line);
+            border-bottom: 2px solid var(--grid-line);
+            box-sizing: border-box;
+            background-color: #ffffff;
+        }
+        .re-item {
+            position: absolute;
+            background-color: rgba(244, 143, 177, 0.2);
+            border: 2px solid var(--primary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: grab;
+            user-select: none;
+            touch-action: none;
+            transition: transform 0.1s;
+        }
+        .re-item:active { cursor: grabbing; background-color: rgba(244, 143, 177, 0.4); }
+        .re-item img {
+            width: 90%;
+            height: 90%;
+            object-fit: contain;
+            pointer-events: none;
+            image-rendering: pixelated;
+        }
+
+        .drag-clone {
+            position: fixed;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0.9;
+            box-shadow: 4px 4px 0px rgba(26, 35, 126, 0.3);
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 3px solid var(--border-color);
+        }
+
+        .nav-btn {
+            background-color: var(--secondary);
+            color: var(--text-main);
+            border: 2px solid var(--border-color);
+            border-bottom: none;
+            border-radius: 8px 8px 0 0;
+            margin: 0 2px;
+            transition: background-color 0.2s;
+        }
+        .nav-btn.active-tab {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--border-color);
+            transform: translateY(-2px);
+            box-shadow: 0 -2px 0px rgba(0,0,0,0.1);
+        }
+
+        .header-title {
+            color: var(--text-main);
+            background-color: white;
+            padding: 2px 8px;
+            border: 2px solid var(--border-color);
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        ::-webkit-scrollbar { width: 12px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; border-left: 2px solid var(--border-color); }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border: 2px solid var(--border-color); }
+    </style>
+</head>
+<body class="flex flex-col h-screen w-screen relative">
+
+    <!-- Navbar Superior -->
+    <header class="h-14 bg-[#e8eaf6] border-b-4 border-[#1a237e] flex items-center justify-between px-4 z-10 shrink-0">
+        <h1 class="text-3xl text-[#1a237e] tracking-widest font-bold bg-white px-2 py-1 border-2 border-[#1a237e] rounded">PIXEL BARTER</h1>
+        <div id="userPointsDisplay" class="bg-white border-2 border-[#1a237e] rounded px-3 py-1 text-[#1a237e] text-xl font-bold hidden flex items-center">
+            <span class="mr-1">Lv.</span><span id="hdrPoints" class="text-[#d81b60] bg-[#f48fb1] text-white px-1 rounded">0</span>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 relative bg-white">
+        
+        <!-- PANTALLA: FEED -->
+        <div id="view-feed" class="view-section active w-full h-full p-0">
+            <div id="feedContainer" class="feed-container">
+                <!-- Posts cargados dinamicamente -->
+            </div>
+            <div id="feedEmpty" class="hidden h-full flex flex-col items-center justify-center text-center p-8 bg-white">
+                <div class="pixel-border p-6 bg-[#e8eaf6] inline-block mb-4">
+                    <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=emptybox" class="w-24 h-24 mx-auto opacity-50">
+                </div>
+                <p class="text-2xl text-[#1a237e] bg-[#f48fb1] text-white px-4 py-2 border-2 border-[#1a237e] rounded inline-block">El mercado está vacío.</p>
+                <p class="mt-4 text-[#5c6bc0] text-xl">¡Ve a tu mochila y publica objetos!</p>
+            </div>
+        </div>
+
+        <!-- PANTALLA: BUSCAR -->
+        <div id="view-search" class="view-section w-full h-full p-4">
+            <div class="max-w-md mx-auto">
+                <div class="flex items-center mb-6 mt-2">
+                    <h2 class="text-2xl header-title mr-4 font-bold">BUSCAR ITEM</h2>
+                </div>
+                
+                <div class="pixel-border p-4 mb-6">
+                    <input type="text" id="searchInput" placeholder="Nombre o estado..." class="w-full p-3 font-pixel text-xl pixel-input">
+                </div>
+                
+                <div id="searchResults" class="grid grid-cols-2 gap-4">
+                    <!-- Resultados dinamicos -->
+                </div>
+            </div>
+        </div>
+
+        <!-- PANTALLA: MOCHILA (INVENTARIO) -->
+        <div id="view-backpack" class="view-section inventory-view w-full h-full p-3 flex flex-col">
+            <div class="max-w-xl mx-auto w-full flex-1 flex flex-col space-y-6">
+                
+                <!-- Panel Superior: Controles -->
+                <div class="flex justify-between items-center pixel-border p-3">
+                    <div class="flex space-x-2">
+                        <span class="bg-[#1a237e] text-white px-2 py-1 border border-[#1a237e] text-lg">EQUIP</span>
+                        <span class="bg-[#f48fb1] text-white px-2 py-1 border border-[#1a237e] text-lg font-bold">USE</span>
+                    </div>
+                    <button onclick="openAddItemModal()" class="px-4 py-1 text-xl font-bold pixel-btn">
+                        + NUEVO ITEM
+                    </button>
+                </div>
+                
+                <!-- Dialog box style instruction -->
+                <div class="bg-[#1a237e] text-white p-3 border-2 border-[#1a237e] rounded relative mx-2">
+                    <div class="absolute -top-3 left-4 w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-b-[10px] border-b-[#1a237e]"></div>
+                    <p class="text-lg leading-tight">Arrastra objetos entre mochilas.<br>Objetos más grandes dan más puntos.</p>
+                </div>
+
+                <!-- Mochila Privada -->
+                <div class="flex-1 flex flex-col">
+                    <div class="flex items-center mb-2">
+                        <span class="bg-white border-2 border-[#1a237e] text-[#1a237e] px-2 font-bold rounded">INVENTARIO (Oculto)</span>
+                    </div>
+                    <div class="pixel-border p-2 bg-white pb-6">
+                         <div id="grid-private" class="re-grid flex-1 border-[#9fa8da]" data-grid="private"></div>
+                    </div>
+                </div>
+
+                <!-- Mochila Pública -->
+                <div class="flex-1 flex flex-col mt-4">
+                    <div class="flex justify-between items-end mb-2">
+                        <span class="bg-white border-2 border-[#1a237e] text-[#1a237e] px-2 font-bold rounded">MOSTRADOR (Público)</span>
+                        <div class="bg-white border-2 border-[#1a237e] px-2 text-[#1a237e]">
+                            EXP: <span id="publicScoreTxt" class="font-bold">0</span>
+                        </div>
+                    </div>
+                    <div class="pixel-border p-2 bg-[#f8f9fa] pb-6">
+                        <div id="grid-public" class="re-grid flex-1 border-[#1a237e]" data-grid="public"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- PANTALLA: PERFIL -->
+        <div id="view-profile" class="view-section w-full h-full p-4">
+            <div class="max-w-md mx-auto pixel-border p-6 mt-4">
+                <div class="flex items-center justify-between border-b-2 border-[#1a237e] pb-2 mb-6">
+                    <h2 class="text-2xl font-bold text-[#1a237e]">ESTADO PERSONAJE</h2>
+                    <span class="bg-[#1a237e] text-white px-2 py-1 rounded text-sm">STATUS</span>
+                </div>
+                
+                <div class="flex justify-center mb-6 relative">
+                    <div class="pixel-border bg-white p-2 border-[#1a237e]">
+                        <img id="profilePreview" src="https://api.dicebear.com/7.x/pixel-art/svg?seed=fallback" class="w-32 h-32 object-contain bg-white">
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="flex items-center bg-white border-2 border-[#1a237e] rounded p-1">
+                        <label class="w-24 text-[#1a237e] font-bold px-2 border-r-2 border-[#1a237e]">Nombre</label>
+                        <input type="text" id="profName" class="flex-1 p-1 font-pixel text-xl focus:outline-none text-[#1a237e]">
+                    </div>
+                    
+                    <div class="flex items-center bg-white border-2 border-[#1a237e] rounded p-1">
+                        <label class="w-24 text-[#1a237e] font-bold px-2 border-r-2 border-[#1a237e] text-sm leading-tight">URL Foto</label>
+                        <input type="text" id="profPic" placeholder="https://..." class="flex-1 p-1 font-pixel text-xl focus:outline-none text-[#1a237e]">
+                    </div>
+                    
+                    <div class="border-2 border-[#1a237e] rounded bg-white overflow-hidden">
+                        <div class="bg-[#e8eaf6] border-b-2 border-[#1a237e] px-2 py-1 font-bold text-[#1a237e]">¿Qué buscas?</div>
+                        <textarea id="profStatus" rows="3" class="w-full p-2 font-pixel text-xl focus:outline-none text-[#1a237e]" placeholder="Busco items..."></textarea>
+                    </div>
+                    
+                    <div class="pt-4 flex justify-end">
+                        <button onclick="saveProfile()" class="px-6 py-2 text-xl font-bold pixel-btn">
+                            APLICAR
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Barra de Navegación Inferior -->
+    <nav class="h-16 bg-[#e8eaf6] border-t-4 border-[#1a237e] flex justify-around items-end px-2 pt-2 shrink-0 z-10">
+        <button onclick="switchTab('feed')" class="nav-btn flex-1 h-12 flex flex-col items-center justify-center active-tab" data-tab="feed">
+            <span class="text-lg font-bold tracking-wide">MUNDO</span>
+        </button>
+        <button onclick="switchTab('search')" class="nav-btn flex-1 h-10 flex flex-col items-center justify-center opacity-80" data-tab="search">
+            <span class="text-lg font-bold tracking-wide">BUSCAR</span>
+        </button>
+        <button onclick="switchTab('backpack')" class="nav-btn flex-1 h-10 flex flex-col items-center justify-center opacity-80" data-tab="backpack">
+            <span class="text-lg font-bold tracking-wide">ITEM</span>
+        </button>
+        <button onclick="switchTab('profile')" class="nav-btn flex-1 h-10 flex flex-col items-center justify-center opacity-80" data-tab="profile">
+            <span class="text-lg font-bold tracking-wide">ESTAD</span>
+        </button>
+    </nav>
+
+    <!-- Modal: Agregar Objeto -->
+    <div id="addItemModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex justify-center items-center p-4">
+        <div class="pixel-border bg-[#e8eaf6] w-full max-w-md relative p-0 overflow-hidden">
+            <!-- Header Ventana -->
+            <div class="bg-[#1a237e] text-white flex justify-between items-center px-2 py-1 border-b-2 border-[#1a237e]">
+                <span class="font-bold">CREAR ITEM</span>
+                <button onclick="closeAddItemModal()" class="bg-red-500 border border-white w-6 h-6 flex items-center justify-center text-sm hover:bg-red-400">X</button>
+            </div>
+            
+            <div class="p-4 space-y-4">
+                <div>
+                    <label class="text-[#1a237e] font-bold text-sm bg-white border-2 border-b-0 border-[#1a237e] px-2 rounded-t inline-block ml-2">Nombre del Objeto</label>
+                    <input type="text" id="newItemName" class="w-full p-2 font-pixel text-xl pixel-input rounded-tl-none">
+                </div>
+                
+                <!-- Sección de Cámara / Base64 -->
+                <div class="border-2 border-[#1a237e] p-2 bg-white rounded flex flex-col items-center">
+                    <label class="text-[#1a237e] font-bold block mb-2 w-full border-b-2 border-[#e8eaf6] pb-1">Foto del Objeto</label>
+                    
+                    <!-- Input oculto que abre la cámara o selector de archivos -->
+                    <input type="file" id="cameraInput" accept="image/*" capture="environment" class="hidden" onchange="handlePhotoCapture(event)">
+                    
+                    <button onclick="document.getElementById('cameraInput').click()" class="w-full py-2 mb-2 text-lg font-bold pixel-btn bg-[#5c6bc0]">
+                        📸 TOMAR FOTO / SUBIR
+                    </button>
+                    
+                    <!-- Preview de la foto convertida a Base64 -->
+                    <img id="newItemPicPreview" class="hidden w-full h-40 object-contain border-2 border-[#1a237e] bg-[#f8f9fa] mt-2">
+                </div>
+                
+                <div class="border-2 border-[#1a237e] p-2 bg-white rounded">
+                    <label class="text-[#1a237e] font-bold block mb-2 border-b-2 border-[#e8eaf6] pb-1">Tamaño en Rejilla</label>
+                    <select id="newItemSize" class="w-full p-2 font-pixel text-xl pixel-input bg-[#e8eaf6]">
+                        <option value="1,1">Pequeño (1x1) - 10 EXP</option>
+                        <option value="1,2">Alargado (1x2) - 20 EXP</option>
+                        <option value="2,2">Cuadrado (2x2) - 40 EXP</option>
+                        <option value="2,3">Grande (2x3) - 60 EXP</option>
+                    </select>
+                </div>
+                
+                <div class="flex justify-end pt-2">
+                    <button onclick="submitNewItem()" class="px-6 py-2 text-xl font-bold pixel-btn">
+                        GUARDAR EN ITEM
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Overlay -->
+    <div id="loginOverlay" class="fixed inset-0 bg-[#e8eaf6] z-[100] flex flex-col items-center justify-center text-[#1a237e] hidden">
+        <div class="pixel-border p-8 bg-white max-w-sm w-[90%] text-center">
+            <h1 class="text-4xl font-bold mb-6 tracking-widest bg-[#1a237e] text-white py-2 border-2 border-[#1a237e]">PIXEL BARTER</h1>
+            <p class="text-xl mb-8">Inicia sesión para comenzar a intercambiar items.</p>
+            <button onclick="loginWithGoogle()" class="w-full px-6 py-3 text-2xl font-bold pixel-btn bg-white text-[#1a237e] hover:bg-[#e8eaf6] flex items-center justify-center">
+                <svg class="w-6 h-6 mr-2" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path></svg>
+                Entrar con Google
+            </button>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-white z-[110] flex flex-col items-center justify-center text-[#1a237e]">
+        <div class="pixel-border p-6 text-center animate-pulse">
+            <h1 class="text-4xl font-bold mb-2">CONECTANDO...</h1>
+            <p class="text-xl">Iniciando sistema</p>
+        </div>
+    </div>
+
+    <!-- Custom Alert Box -->
+    <div id="msgBox" class="fixed top-20 left-1/2 transform -translate-x-1/2 bg-[#1a237e] border-2 border-white px-4 py-2 z-[120] hidden shadow-lg transition-opacity duration-300 rounded max-w-[80%]">
+        <p id="msgText" class="text-white text-xl"></p>
+    </div>
+
+    <!-- FIREBASE & APP LOGIC -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, setDoc, getDoc, onSnapshot, addDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Firebase config del usuario
+        const firebaseConfig = {
+            apiKey: "AIzaSyBjlyxlJroTZzYb6Oc3rHe5SUULxcpe5fI",
+            authDomain: "toloot.firebaseapp.com",
+            projectId: "toloot",
+            storageBucket: "toloot.firebasestorage.app",
+            messagingSenderId: "702218699864",
+            appId: "1:702218699864:web:ec868e0ff84b444f7e362d"
+        };
+
+        const appId = 'toloot-app'; // Identificador para la ruta de la base de datos
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // App State
+        let currentUser = null;
+        let myProfile = { displayName: 'Nuevo', photoURL: '', status: '', publicScore: 0 };
+        let currentPhotoBase64 = null; // Almacenará la foto comprimida en texto
+        
+        let inventory = { private: [], public: [] };
+        let allPublicItems = []; 
+        let allUsers = {}; 
+
+        const GRID_COLS = 5; 
+        const GRID_ROWS = 6; 
+        let cellWidth = 0;
+        let cellHeight = 0;
+
+        // --- UI Utilities ---
+        window.showMessage = (text, isError = false) => {
+            const box = document.getElementById('msgBox');
+            const txt = document.getElementById('msgText');
+            txt.innerText = "• " + text;
+            box.style.borderColor = isError ? '#f44336' : '#ffffff';
+            box.style.display = 'block';
+            box.style.opacity = '1';
+            setTimeout(() => {
+                box.style.opacity = '0';
+                setTimeout(() => box.style.display = 'none', 300);
+            }, 3000);
+        };
+
+        window.switchTab = (tabId) => {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(el => {
+                el.classList.remove('active-tab', 'h-12');
+                el.classList.add('h-10', 'opacity-80');
+            });
+
+            document.getElementById(`view-${tabId}`).classList.add('active');
+            
+            const activeBtn = document.querySelector(`[data-tab="${tabId}"]`);
+            activeBtn.classList.add('active-tab', 'h-12');
+            activeBtn.classList.remove('h-10', 'opacity-80');
+
+            if (tabId === 'backpack') setTimeout(resizeGrids, 100); 
+            else if (tabId === 'feed') renderFeed();
+        };
+
+        // --- Authentication Flow ---
+        // Se ejecuta al cargar la página
+        const initAuth = async () => {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        };
+
+        window.loginWithGoogle = async () => {
+            const provider = new GoogleAuthProvider();
+            try {
+                await signInWithPopup(auth, provider);
+            } catch (error) {
+                console.error("Error en login:", error);
+                showMessage("Error al iniciar sesión", true);
+            }
+        };
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+                document.getElementById('loginOverlay').classList.add('hidden');
+                document.getElementById('loadingOverlay').style.display = 'none';
+                await ensureUserProfile(user.uid);
+                startRealtimeListeners();
+            } else {
+                document.getElementById('loginOverlay').classList.remove('hidden');
+            }
+        });
+
+        // --- Manejo y Compresión de Imagen a Base64 ---
+        window.handlePhotoCapture = (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    // Crear un canvas para redimensionar y comprimir la imagen
+                    const canvas = document.createElement('canvas');
+                    const MAX_WIDTH = 600; // Ancho máximo para optimizar peso en Firestore
+                    const MAX_HEIGHT = 600;
+                    let width = img.width;
+                    let height = img.height;
+
+                    // Calcular nuevas proporciones
+                    if (width > height) {
+                        if (width > MAX_WIDTH) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+                    } else {
+                        if (height > MAX_HEIGHT) {
+                            width *= MAX_HEIGHT / height;
+                            height = MAX_HEIGHT;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // Convertir a JPEG con calidad al 70%
+                    currentPhotoBase64 = canvas.toDataURL('image/jpeg', 0.7);
+                    
+                    // Mostrar preview
+                    const preview = document.getElementById('newItemPicPreview');
+                    preview.src = currentPhotoBase64;
+                    preview.classList.remove('hidden');
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        };
+
+        // --- Data Layer ---
+        async function ensureUserProfile(uid) {
+            const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', uid);
+            try {
+                const snap = await getDoc(userRef);
+                if (snap.exists()) {
+                    myProfile = snap.data();
+                } else {
+                    myProfile.displayName = currentUser.displayName || 'Usuario';
+                    myProfile.photoURL = currentUser.photoURL || `https://api.dicebear.com/7.x/pixel-art/svg?seed=${uid}`;
+                    await setDoc(userRef, myProfile);
+                }
+                updateProfileUI();
+            } catch (e) { console.error("Error loading profile", e); }
+        }
+
+        window.saveProfile = async () => {
+            if(!currentUser) return;
+            const name = document.getElementById('profName').value;
+            const pic = document.getElementById('profPic').value || myProfile.photoURL;
+            const status = document.getElementById('profStatus').value;
+
+            myProfile.displayName = name;
+            myProfile.photoURL = pic;
+            myProfile.status = status;
+
+            try {
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', currentUser.uid), myProfile);
+                updateProfileUI();
+                showMessage("Perfil guardado");
+            } catch (e) {
+                showMessage("Error al guardar", true);
+            }
+        };
+
+        function updateProfileUI() {
+            document.getElementById('profName').value = myProfile.displayName || '';
+            document.getElementById('profPic').value = myProfile.photoURL || '';
+            document.getElementById('profStatus').value = myProfile.status || '';
+            document.getElementById('profilePreview').src = myProfile.photoURL || `https://api.dicebear.com/7.x/pixel-art/svg?seed=fallback`;
+            document.getElementById('hdrPoints').innerText = myProfile.publicScore || 0;
+            document.getElementById('publicScoreTxt').innerText = myProfile.publicScore || 0;
+            document.getElementById('userPointsDisplay').classList.remove('hidden');
+        }
+
+        function startRealtimeListeners() {
+            if(!currentUser) return;
+
+            const privateRef = collection(db, 'artifacts', appId, 'users', currentUser.uid, 'privateItems');
+            onSnapshot(privateRef, (snapshot) => {
+                inventory.private = [];
+                snapshot.forEach(doc => inventory.private.push({ ...doc.data(), id: doc.id }));
+                renderGrids();
+            }, (e) => console.error("Error private:", e));
+
+            const usersRef = collection(db, 'artifacts', appId, 'public', 'data', 'users');
+            onSnapshot(usersRef, (snapshot) => {
+                allUsers = {};
+                snapshot.forEach(doc => allUsers[doc.id] = doc.data());
+                renderFeed();
+            }, (e) => console.error("Error users:", e));
+
+            const publicRef = collection(db, 'artifacts', appId, 'public', 'data', 'publicItems');
+            onSnapshot(publicRef, (snapshot) => {
+                allPublicItems = [];
+                inventory.public = [];
+                let myScore = 0;
+
+                snapshot.forEach(doc => {
+                    const item = { ...doc.data(), id: doc.id };
+                    allPublicItems.push(item);
+                    
+                    if (item.uid === currentUser.uid) {
+                        inventory.public.push(item);
+                        myScore += item.points || 0;
+                    }
+                });
+
+                if (myScore !== myProfile.publicScore) {
+                    myProfile.publicScore = myScore;
+                    setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', currentUser.uid), { publicScore: myScore }, { merge: true });
+                }
+
+                renderGrids();
+                renderFeed();
+                renderSearch();
+            }, (e) => console.error("Error public:", e));
+        }
+
+        // --- Grid Logic ---
+        function resizeGrids() {
+            const gPriv = document.getElementById('grid-private');
+            const width = gPriv.clientWidth;
+            cellWidth = Math.floor(width / GRID_COLS); 
+            cellHeight = cellWidth; 
+            
+            document.querySelectorAll('.re-grid').forEach(g => {
+                g.style.gridTemplateColumns = `repeat(${GRID_COLS}, ${cellWidth}px)`;
+                g.style.gridTemplateRows = `repeat(${GRID_ROWS}, ${cellHeight}px)`;
+                g.style.height = `${cellHeight * GRID_ROWS}px`;
+                g.style.width = `${cellWidth * GRID_COLS}px`; 
+                
+                g.innerHTML = '';
+                for(let i=0; i<GRID_COLS*GRID_ROWS; i++) {
+                    const cell = document.createElement('div');
+                    cell.className = 're-cell';
+                    g.appendChild(cell);
+                }
+            });
+            renderGrids();
+        }
+        window.addEventListener('resize', () => {
+            if(document.getElementById('view-backpack').classList.contains('active')) resizeGrids();
+        });
+
+        function renderGrids() {
+            if (cellWidth === 0) return;
+
+            const renderItems = (items, gridId) => {
+                const container = document.getElementById(gridId);
+                container.querySelectorAll('.re-item').forEach(el => el.remove());
+
+                items.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 're-item';
+                    div.style.width = `${(item.w * cellWidth) - 2}px`;
+                    div.style.height = `${(item.h * cellHeight) - 2}px`;
+                    div.style.left = `${item.x * cellWidth + 1}px`;
+                    div.style.top = `${item.y * cellHeight + 1}px`;
+                    div.dataset.id = item.id;
+                    div.dataset.grid = gridId === 'grid-private' ? 'private' : 'public';
+                    
+                    if(item.photos && item.photos[0]) {
+                        const img = document.createElement('img');
+                        img.src = item.photos[0];
+                        img.onerror = () => img.src = 'https://api.dicebear.com/7.x/icons/svg?seed=error';
+                        div.appendChild(img);
+                    }
+                    
+                    div.addEventListener('pointerdown', handleDragStart);
+                    container.appendChild(div);
+                });
+            };
+
+            renderItems(inventory.private, 'grid-private');
+            renderItems(inventory.public, 'grid-public');
+        }
+
+        // Custom Drag Implementation
+        let isDragging = false;
+        let dragItemData = null;
+        let dragClone = null;
+        let dragOffset = { x: 0, y: 0 };
+
+        function handleDragStart(e) {
+            if (e.button !== 0 && e.type !== 'touchstart' && e.pointerType !== 'mouse' && e.pointerType !== 'touch') return;
+            isDragging = true;
+            
+            const target = e.currentTarget;
+            const itemId = target.dataset.id;
+            const sourceGridType = target.dataset.grid;
+            
+            dragItemData = (sourceGridType === 'private' ? inventory.private : inventory.public).find(i => i.id === itemId);
+            if(!dragItemData) return;
+
+            target.style.opacity = '0.3';
+            const rect = target.getBoundingClientRect();
+            dragOffset.x = e.clientX - rect.left;
+            dragOffset.y = e.clientY - rect.top;
+
+            dragClone = target.cloneNode(true);
+            dragClone.className = 're-item drag-clone';
+            dragClone.style.opacity = '0.9';
+            dragClone.style.width = `${rect.width}px`;
+            dragClone.style.height = `${rect.height}px`;
+            dragClone.style.left = `${e.clientX - dragOffset.x}px`;
+            dragClone.style.top = `${e.clientY - dragOffset.y}px`;
+            document.body.appendChild(dragClone);
+
+            document.addEventListener('pointermove', handleDragMove);
+            document.addEventListener('pointerup', handleDragEnd);
+        }
+
+        function handleDragMove(e) {
+            if (!isDragging || !dragClone) return;
+            dragClone.style.left = `${e.clientX - dragOffset.x}px`;
+            dragClone.style.top = `${e.clientY - dragOffset.y}px`;
+            e.preventDefault(); 
+        }
+
+        async function handleDragEnd(e) {
+            if (!isDragging) return;
+            isDragging = false;
+            document.removeEventListener('pointermove', handleDragMove);
+            document.removeEventListener('pointerup', handleDragEnd);
+
+            dragClone.remove();
+            dragClone = null;
+
+            const els = document.elementsFromPoint(e.clientX, e.clientY);
+            let targetGridElem = els.find(el => el.classList.contains('re-grid'));
+
+            renderGrids();
+
+            if (!targetGridElem) return;
+
+            const targetGridType = targetGridElem.dataset.grid;
+            const gridRect = targetGridElem.getBoundingClientRect();
+            
+            const dropRelativeX = (e.clientX - dragOffset.x) - gridRect.left;
+            const dropRelativeY = (e.clientY - dragOffset.y) - gridRect.top;
+            
+            let cellX = Math.round(dropRelativeX / cellWidth);
+            let cellY = Math.round(dropRelativeY / cellHeight);
+
+            if (isValidDrop(targetGridType, dragItemData, cellX, cellY)) {
+                await moveItem(dragItemData, targetGridType, cellX, cellY);
+            } else {
+                showMessage("Espacio ocupado", true);
+            }
+        }
+
+        function isValidDrop(targetGridType, itemData, targetX, targetY) {
+            const w = itemData.w;
+            const h = itemData.h;
+
+            if (targetX < 0 || targetY < 0 || targetX + w > GRID_COLS || targetY + h > GRID_ROWS) return false;
+
+            const targetItems = targetGridType === 'private' ? inventory.private : inventory.public;
+            
+            for (let item of targetItems) {
+                if (item.id === itemData.id) continue;
+                if (targetX < item.x + item.w && targetX + w > item.x && targetY < item.y + item.h && targetY + h > item.y) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        async function moveItem(itemData, targetGridType, newX, newY) {
+            const oldGridType = inventory.private.find(i => i.id === itemData.id) ? 'private' : 'public';
+            const wasPublic = oldGridType === 'public';
+
+            const newItemData = { ...itemData, x: newX, y: newY };
+            delete newItemData.id;
+
+            try {
+                if (oldGridType !== targetGridType) {
+                    if (wasPublic) {
+                        await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'publicItems', itemData.id));
+                        await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'privateItems', itemData.id), newItemData);
+                    } else {
+                        await deleteDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'privateItems', itemData.id));
+                        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'publicItems', itemData.id), newItemData);
+                    }
+                } else {
+                    if (wasPublic) {
+                        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'publicItems', itemData.id), newItemData, { merge: true });
+                    } else {
+                        await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'privateItems', itemData.id), newItemData, { merge: true });
+                    }
+                }
+            } catch (error) {
+                console.error("Error moving item", error);
+                showMessage("Error de red", true);
+                renderGrids();
+            }
+        }
+
+        // --- Add Item Logic ---
+        window.openAddItemModal = () => {
+            currentPhotoBase64 = null;
+            document.getElementById('newItemPicPreview').classList.add('hidden');
+            document.getElementById('cameraInput').value = '';
+            document.getElementById('addItemModal').classList.remove('hidden');
+        };
+        window.closeAddItemModal = () => document.getElementById('addItemModal').classList.add('hidden');
+
+        window.submitNewItem = async () => {
+            if(!currentUser) return;
+            const name = document.getElementById('newItemName').value.trim();
+            const sizeStr = document.getElementById('newItemSize').value;
+            
+            if(!name) return showMessage("El nombre es requerido", true);
+            if(!currentPhotoBase64) return showMessage("Debes subir una foto", true);
+
+            const [w, h] = sizeStr.split(',').map(Number);
+            const points = (w * h) * 10;
+            const photos = [currentPhotoBase64]; // Guardamos el texto base64
+
+            let foundSpot = false;
+            let targetX = 0, targetY = 0;
+            
+            for(let y=0; y<=GRID_ROWS-h; y++) {
+                for(let x=0; x<=GRID_COLS-w; x++) {
+                    if(isValidDrop('private', {id:'temp', w, h}, x, y)) {
+                        targetX = x; targetY = y;
+                        foundSpot = true;
+                        break;
+                    }
+                }
+                if(foundSpot) break;
+            }
+
+            if(!foundSpot) {
+                return showMessage("Inventario lleno", true);
+            }
+
+            const item = {
+                uid: currentUser.uid,
+                name, photos, w, h, x: targetX, y: targetY, points,
+                createdAt: new Date().toISOString()
+            };
+
+            try {
+                await addDoc(collection(db, 'artifacts', appId, 'users', currentUser.uid, 'privateItems'), item);
+                closeAddItemModal();
+                document.getElementById('newItemName').value = '';
+                showMessage("Objeto creado");
+            } catch (e) {
+                console.error(e);
+                showMessage("Error de red (Foto muy pesada?)", true);
+            }
+        };
+
+        // --- Feed Logic ---
+        function renderFeed() {
+            const container = document.getElementById('feedContainer');
+            const emptyState = document.getElementById('feedEmpty');
+            
+            let feedItems = allPublicItems.filter(item => item.uid !== currentUser.uid);
+
+            if (feedItems.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            emptyState.classList.add('hidden');
+
+            feedItems.sort((a, b) => {
+                const scoreA = allUsers[a.uid]?.publicScore || 0;
+                const scoreB = allUsers[b.uid]?.publicScore || 0;
+                if(scoreA !== scoreB) return scoreB - scoreA;
+                return b.points - a.points;
+            });
+
+            container.innerHTML = '';
+            feedItems.forEach(item => {
+                const user = allUsers[item.uid] || { displayName: 'Anónimo', status: '', photoURL: '' };
+                const post = document.createElement('div');
+                post.className = 'feed-item';
+                
+                let photosHTML = '';
+                if(item.photos && item.photos.length > 0) {
+                    item.photos.forEach(base64Str => {
+                        photosHTML += `<img src="${base64Str}" class="feed-photo">`;
+                    });
+                }
+
+                post.innerHTML = `
+                    <div class="relative w-full h-full flex flex-col">
+                        <div class="feed-photos flex-1 mb-24">
+                            ${photosHTML}
+                        </div>
+                        
+                        <div class="absolute bottom-4 left-4 right-4 bg-[#1a237e] text-white p-3 border-4 border-white rounded shadow-lg">
+                            <div class="flex items-start">
+                                <div class="bg-white p-1 rounded border-2 border-[#1a237e] mr-3 mt-[-20px]">
+                                    <img src="${user.photoURL}" class="w-12 h-12 object-contain bg-[#e8eaf6]">
+                                </div>
+                                <div class="flex-1">
+                                    <div class="flex justify-between items-baseline border-b border-[#5c6bc0] pb-1 mb-1">
+                                        <h3 class="text-xl font-bold text-white">${user.displayName}</h3>
+                                        <span class="text-sm bg-[#f48fb1] px-1 rounded text-white">Lv.${user.publicScore||0}</span>
+                                    </div>
+                                    <h2 class="text-2xl text-[#f48fb1] font-bold">${item.name}</h2>
+                                    <p class="text-sm text-[#c5cae9] mt-1 line-clamp-2">"Busco: ${user.status || 'Ofertas...'}"</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(post);
+            });
+        }
+
+        // --- Search Logic ---
+        document.getElementById('searchInput').addEventListener('input', renderSearch);
+
+        function renderSearch() {
+            const queryTxt = document.getElementById('searchInput').value.toLowerCase();
+            const container = document.getElementById('searchResults');
+            
+            if(!queryTxt) {
+                container.innerHTML = '<p class="col-span-2 text-center text-[#5c6bc0] mt-8 text-xl">Ingresa un término para buscar.</p>';
+                return;
+            }
+
+            const results = allPublicItems.filter(item => {
+                const user = allUsers[item.uid];
+                const matchName = item.name.toLowerCase().includes(queryTxt);
+                const matchStatus = user && user.status && user.status.toLowerCase().includes(queryTxt);
+                return matchName || matchStatus;
+            });
+
+            container.innerHTML = '';
+            if(results.length === 0) {
+                container.innerHTML = '<p class="col-span-2 text-center text-[#5c6bc0] mt-8 text-xl">Ningún item encontrado.</p>';
+                return;
+            }
+
+            results.forEach(item => {
+                const user = allUsers[item.uid];
+                const div = document.createElement('div');
+                div.className = 'bg-white border-2 border-[#1a237e] p-2 flex flex-col text-left rounded hover:bg-[#e8eaf6] transition-colors';
+                div.innerHTML = `
+                    <div class="bg-white border-2 border-[#1a237e] mb-2 p-1">
+                        <img src="${item.photos[0] || ''}" class="w-full h-20 object-contain">
+                    </div>
+                    <h4 class="text-[#1a237e] font-bold text-lg truncate w-full">${item.name}</h4>
+                    <span class="text-xs text-[#d81b60] font-bold mt-1 block">Por: ${user ? user.displayName : 'Unknown'}</span>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Boot
+        initAuth();
+
+    </script>
+</body>
+</html>
