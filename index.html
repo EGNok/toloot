@@ -92,7 +92,7 @@
         .re-grid {
             display: grid; background-color: rgba(0,0,0,0.2);
             border: 1px solid var(--border-color); border-radius: 16px;
-            position: relative; margin: 0 auto; overflow: hidden;
+            position: relative; margin: 0 auto; overflow: hidden; box-sizing: content-box;
         }
         .re-cell { border-right: 1px solid var(--grid-line); border-bottom: 1px solid var(--grid-line); box-sizing: border-box; }
         .re-item {
@@ -120,6 +120,8 @@
         
         details > summary { list-style: none; }
         details > summary::-webkit-details-marker { display: none; }
+
+        .del-btn-hover:hover { color: var(--danger); background: rgba(244, 63, 94, 0.1); }
     </style>
 </head>
 <body>
@@ -187,8 +189,9 @@
                         </div>
                         <button onclick="openAddItemModal()" class="px-5 py-2 text-sm sleek-btn shadow-[0_0_15px_rgba(99,102,241,0.3)]">+ Añadir</button>
                     </div>
-                    <div class="p-3 bg-[var(--panel-bg)] rounded-[2rem] w-full flex justify-center border border-[var(--border-color)]">
-                        <div id="grid-public-container" class="w-full flex justify-center overflow-hidden">
+                    <!-- Contenedor adaptado a celular para no causar overflow -->
+                    <div class="p-2 bg-[var(--panel-bg)] rounded-[2rem] w-full flex justify-center border border-[var(--border-color)] overflow-hidden">
+                        <div id="grid-public-container" class="w-full flex justify-center overflow-hidden touch-none">
                             <div id="grid-public" class="re-grid" data-grid="public"></div>
                         </div>
                     </div>
@@ -199,14 +202,15 @@
                 <div class="w-12 h-1 bg-[var(--text-light)] rounded-full opacity-30"></div>
             </div>
 
-            <div id="private-area" class="h-[40vh] overflow-y-auto p-5 bg-[var(--panel-light)] shrink-0 flex flex-col relative w-full pb-28 z-10">
+            <div id="private-area" class="h-[40vh] overflow-y-auto px-4 py-5 bg-[var(--panel-light)] shrink-0 flex flex-col relative w-full pb-28 z-10">
                 <div class="max-w-xl mx-auto w-full">
                     <div class="flex items-center justify-between mb-4">
                         <h2 class="text-lg font-bold text-white">Inventario Privado</h2>
                         <span class="text-[10px] text-[var(--text-main)] font-medium bg-[var(--panel-bg)] px-2 py-1 rounded-full border border-[var(--border-color)]">Toca para rotar, arrastra al mostrador</span>
                     </div>
-                    <div class="p-3 bg-[var(--bg-color)] rounded-[2rem] w-full flex justify-center shadow-inner border border-[var(--border-color)]">
-                         <div id="grid-private-container" class="w-full flex justify-center overflow-hidden">
+                    <!-- Contenedor adaptado a celular -->
+                    <div class="p-2 bg-[var(--bg-color)] rounded-[2rem] w-full flex justify-center shadow-inner border border-[var(--border-color)] overflow-hidden">
+                         <div id="grid-private-container" class="w-full flex justify-center overflow-hidden touch-none">
                              <div id="grid-private" class="re-grid" data-grid="private"></div>
                          </div>
                     </div>
@@ -316,32 +320,47 @@
         </div>
     </div>
 
-    <!-- MODAL: Mesa de Trato -->
+    <!-- MODAL: Mesa de Trato (Negociación Cruzada) -->
     <div id="tradeModal" class="fixed inset-0 bg-[var(--bg-color)] z-[70] hidden flex flex-col">
         <div class="flex justify-between items-center p-5 border-b border-[var(--border-color)] bg-black/40 backdrop-blur-md">
             <h2 class="text-xl font-black text-[var(--primary)] tracking-wider">MESA DE TRATO</h2>
-            <button onclick="closeTradeModal()" class="text-[var(--text-light)] w-8 h-8 flex items-center justify-center bg-white/5 rounded-full">✕</button>
+            <button onclick="closeTradeModal()" class="text-[var(--text-light)] w-8 h-8 flex items-center justify-center bg-white/5 rounded-full hover:text-white">✕</button>
         </div>
         
-        <div class="flex-1 overflow-y-auto p-5 space-y-6 bg-gradient-to-b from-transparent to-[var(--panel-bg)]">
-            <div class="bg-[var(--panel-light)] rounded-3xl p-5 border border-[var(--border-color)] relative shadow-lg">
-                <div class="absolute -top-3 left-6 bg-[var(--panel-bg)] px-3 py-1 rounded-full text-xs font-bold text-[var(--text-light)] border border-[var(--border-color)]" id="tradeOtherName">Oferta</div>
-                <div id="tradeOtherItems" class="flex flex-wrap gap-3 min-h-[70px] mt-2"></div>
+        <div class="flex-1 overflow-y-auto p-5 space-y-5 bg-gradient-to-b from-transparent to-[var(--panel-bg)]">
+            <!-- Lo que recibes de la otra persona -->
+            <div class="bg-[var(--panel-light)] rounded-3xl p-4 border border-[var(--border-color)] relative shadow-lg">
+                <div class="absolute -top-3 left-6 bg-[var(--panel-bg)] px-3 py-1 rounded-full text-xs font-bold text-[var(--text-light)] border border-[var(--border-color)]" id="tradeOtherName">Lo que recibes</div>
+                <div id="tradeTheirSelected" class="flex flex-wrap gap-2 min-h-[50px] mt-3"></div>
             </div>
-            <div class="text-center text-3xl text-[var(--primary)] font-bold opacity-30">⇅</div>
-            <div class="bg-[var(--primary)]/5 rounded-3xl p-5 border border-[var(--primary)]/30 relative shadow-lg">
+            
+            <div class="text-center text-xl text-[var(--primary)] font-bold opacity-30">⇅</div>
+            
+            <!-- Lo que ofreces tú -->
+            <div class="bg-[var(--primary)]/10 rounded-3xl p-4 border border-[var(--primary)]/30 relative shadow-lg">
                 <div class="absolute -top-3 left-6 bg-[var(--primary)] px-3 py-1 rounded-full text-xs font-bold text-white shadow-[0_0_10px_rgba(99,102,241,0.5)]">Tus objetos ofrecidos</div>
-                <div id="tradeMyItems" class="flex flex-wrap gap-3 min-h-[70px] mt-2"></div>
+                <div id="tradeMySelected" class="flex flex-wrap gap-2 min-h-[50px] mt-3"></div>
             </div>
-            <div class="pt-2">
-                <h3 class="text-xs font-semibold text-[var(--text-light)] mb-3 pl-2 uppercase tracking-wide">Selecciona de tu mostrador:</h3>
-                <div id="tradeInventory" class="flex overflow-x-auto space-x-3 pb-4"></div>
+            
+            <div class="pt-4 space-y-4">
+                <!-- Mostrador de él/ella para elegir -->
+                <div>
+                    <h3 class="text-[10px] font-bold text-[var(--text-light)] mb-2 pl-2 uppercase tracking-wide" id="tradeTheirInvTitle">Elegir de su mostrador:</h3>
+                    <div id="tradeTheirInventory" class="flex overflow-x-auto space-x-2 pb-2 scrollbar-hide"></div>
+                </div>
+                <!-- Tu mostrador para elegir -->
+                <div>
+                    <h3 class="text-[10px] font-bold text-[var(--text-light)] mb-2 pl-2 uppercase tracking-wide">Elegir de tu mostrador:</h3>
+                    <div id="tradeMyInventory" class="flex overflow-x-auto space-x-2 pb-2 scrollbar-hide"></div>
+                </div>
             </div>
         </div>
 
-        <div class="p-5 bg-[var(--panel-bg)] border-t border-[var(--border-color)] flex space-x-3 pb-8">
-            <button id="btnCancelTrade" onclick="cancelTrade()" class="flex-1 py-3.5 sleek-btn sleek-btn-outline rounded-2xl font-bold">Cancelar</button>
-            <button id="btnAcceptTrade" onclick="acceptTrade()" class="flex-1 py-3.5 sleek-btn rounded-2xl shadow-lg shadow-[var(--primary)]/30">Aceptar Trato</button>
+        <div class="p-4 bg-[var(--panel-bg)] border-t border-[var(--border-color)] flex space-x-2 pb-8">
+            <button id="btnDeclineTrade" onclick="declineTrade()" class="w-14 h-14 flex-shrink-0 sleek-btn sleek-btn-danger rounded-2xl flex items-center justify-center shadow-lg" title="Rechazar Oferta">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <button id="btnAcceptTrade" onclick="acceptTrade()" class="flex-1 py-3.5 sleek-btn rounded-2xl shadow-lg shadow-[var(--primary)]/30 font-bold text-lg">Aceptar Trato</button>
         </div>
     </div>
 
@@ -803,11 +822,14 @@
             }, (error) => console.error(error));
         }
 
-        // --- Grids & Drag/Drop ---
+        // --- Grids & Drag/Drop Ajustado a Mobile ---
         function resizeGrids() {
             const container = document.getElementById('view-backpack'); if(!container) return;
-            let aw = container.clientWidth - 40; if(aw <= 0) return; if (aw > 450) aw = 450; 
-            cellWidth = Math.floor(aw / GRID_COLS); cellHeight = cellWidth; 
+            // Para asegurar que encaje en celulares sin scroll-x, quitamos 32px que son los padding laterales
+            let aw = Math.min(window.innerWidth - 32, 450); 
+            cellWidth = Math.floor(aw / GRID_COLS); 
+            cellHeight = cellWidth; 
+            
             document.querySelectorAll('.re-grid').forEach(g => {
                 g.style.gridTemplateColumns = `repeat(${GRID_COLS}, ${cellWidth}px)`; g.style.gridTemplateRows = `repeat(${GRID_ROWS}, ${cellHeight}px)`;
                 g.style.width = `${cellWidth * GRID_COLS}px`; g.style.height = `${cellHeight * GRID_ROWS}px`;
@@ -1025,7 +1047,11 @@
         function renderChatsView() {
             const container = document.getElementById('chatsListContainer');
             const emptyState = document.getElementById('chatsEmpty');
-            if(allChats.length === 0) {
+            
+            // Ocultar chats si los eliminamos
+            const visibleChats = allChats.filter(c => !(c.hiddenFor || []).includes(currentUser.uid));
+            
+            if(visibleChats.length === 0) {
                 container.innerHTML = '';
                 emptyState.classList.remove('hidden');
                 return;
@@ -1033,25 +1059,24 @@
             emptyState.classList.add('hidden');
             container.innerHTML = '';
 
-            [...allChats].reverse().forEach(chat => {
+            [...visibleChats].reverse().forEach(chat => {
                 const otherUid = chat.participants.find(id => id !== currentUser.uid);
                 const user = allUsers[otherUid] || { displayName: 'Usuario', photoURL: '' };
                 const isFinished = chat.status && chat.status !== 'active';
                 const lastMsg = chat.messages.length > 0 ? chat.messages[chat.messages.length-1].text : 'Sin mensajes';
                 
-                // Buscar info de la oferta para mostrar nombre del objeto
                 const offerInfo = allOffers.find(o => o.id === chat.offerId);
                 const itemName = offerInfo?.receiverItemName || 'Objeto eliminado';
 
                 const div = document.createElement('div');
-                div.className = `glass-panel p-4 rounded-[1.5rem] cursor-pointer hover:border-[var(--primary)] transition-colors flex items-center gap-4 ${isFinished ? 'opacity-60' : ''}`;
+                div.className = `glass-panel p-4 rounded-[1.5rem] cursor-pointer hover:border-[var(--primary)] transition-colors flex items-center gap-4 relative group ${isFinished ? 'opacity-60' : ''}`;
                 div.onclick = () => openChat(chat.id);
                 div.innerHTML = `
                     <div class="relative shrink-0" onclick="event.stopPropagation(); openUserProfile('${otherUid}')">
                         <img src="${user.photoURL}" class="w-14 h-14 rounded-full object-cover border border-[var(--border-color)]">
                         ${!isFinished ? `<div class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-[var(--secondary)] border-2 border-[var(--panel-bg)] rounded-full"></div>` : ''}
                     </div>
-                    <div class="flex-1 overflow-hidden">
+                    <div class="flex-1 overflow-hidden pr-6">
                         <div class="flex items-center gap-2">
                             <h4 class="text-white font-bold text-lg truncate">${user.displayName}</h4>
                         </div>
@@ -1059,12 +1084,18 @@
                         <p class="text-[var(--text-light)] text-sm truncate">${lastMsg}</p>
                     </div>
                     ${isFinished ? `<span class="text-[10px] bg-[var(--panel-bg)] px-2 py-1 rounded-md text-[var(--text-light)] uppercase tracking-wide">Fin</span>` : `<svg class="w-5 h-5 text-[var(--primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>`}
+                    
+                    ${isFinished ? `<button onclick="event.stopPropagation(); deleteChat('${chat.id}')" class="absolute top-2 right-2 w-6 h-6 flex items-center justify-center text-[var(--text-light)] del-btn-hover rounded-full transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>` : ''}
                 `;
                 container.appendChild(div);
             });
         }
+        
+        window.deleteChat = async (id) => {
+             try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'chats', id), { hiddenFor: arrayUnion(currentUser.uid) }); } catch(e){}
+        };
 
-        // --- Sistema de Ofertas (Trade) Un Chat Por Artículo ---
+        // --- Sistema de Ofertas Cruzadas (Turn-based Trade) ---
         window.initiateTrade = async (targetItemId, targetUserId, targetItemName) => {
             let existingOffer = allOffers.find(o => o.receiverItems.includes(targetItemId) && o.initiatorId === currentUser.uid && o.status === 'negotiating');
             if(existingOffer) {
@@ -1100,35 +1131,75 @@
 
         function renderTradeModal(offerId) {
             const offer = allOffers.find(o => o.id === offerId); if(!offer || offer.status !== 'negotiating') { closeTradeModal(); return; }
+            
             const isInit = offer.initiatorId === currentUser.uid;
             const otherUId = isInit ? offer.receiverId : offer.initiatorId;
-            const myItems = isInit ? offer.initiatorItems : offer.receiverItems;
-            const otherItems = isInit ? offer.receiverItems : offer.initiatorItems;
-
-            document.getElementById('tradeOtherName').innerText = `Oferta de ${allUsers[otherUId]?.displayName || 'Usuario'}`;
-            const renderItem = (item, isMine) => `<div class="w-[60px] h-[60px] bg-[var(--panel-bg)] rounded-2xl border border-[var(--border-color)] overflow-hidden cursor-pointer hover:border-[var(--primary)] transition-colors relative" ${isMine?`onclick="toggleTradeItem('${item.id}')"`:''}><img src="${item.photos[0]}" class="w-full h-full object-cover"><span class="absolute bottom-0.5 right-0.5 bg-black/80 text-[8px] font-bold text-white px-1 rounded shadow">x1</span></div>`;
+            const otherUser = allUsers[otherUId];
             
-            document.getElementById('tradeOtherItems').innerHTML = otherItems.map(id => renderItem(allPublicItems.find(i=>i.id===id),false)).join('') || '<span class="text-xs text-[var(--text-light)]">Vacío</span>';
-            document.getElementById('tradeMyItems').innerHTML = myItems.map(id => renderItem(allPublicItems.find(i=>i.id===id),true)).join('') || '<span class="text-xs text-[var(--text-light)]">Vacío</span>';
-            document.getElementById('tradeInventory').innerHTML = inventory.public.map(item => `<div onclick="toggleTradeItem('${item.id}')" class="w-[60px] h-[60px] shrink-0 rounded-2xl overflow-hidden cursor-pointer border-2 transition-all relative ${myItems.includes(item.id)?'border-[var(--primary)] opacity-40 scale-95':'border-transparent hover:border-[var(--primary)]'}"><img src="${item.photos[0]}" class="w-full h-full object-cover">${item.quantity > 1 ? `<span class="absolute top-0.5 right-0.5 bg-black/80 text-[8px] font-bold text-white px-1 rounded">x${item.quantity}</span>` : ''}</div>`).join('') || '<span class="text-xs text-[var(--text-light)]">Mostrador vacío.</span>';
+            const myItems = isInit ? (offer.initiatorItems||[]) : (offer.receiverItems||[]);
+            const theirItems = isInit ? (offer.receiverItems||[]) : (offer.initiatorItems||[]);
+
+            document.getElementById('tradeOtherName').innerText = `Lo que recibes de ${otherUser?.displayName || 'Usuario'}`;
+            document.getElementById('tradeTheirInvTitle').innerText = `Elegir del mostrador de ${otherUser?.displayName || 'Usuario'}:`;
+
+            // Renderizado de items seleccionados
+            const renderItem = (item, isMine) => {
+                if(!item) return '';
+                return `<div class="w-[60px] h-[60px] bg-[var(--panel-bg)] rounded-2xl border border-[var(--border-color)] overflow-hidden cursor-pointer hover:border-[var(--primary)] transition-colors relative" onclick="toggleTradeItem('${item.id}', ${isMine})">
+                    <img src="${item.photos[0]}" class="w-full h-full object-cover">
+                    ${item.quantity > 1 ? `<span class="absolute bottom-0.5 right-0.5 bg-black/80 text-[8px] font-bold text-white px-1 rounded shadow">x1</span>` : ''}
+                </div>`;
+            };
+            
+            document.getElementById('tradeTheirSelected').innerHTML = theirItems.map(id => renderItem(allPublicItems.find(i=>i.id===id), false)).join('') || '<span class="text-xs text-[var(--text-light)] py-2">Vacío</span>';
+            document.getElementById('tradeMySelected').innerHTML = myItems.map(id => renderItem(allPublicItems.find(i=>i.id===id), true)).join('') || '<span class="text-xs text-[var(--text-light)] py-2">Vacío</span>';
+            
+            // Renderizado de las dos tiras (Mi inventario y el suyo)
+            const myFullInventory = allPublicItems.filter(i => i.uid === currentUser.uid);
+            const theirFullInventory = allPublicItems.filter(i => i.uid === otherUId);
+
+            const renderInventoryStrip = (inventoryList, selectedArr, isMine) => {
+                return inventoryList.map(item => `<div onclick="toggleTradeItem('${item.id}', ${isMine})" class="w-[60px] h-[60px] shrink-0 rounded-2xl overflow-hidden cursor-pointer border-2 transition-all relative ${selectedArr.includes(item.id)?'border-[var(--primary)] opacity-40 scale-95':'border-transparent hover:border-[var(--primary)]'}"><img src="${item.photos[0]}" class="w-full h-full object-cover">${item.quantity > 1 ? `<span class="absolute top-0.5 right-0.5 bg-black/80 text-[8px] font-bold text-white px-1 rounded">x${item.quantity}</span>` : ''}</div>`).join('') || '<span class="text-xs text-[var(--text-light)]">Mostrador vacío.</span>';
+            };
+
+            document.getElementById('tradeMyInventory').innerHTML = renderInventoryStrip(myFullInventory, myItems, true);
+            document.getElementById('tradeTheirInventory').innerHTML = renderInventoryStrip(theirFullInventory, theirItems, false);
 
             const btnAccept = document.getElementById('btnAcceptTrade');
-            if(offer.lastUpdatedBy === currentUser.uid) { btnAccept.innerText = "Esperando..."; btnAccept.disabled = true; btnAccept.classList.add('opacity-50'); } 
-            else { btnAccept.innerText = "Aceptar Trato"; btnAccept.disabled = false; btnAccept.classList.remove('opacity-50'); }
+            if(offer.lastUpdatedBy === currentUser.uid) { 
+                btnAccept.innerText = "Esperando Respuesta..."; btnAccept.disabled = true; btnAccept.classList.add('opacity-50'); 
+            } else { 
+                btnAccept.innerText = "Aceptar Trato"; btnAccept.disabled = false; btnAccept.classList.remove('opacity-50'); 
+            }
         }
 
-        window.toggleTradeItem = async (itemId) => {
+        window.toggleTradeItem = async (itemId, isMine) => {
             const offer = allOffers.find(o => o.id === currentTradeOfferId); if(!offer) return;
             const isInit = offer.initiatorId === currentUser.uid;
-            let currentItems = isInit ? [...offer.initiatorItems] : [...offer.receiverItems];
-            if(currentItems.includes(itemId)) currentItems = currentItems.filter(id => id !== itemId); else currentItems.push(itemId);
-            const updates = { lastUpdatedBy: currentUser.uid };
-            if(isInit) updates.initiatorItems = currentItems; else updates.receiverItems = currentItems;
+            
+            // Determinar si estoy modificando MIS items o SUS items en la oferta
+            let currentItems = isMine 
+                ? (isInit ? [...(offer.initiatorItems||[])] : [...(offer.receiverItems||[])])
+                : (isInit ? [...(offer.receiverItems||[])] : [...(offer.initiatorItems||[])]);
+                
+            if(currentItems.includes(itemId)) currentItems = currentItems.filter(id => id !== itemId); 
+            else currentItems.push(itemId);
+            
+            const updates = { lastUpdatedBy: currentUser.uid, status: 'negotiating' };
+            
+            if(isMine) {
+                if(isInit) updates.initiatorItems = currentItems; else updates.receiverItems = currentItems;
+            } else {
+                if(isInit) updates.receiverItems = currentItems; else updates.initiatorItems = currentItems;
+            }
+            
             try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'offers', offer.id), updates); } catch(e) {}
         };
-        window.cancelTrade = async () => {
-            try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'offers', currentTradeOfferId), { status: 'cancelled' }); closeTradeModal(); } catch(e) {}
+        
+        window.declineTrade = async () => {
+            try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'offers', currentTradeOfferId), { status: 'cancelled' }); closeTradeModal(); showMessage("Oferta rechazada."); } catch(e) {}
         };
+
         window.acceptTrade = async () => {
             const offer = allOffers.find(o => o.id === currentTradeOfferId);
             try {
@@ -1144,22 +1215,33 @@
         window.toggleNotifications = () => { const el = document.getElementById('notifModal'); el.classList.contains('hidden') ? el.classList.remove('hidden') : el.classList.add('hidden'); };
         function updateNotifBadge() {
             if(!currentUser) return;
-            const pending = allOffers.some(o => o.status === 'negotiating' && o.lastUpdatedBy !== currentUser.uid);
+            const pending = allOffers.some(o => o.status === 'negotiating' && o.lastUpdatedBy !== currentUser.uid && !(o.dismissedBy || []).includes(currentUser.uid));
             document.getElementById('notifBadge').style.display = pending ? 'block' : 'none';
         }
         function renderNotifList() {
             const list = document.getElementById('notifList'); list.innerHTML = '';
-            allOffers.filter(o => o.status === 'negotiating').forEach(o => {
+            
+            const visibleOffers = allOffers.filter(o => o.status === 'negotiating' && !(o.dismissedBy || []).includes(currentUser.uid));
+            
+            visibleOffers.forEach(o => {
                 const isMyTurn = o.lastUpdatedBy !== currentUser.uid; const otherUid = o.initiatorId === currentUser.uid ? o.receiverId : o.initiatorId;
                 const name = allUsers[otherUid]?.displayName || 'Alguien';
                 const div = document.createElement('div');
-                div.className = `p-4 rounded-3xl border cursor-pointer transition-colors ${isMyTurn ? 'bg-[var(--primary)]/10 border-[var(--primary)]' : 'bg-[var(--panel-light)] border-transparent hover:border-[var(--border-color)]'}`;
-                div.innerHTML = `<p class="font-bold text-white flex items-center gap-2">🤝 Oferta de ${name}</p><p class="text-sm mt-1 text-[var(--text-light)]">${isMyTurn ? 'Esperando tu respuesta...' : 'Negociando...'}</p>`;
+                div.className = `p-4 rounded-3xl border cursor-pointer transition-colors relative ${isMyTurn ? 'bg-[var(--primary)]/10 border-[var(--primary)]' : 'bg-[var(--panel-light)] border-transparent hover:border-[var(--border-color)]'}`;
+                div.innerHTML = `
+                    <p class="font-bold text-white flex items-center gap-2">🤝 Oferta de ${name}</p>
+                    <p class="text-sm mt-1 text-[var(--text-light)] pr-6">${isMyTurn ? 'Requiere tu respuesta...' : 'Negociando...'}</p>
+                    <button onclick="event.stopPropagation(); deleteNotif('${o.id}')" class="absolute top-4 right-4 w-6 h-6 flex items-center justify-center text-[var(--text-light)] del-btn-hover rounded-full transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+                `;
                 div.onclick = () => { toggleNotifications(); currentTradeOfferId = o.id; document.getElementById('tradeModal').classList.remove('hidden'); renderTradeModal(o.id); };
                 list.appendChild(div);
             });
             if(list.innerHTML === '') list.innerHTML = '<p class="text-center py-6 text-sm text-[var(--text-light)]">No tienes notificaciones</p>';
         }
+
+        window.deleteNotif = async (id) => {
+             try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'offers', id), { dismissedBy: arrayUnion(currentUser.uid) }); } catch(e){}
+        };
 
         // --- Chat & Reputation ---
         window.openChat = (chatId) => { currentChatId = chatId; document.getElementById('chatModal').classList.remove('hidden'); renderChatModal(chatId); };
@@ -1227,31 +1309,37 @@
         };
         window.closeReportModal = () => document.getElementById('reportModal').classList.add('hidden');
 
+        // Búsqueda profunda para consumir objetos en ambas mochilas (pública y privada)
         async function processItemConsumption(offerId) {
-            const offer = allOffers.find(o => o.id === offerId);
-            if(!offer) return;
-            const itemsToProcess = [...offer.initiatorItems, ...offer.receiverItems];
-            
-            for (let itemId of itemsToProcess) {
-                const pubRef = doc(db, 'artifacts', appId, 'public', 'data', 'publicItems', itemId);
-                const privRef = doc(db, 'artifacts', appId, 'users', currentUser.uid, 'privateItems', itemId);
+            try {
+                const offerDoc = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'offers', offerId));
+                if(!offerDoc.exists()) return;
+                const offer = offerDoc.data();
+                const itemsToProcess = [...(offer.initiatorItems||[]), ...(offer.receiverItems||[])];
                 
-                try {
-                    const snapPub = await getDoc(pubRef);
-                    if (snapPub.exists()) {
-                        const data = snapPub.data();
-                        if (data.quantity > 1) await updateDoc(pubRef, { quantity: increment(-1) });
+                for (let itemId of itemsToProcess) {
+                    const pubRef = doc(db, 'artifacts', appId, 'public', 'data', 'publicItems', itemId);
+                    const itemDocPub = await getDoc(pubRef);
+                    if (itemDocPub.exists()) {
+                        if (itemDocPub.data().quantity > 1) await updateDoc(pubRef, { quantity: increment(-1) });
                         else await deleteDoc(pubRef);
                     } else {
-                        const snapPriv = await getDoc(privRef);
-                        if (snapPriv.exists()) {
-                            const data = snapPriv.data();
-                            if (data.quantity > 1) await updateDoc(privRef, { quantity: increment(-1) });
-                            else await deleteDoc(privRef);
+                        const priv1 = doc(db, 'artifacts', appId, 'users', offer.initiatorId, 'privateItems', itemId);
+                        const priv1Snap = await getDoc(priv1);
+                        if(priv1Snap.exists()) {
+                            if(priv1Snap.data().quantity > 1) await updateDoc(priv1, {quantity: increment(-1)});
+                            else await deleteDoc(priv1);
+                            continue;
+                        }
+                        const priv2 = doc(db, 'artifacts', appId, 'users', offer.receiverId, 'privateItems', itemId);
+                        const priv2Snap = await getDoc(priv2);
+                        if(priv2Snap.exists()) {
+                            if(priv2Snap.data().quantity > 1) await updateDoc(priv2, {quantity: increment(-1)});
+                            else await deleteDoc(priv2);
                         }
                     }
-                } catch(e) {}
-            }
+                }
+            } catch(e) { console.error("Error consumiendo objetos", e); }
         }
 
         window.finalizeTransaction = async (type) => {
@@ -1262,16 +1350,23 @@
 
             try {
                 if(type === 'success') {
+                    // Agregarnos al arreglo de finalizados
                     await updateDoc(chatRef, { finishedBy: arrayUnion(currentUser.uid) });
-                    const othersVotes = chatData.finishedBy || [];
-                    if(othersVotes.length >= 1) { 
+                    
+                    // Comprobación reforzada: leer de base de datos para no tener desfasaje
+                    const latestSnap = await getDoc(chatRef);
+                    const currentFinishedBy = latestSnap.data().finishedBy || [];
+                    
+                    if(currentFinishedBy.length >= 2) { 
+                        // Ambos finalizaron el trato
                         await updateDoc(chatRef, { status: 'completed' });
                         await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', currentUser.uid), { successfulTrades: increment(1) });
                         const otherUid = chatData.participants.find(id => id !== currentUser.uid);
                         await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', otherUid), { successfulTrades: increment(1) });
+                        
                         await processItemConsumption(chatData.offerId);
                         
-                        showMessage("¡Trato cerrado con éxito! Objetos transferidos.");
+                        showMessage("¡Trato cerrado con éxito! Objetos consumidos.");
                     } else {
                         showMessage("Marcado exitoso. Esperando a la otra parte.");
                     }
