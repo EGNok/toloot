@@ -5,267 +5,186 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>ToLoot</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* Esquema Dark Elegante & Amarillo brillante */
-            --bg-color: #0a0a0a;      
-            --panel-bg: #171717;      
-            --panel-light: #262626;   
-            --primary: #fde047;       /* Amarillo ToLoot */
-            --primary-dark: #eab308;  
-            --secondary: #34d399;     /* Verde acento */
-            --border-color: #3f3f46;  
-            --text-main: #f8fafc;     
-            --text-light: #a1a1aa;    
-            --text-dark: #0a0a0a;
-            --grid-line: rgba(255, 255, 255, 0.05); 
+            /* Psicología del Color: Confianza, Seguridad y Éxito */
+            --bg-color: #0B0F19;      /* Azul muy oscuro (Confianza profunda) */
+            --panel-bg: #151C2C;      /* Pizarra oscuro */
+            --panel-light: #1E293B;   /* Gris azulado */
+            --primary: #6366F1;       /* Indigo (Creatividad, valor, modernidad) */
+            --primary-dark: #4F46E5;  
+            --secondary: #10B981;     /* Esmeralda (Éxito, avanzar) */
+            --danger: #F43F5E;        /* Rosa/Rojo (Alerta, reportes) */
+            --border-color: rgba(255, 255, 255, 0.08);  
+            --text-main: #F8FAFC;     
+            --text-light: #94A3B8;    
+            --grid-line: rgba(255, 255, 255, 0.03); 
         }
 
         html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100dvh; 
-            overflow: hidden; 
-            overscroll-behavior-y: none;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: 'Outfit', sans-serif;
-            touch-action: manipulation;
+            margin: 0; padding: 0; width: 100%; height: 100dvh; 
+            overflow: hidden; overscroll-behavior-y: none;
+            background-color: var(--bg-color); color: var(--text-main);
+            font-family: 'Outfit', sans-serif; touch-action: manipulation;
         }
 
-        /* Glassmorphism y utilidades */
-        .glass-bubble {
-            background: rgba(23, 23, 23, 0.85);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+        .glass-panel {
+            background: rgba(21, 28, 44, 0.7);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
         }
 
         .sleek-btn {
-            background-color: var(--primary);
-            color: var(--text-dark);
-            border-radius: 9999px; /* Pill shape */
-            transition: transform 0.1s, background-color 0.2s;
-            cursor: pointer;
-            font-weight: 700;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            background-color: var(--primary); color: white; border-radius: 9999px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer; font-weight: 600; display: inline-flex;
+            align-items: center; justify-content: center; border: none;
         }
-        .sleek-btn:active {
-            transform: scale(0.96);
-            background-color: var(--primary-dark);
-        }
-        .sleek-btn-secondary {
-            background-color: var(--panel-light);
-            color: var(--text-main);
-            border: 1px solid var(--border-color);
-        }
-        .sleek-btn-danger {
-            background-color: #ef4444;
-            color: white;
-        }
+        .sleek-btn:active { transform: scale(0.95); }
+        .sleek-btn-success { background-color: var(--secondary); color: white; }
+        .sleek-btn-danger { background-color: var(--danger); color: white; }
+        .sleek-btn-outline { background-color: transparent; border: 1px solid var(--text-light); color: var(--text-main); }
+        .sleek-btn-warning { background-color: #F59E0B; color: white; } /* Naranja para sin trato */
 
         .sleek-input {
-            background-color: var(--panel-light);
-            border: 1px solid transparent;
-            color: var(--text-main);
-            border-radius: 16px;
-            padding: 14px 16px;
-            transition: all 0.2s;
+            background-color: rgba(0,0,0,0.2); border: 1px solid var(--border-color);
+            color: var(--text-main); border-radius: 16px; padding: 14px 16px; transition: all 0.3s;
         }
         .sleek-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            background-color: #2e2e2e;
+            outline: none; border-color: var(--primary); background-color: rgba(99, 102, 241, 0.05);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
         }
 
-        /* Layout de Vistas */
+        /* Vistas */
         .view-section {
-            display: none;
-            width: 100%;
-            height: 100%;
-            overflow-y: auto;
-            overflow-x: hidden;
-            padding-bottom: 7rem; /* Espacio barra navegación */
-            padding-top: 5rem; /* Espacio header */
+            display: none; width: 100%; height: 100%; overflow-y: auto; overflow-x: hidden;
+            padding-bottom: 7rem; padding-top: 5rem;
         }
         .view-section.active { display: block; }
-        
         #view-backpack.active { display: flex; flex-direction: column; padding-bottom: 0; padding-top: 4rem; }
-        
-        /* Feed ajustado para celular y PC */
         #view-feed { padding: 0; }
-        .feed-wrapper {
-            width: 100%;
-            height: 100%;
-            position: relative;
-        }
+        
+        .feed-wrapper { width: 100%; height: 100%; position: relative; }
         @media (min-width: 640px) {
             .feed-wrapper {
-                max-width: 450px;
-                margin: 0 auto;
-                height: calc(100dvh - 2rem);
-                margin-top: 1rem;
-                border-radius: 24px;
-                overflow: hidden;
-                border: 1px solid var(--border-color);
-                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+                max-width: 420px; margin: 0 auto; height: calc(100dvh - 2rem);
+                margin-top: 1rem; border-radius: 32px; overflow: hidden;
+                border: 1px solid var(--border-color); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             }
         }
 
-        .feed-container {
-            height: 100%;
-            scroll-snap-type: y mandatory;
-            overflow-y: auto;
-            scrollbar-width: none;
-        }
+        .feed-container { height: 100%; scroll-snap-type: y mandatory; overflow-y: auto; scrollbar-width: none; }
         .feed-container::-webkit-scrollbar { display: none; }
-        .feed-item {
-            height: 100%;
-            width: 100%;
-            scroll-snap-align: start;
-            position: relative;
-            background-color: #000;
-        }
-        .feed-photo {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .feed-gradient {
-            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 40%, transparent 100%);
-        }
+        .feed-item { height: 100%; width: 100%; scroll-snap-align: start; position: relative; background-color: #000; }
+        .feed-photo { width: 100%; height: 100%; object-fit: cover; }
+        .feed-gradient { background: linear-gradient(to top, var(--bg-color) 0%, rgba(11,15,25,0.7) 40%, transparent 100%); }
         
         .feed-card {
-            opacity: 0.85;
-            max-height: 85px;
-            overflow: hidden;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0.9; max-height: 90px; overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .feed-card.expanded {
-            opacity: 1;
-            max-height: 400px;
-            background: rgba(20, 20, 20, 0.95);
-            border-color: rgba(253, 224, 71, 0.3);
+            opacity: 1; max-height: 400px; background: rgba(21, 28, 44, 0.95); border-color: rgba(99, 102, 241, 0.4);
         }
 
         /* Inventario */
         .inventory-view { touch-action: none; }
         .re-grid {
-            display: grid;
-            background-color: var(--panel-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            position: relative;
-            margin: 0 auto;
-            overflow: hidden;
+            display: grid; background-color: rgba(0,0,0,0.2);
+            border: 1px solid var(--border-color); border-radius: 16px;
+            position: relative; margin: 0 auto; overflow: hidden;
         }
-        .re-cell {
-            border-right: 1px solid var(--grid-line);
-            border-bottom: 1px solid var(--grid-line);
-            box-sizing: border-box;
-            background-color: var(--panel-bg);
-        }
+        .re-cell { border-right: 1px solid var(--grid-line); border-bottom: 1px solid var(--grid-line); box-sizing: border-box; }
         .re-item {
-            position: absolute;
-            background-color: rgba(253, 224, 71, 0.08);
-            border: 1.5px solid var(--primary);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: grab;
-            user-select: none;
-            touch-action: none;
-            transition: transform 0.1s;
-            overflow: hidden;
-            box-shadow: inset 0 0 10px rgba(253, 224, 71, 0.1);
+            position: absolute; background-color: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: grab; user-select: none; touch-action: none; transition: transform 0.1s; overflow: hidden;
         }
-        .re-item:active { cursor: grabbing; background-color: rgba(253, 224, 71, 0.2); transform: scale(0.95); }
-        .re-item img { width: 85%; height: 85%; object-fit: contain; pointer-events: none; border-radius: 4px; }
+        .re-item:active { cursor: grabbing; transform: scale(0.92); border-color: var(--primary); }
+        .re-item img { width: 90%; height: 90%; object-fit: contain; pointer-events: none; border-radius: 8px; }
 
-        .drag-clone {
-            position: fixed;
-            pointer-events: none;
-            z-index: 1000;
-            opacity: 0.95;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.6);
-            transform: scale(1.05);
-        }
-
+        .drag-clone { position: fixed; pointer-events: none; z-index: 1000; box-shadow: 0 20px 40px rgba(0,0,0,0.8); transform: scale(1.05); }
         ::-webkit-scrollbar { display: none; }
 
-        /* Iconos de barra navegación */
-        .nav-icon {
-            color: var(--text-light);
-            transition: color 0.2s;
-        }
-        .nav-btn.active .nav-icon {
-            color: var(--text-dark);
-        }
+        /* Iconos Nav */
+        .nav-icon { color: var(--text-light); transition: all 0.3s; }
+        .nav-btn.active .nav-icon { color: white; }
+        
+        /* Checkbox custom */
+        .custom-checkbox { width: 20px; height: 20px; border-radius: 6px; border: 2px solid var(--primary); cursor: pointer; appearance: none; outline: none; background-color: rgba(0,0,0,0.2); position: relative; }
+        .custom-checkbox:checked { background-color: var(--primary); }
+        .custom-checkbox:checked::after { content: '✓'; position: absolute; color: white; font-size: 14px; top: -1px; left: 3px; font-weight: bold; }
+
+        /* Chat bubbles */
+        .chat-bubble-me { background-color: var(--primary); color: white; border-radius: 20px 20px 4px 20px; padding: 10px 16px; max-width: 80%; }
+        .chat-bubble-other { background-color: var(--panel-light); border: 1px solid var(--border-color); color: white; border-radius: 20px 20px 20px 4px; padding: 10px 16px; max-width: 80%; }
     </style>
 </head>
 <body>
 
-    <!-- Header Flotante Superior -->
-    <header class="fixed top-4 left-4 right-4 z-40 flex justify-between items-center pointer-events-none">
-        <h1 class="text-3xl tracking-widest font-black text-[var(--primary)] pointer-events-auto drop-shadow-lg">
-            TOLOOT.
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-40 flex justify-between items-center px-5 py-4 pointer-events-none bg-gradient-to-b from-black/60 to-transparent">
+        <h1 class="text-3xl tracking-widest font-extrabold text-white pointer-events-auto drop-shadow-lg">
+            TOLOOT<span class="text-[var(--primary)]">.</span>
         </h1>
-        <div class="pointer-events-auto">
-            <button onclick="toggleNotifications()" class="glass-bubble w-12 h-12 flex items-center justify-center rounded-full relative hover:bg-[var(--panel-light)] transition-colors">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-                <div id="notifBadge" class="absolute top-3 right-3 w-3 h-3 bg-red-500 rounded-full border-2 border-[var(--panel-bg)] hidden"></div>
+        <div class="pointer-events-auto flex items-center gap-3">
+            <div id="userRepHeader" class="hidden glass-panel px-3 py-1.5 rounded-full flex items-center gap-1 border border-[var(--primary)]/30">
+                <span class="text-xs text-[var(--primary)]">⭐</span>
+                <span id="hdrRep" class="text-sm font-bold text-white">0</span>
+            </div>
+            <button onclick="toggleNotifications()" class="glass-panel w-11 h-11 flex items-center justify-center rounded-full relative hover:bg-white/10 transition-colors">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                <div id="notifBadge" class="absolute top-2 right-2 w-2.5 h-2.5 bg-[var(--danger)] rounded-full hidden"></div>
             </button>
         </div>
     </header>
 
-    <!-- Main Content Area -->
+    <!-- Main Content -->
     <main class="w-full h-full relative overflow-hidden flex flex-col">
         
         <!-- PANTALLA: FEED -->
         <div id="view-feed" class="view-section active">
             <div class="feed-wrapper">
                 <div id="feedContainer" class="feed-container w-full"></div>
-                
                 <div id="feedEmpty" class="hidden h-full flex flex-col items-center justify-center text-center p-8 bg-[var(--bg-color)]">
-                    <div class="w-24 h-24 bg-[var(--panel-light)] rounded-full flex items-center justify-center mb-6">
-                        <svg class="w-12 h-12 text-[var(--text-light)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    <div class="w-20 h-20 bg-[var(--panel-light)] rounded-full flex items-center justify-center mb-6">
+                        <svg class="w-10 h-10 text-[var(--text-light)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                     </div>
-                    <p class="text-2xl font-bold text-white mb-2">El mercado está vacío</p>
-                    <p class="text-[var(--text-light)] mb-8">Publica el primer objeto de tu inventario.</p>
+                    <p class="text-xl font-bold text-white mb-2">Aún no hay objetos</p>
+                    <p class="text-[var(--text-light)] text-sm mb-8">Sé el primero en iniciar un intercambio.</p>
                 </div>
             </div>
         </div>
 
-        <!-- PANTALLA: BUSCAR -->
-        <div id="view-search" class="view-section">
+        <!-- PANTALLA: CHATS (Ex Búsqueda) -->
+        <div id="view-chats" class="view-section">
             <div class="max-w-md mx-auto w-full px-5">
-                <h2 class="text-3xl font-bold mb-6 text-white tracking-wide">Explorar</h2>
-                <div class="relative mb-8">
-                    <svg class="w-6 h-6 absolute left-4 top-4 text-[var(--text-light)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    <input type="text" id="searchInput" placeholder="Buscar items o usuarios..." class="w-full text-lg sleek-input pl-12 shadow-lg">
+                <h2 class="text-3xl font-extrabold mb-6 text-white tracking-wide">Mensajes</h2>
+                <div id="chatsListContainer" class="flex flex-col gap-3">
+                    <!-- Lista de chats inyectada por JS -->
                 </div>
-                <div id="searchResults" class="grid grid-cols-2 gap-4"></div>
+                <div id="chatsEmpty" class="hidden flex flex-col items-center justify-center text-center p-8 mt-10">
+                    <svg class="w-16 h-16 text-[var(--text-light)] mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                    <p class="text-[var(--text-light)]">No tienes conversaciones activas.</p>
+                    <button onclick="switchTab('feed')" class="mt-4 px-6 py-2 sleek-btn sleek-btn-outline rounded-full text-sm">Explorar el mercado</button>
+                </div>
             </div>
         </div>
 
         <!-- PANTALLA: MOCHILA -->
         <div id="view-backpack" class="view-section inventory-view">
-            <!-- Mostrador Público -->
             <div class="flex-1 overflow-y-auto px-4 py-2 flex flex-col relative w-full pb-8" id="public-area">
                 <div class="max-w-xl mx-auto w-full">
-                    <div class="flex justify-between items-center mb-5 mt-2">
+                    <div class="flex justify-between items-center mb-4 mt-2">
                         <div>
                             <h2 class="text-2xl font-bold text-white">Mostrador</h2>
-                            <p class="text-sm text-[var(--text-light)]">El mundo puede ver esto</p>
+                            <p class="text-xs text-[var(--text-light)]">El mundo puede ver esto</p>
                         </div>
-                        <button onclick="openAddItemModal()" class="px-5 py-2 text-sm sleek-btn shadow-lg">+ NUEVO</button>
+                        <button onclick="openAddItemModal()" class="px-5 py-2 text-sm sleek-btn shadow-[0_0_15px_rgba(99,102,241,0.3)]">+ Añadir</button>
                     </div>
-                    <div class="p-3 bg-black rounded-3xl w-full flex justify-center shadow-xl border border-[var(--border-color)]">
+                    <div class="p-3 bg-[var(--panel-bg)] rounded-[2rem] w-full flex justify-center border border-[var(--border-color)]">
                         <div id="grid-public-container" class="w-full flex justify-center overflow-hidden">
                             <div id="grid-public" class="re-grid" data-grid="public"></div>
                         </div>
@@ -273,19 +192,17 @@
                 </div>
             </div>
 
-            <!-- Manija Deslizable -->
-            <div id="drawer-handle" class="w-full h-12 bg-[var(--panel-light)] cursor-ns-resize flex items-center justify-center shrink-0 rounded-t-[2rem] border-t border-[var(--border-color)] touch-none relative z-20 shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
-                <div class="w-12 h-1.5 bg-[var(--border-color)] rounded-full"></div>
+            <div id="drawer-handle" class="w-full h-10 glass-panel cursor-ns-resize flex items-center justify-center shrink-0 rounded-t-[2rem] border-t border-[var(--border-color)] touch-none relative z-20 shadow-[0_-10px_40px_rgba(0,0,0,0.8)]">
+                <div class="w-12 h-1 bg-[var(--text-light)] rounded-full opacity-30"></div>
             </div>
 
-            <!-- Inventario Privado -->
             <div id="private-area" class="h-[40vh] overflow-y-auto p-5 bg-[var(--panel-light)] shrink-0 flex flex-col relative w-full pb-28 z-10">
                 <div class="max-w-xl mx-auto w-full">
                     <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-xl font-bold text-white">Tu Mochila</h2>
-                        <span class="text-xs text-[var(--primary)] font-bold bg-[var(--primary)]/10 px-3 py-1 rounded-full">▲ Sube al mostrador</span>
+                        <h2 class="text-lg font-bold text-white">Inventario Privado</h2>
+                        <span class="text-xs text-[var(--text-main)] font-medium bg-[var(--panel-bg)] px-3 py-1 rounded-full border border-[var(--border-color)]">▲ Arrastra para publicar</span>
                     </div>
-                    <div class="p-3 bg-black rounded-3xl w-full flex justify-center shadow-inner">
+                    <div class="p-3 bg-[var(--bg-color)] rounded-[2rem] w-full flex justify-center shadow-inner border border-[var(--border-color)]">
                          <div id="grid-private-container" class="w-full flex justify-center overflow-hidden">
                              <div id="grid-private" class="re-grid" data-grid="private"></div>
                          </div>
@@ -297,33 +214,38 @@
         <!-- PANTALLA: PERFIL -->
         <div id="view-profile" class="view-section">
             <div class="max-w-md mx-auto w-full px-5">
-                <h2 class="text-3xl font-bold mb-6 text-white tracking-wide">Tu Perfil</h2>
-                <div class="bg-[var(--panel-bg)] p-6 rounded-[2rem] w-full shadow-2xl border border-[var(--border-color)]">
-                    
-                    <div class="flex justify-center mb-8">
+                <h2 class="text-3xl font-extrabold mb-6 text-white tracking-wide">Perfil</h2>
+                <div class="glass-panel p-6 rounded-[2rem] w-full shadow-2xl">
+                    <div class="flex justify-center mb-6">
                         <div class="relative cursor-pointer group" onclick="document.getElementById('profilePicInput').click()">
-                            <img id="profilePreview" src="https://api.dicebear.com/7.x/avataaars/svg?seed=fallback" class="w-32 h-32 object-cover rounded-full border-4 border-[var(--panel-light)] shadow-lg">
-                            <div class="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <img id="profilePreview" src="https://api.dicebear.com/7.x/avataaars/svg?seed=fallback" class="w-28 h-28 object-cover rounded-full border-2 border-[var(--primary)] shadow-[0_0_20px_rgba(99,102,241,0.2)]">
+                            <div class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                 <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                             </div>
-                            <!-- Input oculto para la foto -->
                             <input type="file" id="profilePicInput" class="hidden" accept="image/*" onchange="handleProfilePic(event)">
                         </div>
                     </div>
+                    
+                    <div class="flex justify-center gap-6 mb-8 border-y border-[var(--border-color)] py-4">
+                        <div class="text-center">
+                            <p class="text-xs text-[var(--text-light)] uppercase tracking-wider mb-1">Tratos Exitosos</p>
+                            <p class="text-2xl font-black text-[var(--secondary)]" id="profRepText">0</p>
+                        </div>
+                    </div>
 
-                    <div class="space-y-5">
+                    <div class="space-y-4">
                         <div>
-                            <label class="text-[var(--text-light)] text-sm font-semibold ml-2">Nombre de Usuario</label>
-                            <input type="text" id="profName" class="w-full text-lg sleek-input mt-1">
+                            <label class="text-[var(--text-light)] text-xs font-semibold ml-2 uppercase">Nombre de Usuario</label>
+                            <input type="text" id="profName" class="w-full text-md sleek-input mt-1">
                         </div>
                         <div>
-                            <label class="text-[var(--text-light)] text-sm font-semibold ml-2">Bio / ¿Qué buscas?</label>
-                            <textarea id="profStatus" rows="3" class="w-full text-lg sleek-input mt-1 resize-none" placeholder="Escribe algo sobre ti o lo que buscas..."></textarea>
+                            <label class="text-[var(--text-light)] text-xs font-semibold ml-2 uppercase">Bio / ¿Qué buscas?</label>
+                            <textarea id="profStatus" rows="3" class="w-full text-md sleek-input mt-1 resize-none" placeholder="Busco tecnología, ofrezco ropa..."></textarea>
                         </div>
                         
                         <div class="pt-6 space-y-3">
-                            <button onclick="saveProfile()" class="py-4 text-lg sleek-btn w-full shadow-lg shadow-[var(--primary)]/20">GUARDAR CAMBIOS</button>
-                            <button onclick="logout()" class="py-4 text-lg sleek-btn sleek-btn-secondary w-full">Cerrar Sesión</button>
+                            <button onclick="saveProfile()" class="py-3.5 text-md sleek-btn w-full shadow-[0_5px_15px_rgba(99,102,241,0.2)]">Guardar Cambios</button>
+                            <button onclick="logout()" class="py-3.5 text-md sleek-btn sleek-btn-outline w-full">Cerrar Sesión</button>
                         </div>
                     </div>
                 </div>
@@ -332,152 +254,200 @@
 
     </main>
 
-    <!-- Navegación Flotante Estilo Píldora -->
-    <nav class="fixed bottom-6 left-1/2 transform -translate-x-1/2 glass-bubble rounded-full px-2 py-2 flex space-x-1 z-30 shadow-2xl items-center w-[92%] max-w-sm justify-between border border-[var(--border-color)]">
-        <button onclick="switchTab('feed')" class="nav-btn w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 active bg-[var(--primary)]" data-tab="feed">
-            <svg class="w-6 h-6 nav-icon text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+    <!-- Barra Navegación -->
+    <nav class="fixed bottom-5 left-1/2 transform -translate-x-1/2 glass-panel rounded-full px-2 py-2 flex space-x-1 z-30 shadow-[0_20px_40px_rgba(0,0,0,0.8)] items-center w-[92%] max-w-[380px] justify-between">
+        <button onclick="switchTab('feed')" class="nav-btn w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 active bg-[var(--primary)]" data-tab="feed">
+            <svg class="w-6 h-6 nav-icon text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
         </button>
-        <button onclick="switchTab('search')" class="nav-btn w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-[var(--panel-light)]" data-tab="search">
-            <svg class="w-6 h-6 nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        <!-- Icono Chat reemplazando la Búsqueda -->
+        <button onclick="requireAuth('chats')" class="nav-btn w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-white/5" data-tab="chats">
+            <svg class="w-6 h-6 nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
         </button>
-        <button onclick="switchTab('backpack')" class="nav-btn w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-[var(--panel-light)]" data-tab="backpack">
+        <button onclick="requireAuth('backpack')" class="nav-btn w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-white/5" data-tab="backpack">
             <svg class="w-6 h-6 nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
         </button>
-        <button onclick="switchTab('profile')" class="nav-btn w-14 h-14 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-[var(--panel-light)]" data-tab="profile">
+        <button onclick="requireAuth('profile')" class="nav-btn w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-white/5" data-tab="profile">
             <svg class="w-6 h-6 nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
         </button>
     </nav>
 
     <!-- MODAL: Notificaciones -->
     <div id="notifModal" class="fixed inset-0 bg-black/80 z-[60] hidden flex flex-col items-center justify-start pt-20 px-4 backdrop-blur-md">
-        <div class="w-full max-w-md bg-[var(--panel-bg)] rounded-[2rem] p-5 flex flex-col max-h-[70vh] border border-[var(--border-color)] shadow-2xl">
-            <div class="flex justify-between items-center mb-6 px-2">
-                <h2 class="text-2xl font-bold text-white">Notificaciones</h2>
-                <button onclick="toggleNotifications()" class="w-8 h-8 flex items-center justify-center bg-[var(--panel-light)] rounded-full text-[var(--text-light)] hover:text-white">✕</button>
+        <div class="w-full max-w-md glass-panel rounded-[2rem] p-5 flex flex-col max-h-[75vh] shadow-2xl">
+            <div class="flex justify-between items-center mb-6 px-2 border-b border-[var(--border-color)] pb-4">
+                <h2 class="text-xl font-bold text-white">Notificaciones</h2>
+                <button onclick="toggleNotifications()" class="w-8 h-8 flex items-center justify-center bg-white/5 rounded-full text-[var(--text-light)] hover:text-white">✕</button>
             </div>
-            <div id="notifList" class="flex-1 overflow-y-auto space-y-3 pr-2">
-            </div>
+            <div id="notifList" class="flex-1 overflow-y-auto space-y-3 pr-2 pb-4"></div>
         </div>
     </div>
 
-    <!-- MODAL: Mesa de Intercambio (Trade) -->
-    <div id="tradeModal" class="fixed inset-0 bg-black/95 z-[70] hidden flex flex-col backdrop-blur-md">
-        <div class="flex justify-between items-center p-5 bg-[var(--bg-color)] border-b border-[var(--border-color)]">
-            <h2 class="text-2xl font-black text-[var(--primary)] tracking-wide">MESA DE TRATO</h2>
-            <button onclick="closeTradeModal()" class="text-[var(--text-light)] text-xl w-10 h-10 bg-[var(--panel-light)] rounded-full">✕</button>
+    <!-- MODAL: Mesa de Trato -->
+    <div id="tradeModal" class="fixed inset-0 bg-[var(--bg-color)] z-[70] hidden flex flex-col">
+        <div class="flex justify-between items-center p-5 border-b border-[var(--border-color)] bg-black/40 backdrop-blur-md">
+            <h2 class="text-xl font-black text-[var(--primary)] tracking-wider">MESA DE TRATO</h2>
+            <button onclick="closeTradeModal()" class="text-[var(--text-light)] w-8 h-8 flex items-center justify-center bg-white/5 rounded-full">✕</button>
         </div>
         
-        <div class="flex-1 overflow-y-auto p-5 space-y-6">
-            <!-- Lado del Otro -->
-            <div class="bg-[var(--panel-light)] rounded-3xl p-5 border border-[var(--border-color)] relative">
-                <div class="absolute -top-3 left-6 bg-[var(--bg-color)] px-3 py-1 rounded-full text-xs font-bold text-[var(--text-light)] border border-[var(--border-color)]" id="tradeOtherName">Oferta</div>
+        <div class="flex-1 overflow-y-auto p-5 space-y-6 bg-gradient-to-b from-transparent to-[var(--panel-bg)]">
+            <div class="bg-[var(--panel-light)] rounded-3xl p-5 border border-[var(--border-color)] relative shadow-lg">
+                <div class="absolute -top-3 left-6 bg-[var(--panel-bg)] px-3 py-1 rounded-full text-xs font-bold text-[var(--text-light)] border border-[var(--border-color)]" id="tradeOtherName">Oferta</div>
                 <div id="tradeOtherItems" class="flex flex-wrap gap-3 min-h-[70px] mt-2"></div>
             </div>
-            
-            <div class="text-center text-3xl text-[var(--primary)] font-bold opacity-50">⇅</div>
-            
-            <!-- Mi Lado -->
-            <div class="bg-[var(--panel-light)] rounded-3xl p-5 border border-[var(--primary)]/30 relative shadow-[0_0_20px_rgba(253,224,71,0.05)]">
-                <div class="absolute -top-3 left-6 bg-[var(--primary)] px-3 py-1 rounded-full text-xs font-bold text-black">Tus objetos ofrecidos</div>
+            <div class="text-center text-3xl text-[var(--primary)] font-bold opacity-30">⇅</div>
+            <div class="bg-[var(--primary)]/5 rounded-3xl p-5 border border-[var(--primary)]/30 relative shadow-lg">
+                <div class="absolute -top-3 left-6 bg-[var(--primary)] px-3 py-1 rounded-full text-xs font-bold text-white shadow-[0_0_10px_rgba(99,102,241,0.5)]">Tus objetos ofrecidos</div>
                 <div id="tradeMyItems" class="flex flex-wrap gap-3 min-h-[70px] mt-2"></div>
             </div>
-
-            <!-- Mi Inventario para agregar -->
-            <div class="pt-4">
-                <h3 class="text-sm font-semibold text-[var(--text-light)] mb-3 pl-2">Selecciona de tu mostrador:</h3>
+            <div class="pt-2">
+                <h3 class="text-xs font-semibold text-[var(--text-light)] mb-3 pl-2 uppercase tracking-wide">Selecciona de tu mostrador:</h3>
                 <div id="tradeInventory" class="flex overflow-x-auto space-x-3 pb-4"></div>
             </div>
         </div>
 
-        <div class="p-5 bg-[var(--bg-color)] border-t border-[var(--border-color)] flex space-x-3 pb-8">
-            <button id="btnCancelTrade" onclick="cancelTrade()" class="flex-1 py-4 sleek-btn sleek-btn-secondary rounded-2xl font-bold">CANCELAR</button>
-            <button id="btnAcceptTrade" onclick="acceptTrade()" class="flex-1 py-4 sleek-btn rounded-2xl shadow-lg shadow-[var(--primary)]/20 text-lg">ACEPTAR</button>
+        <div class="p-5 bg-[var(--panel-bg)] border-t border-[var(--border-color)] flex space-x-3 pb-8">
+            <button id="btnCancelTrade" onclick="cancelTrade()" class="flex-1 py-3.5 sleek-btn sleek-btn-outline rounded-2xl font-bold">Cancelar</button>
+            <button id="btnAcceptTrade" onclick="acceptTrade()" class="flex-1 py-3.5 sleek-btn rounded-2xl shadow-lg shadow-[var(--primary)]/30">Aceptar Trato</button>
         </div>
     </div>
 
     <!-- MODAL: Chat -->
     <div id="chatModal" class="fixed inset-0 bg-[var(--bg-color)] z-[80] hidden flex flex-col">
-        <div class="flex justify-between items-center p-5 bg-[var(--panel-bg)] border-b border-[var(--border-color)] shadow-md">
-            <h2 class="text-xl font-bold text-white flex items-center gap-3">
-                <span class="w-3 h-3 bg-[var(--secondary)] rounded-full"></span>
+        <div class="flex justify-between items-center p-4 bg-[var(--panel-bg)] border-b border-[var(--border-color)]">
+            <h2 class="text-lg font-bold text-white flex items-center gap-2">
+                <span class="w-2.5 h-2.5 bg-[var(--secondary)] rounded-full shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
                 <span id="chatTitle">Chat</span>
             </h2>
-            <button onclick="closeChat()" class="text-[var(--text-light)] w-10 h-10 bg-[var(--panel-light)] rounded-full">✕</button>
+            <div class="flex items-center gap-2">
+                <button id="btnConcluirTrato" onclick="openConclusionModal()" class="px-4 py-1.5 sleek-btn rounded-full text-xs font-bold">Concluir Trato</button>
+                <button onclick="closeChat()" class="text-[var(--text-light)] w-8 h-8 flex items-center justify-center bg-white/5 rounded-full">✕</button>
+            </div>
         </div>
-        <div id="chatMessages" class="flex-1 overflow-y-auto p-5 space-y-4 flex flex-col">
-            <!-- Mensajes -->
+        
+        <!-- Action Banner (Estado actual del chat) -->
+        <div id="chatActionBanner" class="bg-[var(--panel-light)] border-b border-[var(--border-color)] p-2 hidden justify-center shadow-md text-sm font-bold">
+            <!-- Rellenado por JS -->
         </div>
-        <div class="p-4 bg-[var(--panel-bg)] flex space-x-3 pb-8 border-t border-[var(--border-color)]">
-            <input type="text" id="chatInput" placeholder="Escribe un mensaje..." class="flex-1 sleek-input rounded-full bg-[var(--bg-color)]">
-            <button onclick="sendChatMessage()" class="w-14 h-14 sleek-btn rounded-full flex items-center justify-center">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+
+        <div id="chatMessages" class="flex-1 overflow-y-auto p-5 space-y-4 flex flex-col bg-gradient-to-b from-transparent to-black/20"></div>
+        
+        <div id="chatInputContainer" class="p-3 bg-[var(--panel-bg)] flex space-x-2 pb-6 border-t border-[var(--border-color)]">
+            <input type="text" id="chatInput" placeholder="Acuerda un lugar público..." class="flex-1 sleek-input rounded-full text-sm">
+            <button onclick="sendChatMessage()" class="w-12 h-12 sleek-btn rounded-full flex items-center justify-center shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
             </button>
+        </div>
+    </div>
+
+    <!-- MODAL: Opciones de Conclusión de Trato -->
+    <div id="conclusionModal" class="fixed inset-0 bg-black/60 z-[85] hidden flex flex-col items-center justify-end pb-8 px-4 backdrop-blur-sm">
+        <div class="glass-panel w-full max-w-sm rounded-[2rem] p-6 shadow-2xl flex flex-col gap-3 animate-[slideUp_0.3s_ease-out]">
+            <h3 class="text-center text-white font-bold mb-2">¿Cómo finalizó el intercambio?</h3>
+            <button onclick="finalizeTransaction('success')" class="w-full py-3.5 sleek-btn sleek-btn-success rounded-xl font-bold">✨ Trato Exitoso</button>
+            <p class="text-center text-[10px] text-[var(--text-light)] mb-2 mt-[-5px]">Ambos deben marcarlo exitoso para ganar reputación.</p>
+            
+            <button onclick="finalizeTransaction('cancelled')" class="w-full py-3.5 sleek-btn sleek-btn-warning rounded-xl font-bold">No hubo trato</button>
+            <button onclick="finalizeTransaction('reported')" class="w-full py-3.5 sleek-btn sleek-btn-danger rounded-xl font-bold">⚠️ Reportar problema</button>
+            
+            <button onclick="closeConclusionModal()" class="w-full py-3 mt-2 sleek-btn sleek-btn-outline rounded-xl">Cancelar</button>
         </div>
     </div>
 
     <!-- MODAL: Agregar Objeto -->
     <div id="addItemModal" class="fixed inset-0 bg-black/80 z-[90] hidden flex justify-center items-center p-4 backdrop-blur-md">
-        <div class="bg-[var(--panel-bg)] w-full max-w-sm rounded-[2rem] overflow-hidden border border-[var(--border-color)] shadow-2xl">
-            <div class="flex justify-between items-center p-6 border-b border-[var(--border-color)]">
-                <span class="font-bold text-2xl text-white">Nuevo Item</span>
-                <button onclick="closeAddItemModal()" class="text-[var(--text-light)] hover:text-white bg-[var(--panel-light)] w-8 h-8 rounded-full">✕</button>
+        <div class="glass-panel w-full max-w-sm rounded-[2rem] overflow-hidden shadow-2xl">
+            <div class="flex justify-between items-center p-5 border-b border-[var(--border-color)]">
+                <span class="font-bold text-xl text-white">Nuevo Item</span>
+                <button onclick="closeAddItemModal()" class="text-[var(--text-light)] bg-white/5 w-8 h-8 flex items-center justify-center rounded-full">✕</button>
             </div>
-            
-            <div class="p-6 space-y-5">
-                <input type="text" id="newItemName" placeholder="Nombre del Objeto" class="w-full text-lg sleek-input">
-                
+            <div class="p-5 space-y-4">
+                <input type="text" id="newItemName" placeholder="Nombre del Objeto" class="w-full text-md sleek-input">
                 <div class="relative">
-                    <svg class="w-5 h-5 absolute left-4 top-4 text-[var(--text-light)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.243-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                    <input type="text" id="newItemLocation" placeholder="Ubicación (Ej: CABA)" class="w-full text-lg sleek-input pl-12">
+                    <svg class="w-4 h-4 absolute left-4 top-4 text-[var(--text-light)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.243-4.243a8 8 0 1111.314 0z"></path></svg>
+                    <input type="text" id="newItemLocation" placeholder="Ubicación aproximada" class="w-full text-md sleek-input pl-11">
                 </div>
-                
-                <div class="border border-[var(--border-color)] p-4 bg-[var(--panel-light)] rounded-2xl flex flex-col items-center border-dashed">
+                <div class="border border-[var(--border-color)] p-4 bg-black/20 rounded-2xl flex flex-col items-center border-dashed">
                     <input type="file" id="cameraInput" accept="image/*" capture="environment" class="hidden" onchange="handleItemPhoto(event)">
-                    <button onclick="document.getElementById('cameraInput').click()" class="w-full py-3 text-sm font-bold tracking-wide uppercase sleek-btn sleek-btn-secondary rounded-xl text-[var(--primary)] border-[var(--primary)]/30">
+                    <button onclick="document.getElementById('cameraInput').click()" class="w-full py-2.5 text-xs font-bold tracking-wider uppercase sleek-btn sleek-btn-outline rounded-xl">
                         + Subir Fotografía
                     </button>
-                    <img id="newItemPicPreview" class="hidden w-full h-36 object-cover bg-black mt-4 rounded-xl border border-[var(--border-color)]">
+                    <img id="newItemPicPreview" class="hidden w-full h-32 object-cover bg-black mt-3 rounded-xl border border-[var(--border-color)]">
                 </div>
-                
-                <select id="newItemSize" class="w-full text-lg sleek-input">
+                <select id="newItemSize" class="w-full text-md sleek-input">
                     <option value="1,1">Tamaño: Pequeño (1x1)</option>
                     <option value="1,2">Tamaño: Alargado (1x2)</option>
                     <option value="2,2">Tamaño: Cuadrado (2x2)</option>
                     <option value="2,3">Tamaño: Grande (2x3)</option>
                 </select>
-                
-                <button onclick="submitNewItem()" class="w-full py-4 text-lg sleek-btn w-full mt-2 shadow-[0_5px_15px_rgba(253,224,71,0.2)]">GUARDAR EN MOCHILA</button>
+                <button onclick="submitNewItem()" class="w-full py-3.5 text-md sleek-btn shadow-lg mt-2">Guardar en Mochila</button>
             </div>
         </div>
     </div>
 
-    <!-- Login Overlay -->
-    <div id="loginOverlay" class="fixed inset-0 bg-[var(--bg-color)] z-[100] flex flex-col items-center justify-center px-6 hidden">
-        <div class="bg-[var(--panel-bg)] rounded-[2.5rem] p-8 max-w-sm w-full text-center border border-[var(--border-color)] shadow-2xl relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[var(--primary)] to-transparent opacity-50"></div>
-            <h1 class="text-6xl font-black mb-4 text-[var(--primary)] tracking-tighter mt-4">TOLOOT</h1>
-            <p class="text-lg mb-10 text-[var(--text-light)] leading-tight">La nueva forma de intercambiar objetos.</p>
-            <button onclick="loginWithGoogle()" class="w-full py-4 text-lg sleek-btn flex items-center justify-center gap-3">
-                <svg class="w-6 h-6" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path></svg>
-                Continuar con Google
+    <!-- Login Overlay & Footer Legales -->
+    <div id="loginOverlay" class="fixed inset-0 bg-black/90 z-[100] flex flex-col items-center justify-center px-5 hidden backdrop-blur-md">
+        <div class="glass-panel rounded-[2rem] p-8 max-w-sm w-full border border-[var(--border-color)] shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[var(--primary)] to-transparent opacity-70"></div>
+            
+            <h1 class="text-5xl font-black mb-2 text-white tracking-tight mt-2">TOLOOT<span class="text-[var(--primary)]">.</span></h1>
+            <p class="text-sm mb-8 text-[var(--text-light)] leading-relaxed">Inicia sesión para chatear, ofertar en el mercado y construir tu reputación.</p>
+            
+            <button onclick="handleLoginClick()" class="w-full py-3.5 text-md sleek-btn flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(99,102,241,0.3)]">
+                <svg class="w-5 h-5" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path></svg>
+                Entrar con Google
             </button>
+            <button onclick="closeLogin()" class="mt-5 text-xs text-[var(--text-light)] w-full text-center hover:text-white transition-colors">Continuar como invitado</button>
+        </div>
+
+        <!-- Footer Privacidad y Términos (Requerimiento) -->
+        <div class="absolute bottom-6 w-full flex justify-between px-8 text-[11px] font-semibold tracking-widest text-[var(--text-light)]">
+            <span>© 2026 TOLOOT_</span>
+            <div class="flex gap-4">
+                <span onclick="openTerms()" class="cursor-pointer hover:text-white uppercase">Privacidad</span>
+                <span onclick="openTerms()" class="cursor-pointer hover:text-white uppercase">Términos</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Términos -->
+    <div id="termsModal" class="fixed inset-0 bg-black/90 z-[110] flex flex-col items-center justify-center p-5 hidden backdrop-blur-md">
+        <div class="bg-[var(--primary)] w-full max-w-md max-h-[85vh] rounded-md flex flex-col shadow-2xl border-4 border-[var(--primary)] overflow-hidden">
+            <div class="bg-[var(--primary)] p-2 flex justify-between items-center text-black font-bold">
+                <span class="pl-2">/LEGAL.TXT</span>
+                <button onclick="closeTerms()" class="w-6 h-6 border-2 border-black bg-[var(--danger)] cursor-pointer"></button>
+            </div>
+            <div class="bg-[#FDF6E3] flex-1 p-6 overflow-y-auto text-sm text-black space-y-4">
+                <h2 class="text-xl font-black border-b-2 border-black pb-2">PRIVACIDAD Y TÉRMINOS</h2>
+                <p>Bienvenido a <b>ToLoot</b>. Al utilizar esta plataforma, aceptas nuestras políticas y condiciones de uso.</p>
+                <h3 class="font-bold text-blue-600">> POLÍTICA DE PRIVACIDAD</h3>
+                <ul class="list-disc pl-4 space-y-2">
+                    <li><b>Datos recopilados:</b> Al iniciar sesión, almacenamos tu perfil público básico. No recopilamos contraseñas ni contactos.</li>
+                    <li><b>Almacenamiento:</b> Utilizamos Google Firebase. Tus chats son privados entre las partes.</li>
+                </ul>
+                <h3 class="font-bold text-red-600 mt-4">> TÉRMINOS DE SERVICIO (NORMAS)</h3>
+                <ul class="list-disc pl-4 space-y-2">
+                    <li><b>Respeto:</b> Prohibido el acoso, amenazas o lenguaje de odio en los chats.</li>
+                    <li><b>Contenido Seguro:</b> Prohibido subir material ilegal, armas o explícito.</li>
+                    <li><b>Responsabilidad de Tratos:</b> ToLoot solo conecta usuarios. Los encuentros físicos son bajo responsabilidad de los usuarios. Acuerde siempre en lugares públicos e iluminados.</li>
+                </ul>
+            </div>
         </div>
     </div>
 
     <!-- Loader -->
-    <div id="loadingOverlay" class="fixed inset-0 bg-[var(--bg-color)] z-[110] flex flex-col items-center justify-center">
-        <div class="w-12 h-12 border-4 border-[var(--panel-light)] border-t-[var(--primary)] rounded-full animate-spin"></div>
+    <div id="loadingOverlay" class="fixed inset-0 bg-[var(--bg-color)] z-[120] flex flex-col items-center justify-center">
+        <div class="w-10 h-10 border-4 border-[var(--panel-light)] border-t-[var(--primary)] rounded-full animate-spin"></div>
     </div>
 
     <!-- Alertas -->
-    <div id="msgBox" class="fixed top-24 left-1/2 transform -translate-x-1/2 bg-[var(--panel-light)] border border-[var(--border-color)] px-6 py-3 z-[120] hidden rounded-full shadow-2xl transition-opacity duration-300 pointer-events-none">
+    <div id="msgBox" class="fixed top-20 left-1/2 transform -translate-x-1/2 glass-panel px-5 py-3 z-[130] hidden rounded-full shadow-2xl transition-opacity duration-300 pointer-events-none border-l-4 border-l-[var(--primary)]">
         <p id="msgText" class="text-white text-sm font-semibold tracking-wide"></p>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, getDoc, onSnapshot, addDoc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, getDoc, onSnapshot, addDoc, updateDoc, arrayUnion, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyBjlyxlJroTZzYb6Oc3rHe5SUULxcpe5fI",
@@ -495,7 +465,7 @@
 
         // State
         let currentUser = null;
-        let myProfile = { displayName: 'Nuevo', photoURL: '', status: '', publicScore: 0 };
+        let myProfile = { displayName: 'Nuevo', photoURL: '', status: '', successfulTrades: 0 };
         let currentItemPhotoBase64 = null; 
         
         let inventory = { private: [], public: [] };
@@ -507,146 +477,137 @@
         let currentTradeOfferId = null;
         let currentChatId = null;
 
+        let unsubPrivate = null, unsubUsers = null, unsubPublic = null, unsubOffers = null, unsubChats = null;
+        function clearListeners() {
+            if(unsubPrivate) { unsubPrivate(); unsubPrivate = null; }
+            if(unsubUsers) { unsubUsers(); unsubUsers = null; }
+            if(unsubPublic) { unsubPublic(); unsubPublic = null; }
+            if(unsubOffers) { unsubOffers(); unsubOffers = null; }
+            if(unsubChats) { unsubChats(); unsubChats = null; }
+        }
+
         const GRID_COLS = 5; 
         const GRID_ROWS = 6; 
-        let cellWidth = 0;
-        let cellHeight = 0;
+        let cellWidth = 0; let cellHeight = 0;
 
         // UI Utils
         window.showMessage = (text, isError = false) => {
             const box = document.getElementById('msgBox');
-            const txt = document.getElementById('msgText');
-            txt.innerText = text;
-            box.style.borderLeft = isError ? '4px solid #ef4444' : '4px solid var(--primary)';
-            box.style.display = 'block';
-            box.style.opacity = '1';
-            setTimeout(() => {
-                box.style.opacity = '0';
-                setTimeout(() => box.style.display = 'none', 300);
-            }, 3000);
+            box.style.borderLeftColor = isError ? 'var(--danger)' : 'var(--secondary)';
+            document.getElementById('msgText').innerText = text;
+            box.style.display = 'block'; setTimeout(() => box.style.opacity = '1', 10);
+            setTimeout(() => { box.style.opacity = '0'; setTimeout(() => box.style.display = 'none', 300); }, 3500);
         };
 
         window.switchTab = (tabId) => {
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(el => {
-                el.classList.remove('bg-[var(--primary)]');
-                el.querySelector('svg').classList.remove('text-black');
-                el.classList.add('hover:bg-[var(--panel-light)]');
+                el.classList.remove('bg-[var(--primary)]'); el.querySelector('svg').classList.remove('text-white');
+                el.classList.add('hover:bg-white/5');
             });
-
             document.getElementById(`view-${tabId}`).classList.add('active');
             const activeBtn = document.querySelector(`[data-tab="${tabId}"]`);
-            activeBtn.classList.remove('hover:bg-[var(--panel-light)]');
-            activeBtn.classList.add('bg-[var(--primary)]');
-            activeBtn.querySelector('svg').classList.add('text-black');
+            activeBtn.classList.remove('hover:bg-white/5'); activeBtn.classList.add('bg-[var(--primary)]');
+            activeBtn.querySelector('svg').classList.add('text-white');
 
             if (tabId === 'backpack') setTimeout(resizeGrids, 50); 
             else if (tabId === 'feed') renderFeed();
+            else if (tabId === 'chats') renderChatsView();
         };
+
+        window.requireAuth = (tabId) => {
+            if(!currentUser) { document.getElementById('loginOverlay').classList.remove('hidden'); return; }
+            switchTab(tabId);
+        };
+
+        window.openTerms = () => document.getElementById('termsModal').classList.remove('hidden');
+        window.closeTerms = () => document.getElementById('termsModal').classList.add('hidden');
+        window.closeLogin = () => document.getElementById('loginOverlay').classList.add('hidden');
 
         // Drawer
         const handle = document.getElementById('drawer-handle');
         const privateArea = document.getElementById('private-area');
-        let isResizingDrawer = false;
-        let startY, startHeight;
-
-        const startResize = (e) => {
-            isResizingDrawer = true;
-            startY = e.clientY || (e.touches && e.touches[0].clientY);
-            startHeight = privateArea.getBoundingClientRect().height;
-        };
+        let isResizingDrawer = false; let startY, startHeight;
+        const startResize = (e) => { isResizingDrawer = true; startY = e.clientY || (e.touches && e.touches[0].clientY); startHeight = privateArea.getBoundingClientRect().height; };
         const doResize = (e) => {
             if (!isResizingDrawer) return;
-            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
-            const dy = clientY - startY;
-            let newHeight = startHeight - dy;
-            const maxH = window.innerHeight * 0.75; 
-            const minH = 60; 
-            if (newHeight > maxH) newHeight = maxH;
-            if (newHeight < minH) newHeight = minH;
-            privateArea.style.height = `${newHeight}px`;
-            e.preventDefault(); 
+            const cy = e.clientY || (e.touches && e.touches[0].clientY);
+            let newHeight = startHeight - (cy - startY);
+            if (newHeight > window.innerHeight * 0.70) newHeight = window.innerHeight * 0.70;
+            if (newHeight < 60) newHeight = 60;
+            privateArea.style.height = `${newHeight}px`; e.preventDefault(); 
         };
         const stopResize = () => { isResizingDrawer = false; };
-        handle.addEventListener('pointerdown', startResize);
-        document.addEventListener('pointermove', doResize, {passive: false});
-        document.addEventListener('pointerup', stopResize);
-        handle.addEventListener('touchstart', startResize);
-        document.addEventListener('touchmove', doResize, {passive: false});
-        document.addEventListener('touchend', stopResize);
+        handle.addEventListener('pointerdown', startResize); document.addEventListener('pointermove', doResize, {passive: false}); document.addEventListener('pointerup', stopResize);
+        handle.addEventListener('touchstart', startResize); document.addEventListener('touchmove', doResize, {passive: false}); document.addEventListener('touchend', stopResize);
 
         // Auth
-        window.loginWithGoogle = async () => {
-            try { await signInWithPopup(auth, new GoogleAuthProvider()); } 
-            catch (e) { showMessage("Error login", true); }
+        window.handleLoginClick = async () => {
+            try { await signInWithPopup(auth, new GoogleAuthProvider()); } catch (e) { showMessage("Error en login", true); }
         };
+
         window.logout = async () => {
-            try { await signOut(auth); inventory = { private: [], public: [] }; switchTab('feed'); } 
-            catch (e) {}
+            try { await signOut(auth); inventory = { private: [], public: [] }; switchTab('feed'); } catch (e) {}
         };
 
         onAuthStateChanged(auth, async (user) => {
+            document.getElementById('loadingOverlay').style.display = 'none';
+            clearListeners();
             if (user) {
                 currentUser = user;
                 document.getElementById('loginOverlay').classList.add('hidden');
-                document.getElementById('loadingOverlay').style.display = 'none';
+                document.getElementById('userRepHeader').classList.remove('hidden');
                 await ensureUserProfile(user.uid);
                 startRealtimeListeners();
             } else {
                 currentUser = null;
-                document.getElementById('loadingOverlay').style.display = 'none';
-                document.getElementById('loginOverlay').classList.remove('hidden');
+                document.getElementById('userRepHeader').classList.add('hidden');
+                loadPublicDataGuest();
             }
         });
 
+        // Guest Data Load
+        async function loadPublicDataGuest() {
+            unsubUsers = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'users'), (snap) => {
+                allUsers = {}; snap.forEach(doc => allUsers[doc.id] = doc.data()); renderFeed();
+            }, (error) => {});
+            
+            unsubPublic = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'publicItems'), (snap) => {
+                allPublicItems = []; snap.forEach(doc => allPublicItems.push({ ...doc.data(), id: doc.id }));
+                renderFeed();
+            }, (error) => {});
+        }
+
         // Photo Inputs
         window.handleItemPhoto = (event) => {
-            const file = event.target.files[0];
-            if (!file) return;
+            const file = event.target.files[0]; if (!file) return;
             const reader = new FileReader();
             reader.onload = (e) => {
                 const img = new Image();
                 img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    let width = img.width, height = img.height;
-                    const MAX = 600;
-                    if (width > height && width > MAX) { height *= MAX / width; width = MAX; } 
-                    else if (height > MAX) { width *= MAX / height; height = MAX; }
-                    canvas.width = width; canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
+                    const canvas = document.createElement('canvas'); let w = img.width, h = img.height; const MAX = 600;
+                    if (w > h && w > MAX) { h *= MAX / w; w = MAX; } else if (h > MAX) { w *= MAX / h; h = MAX; }
+                    canvas.width = w; canvas.height = h; canvas.getContext('2d').drawImage(img, 0, 0, w, h);
                     currentItemPhotoBase64 = canvas.toDataURL('image/jpeg', 0.6);
-                    const preview = document.getElementById('newItemPicPreview');
-                    preview.src = currentItemPhotoBase64; preview.classList.remove('hidden');
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
+                    document.getElementById('newItemPicPreview').src = currentItemPhotoBase64; 
+                    document.getElementById('newItemPicPreview').classList.remove('hidden');
+                }; img.src = e.target.result;
+            }; reader.readAsDataURL(file);
         };
 
         window.handleProfilePic = (event) => {
-            const file = event.target.files[0];
-            if (!file) return;
+            const file = event.target.files[0]; if (!file) return;
             const reader = new FileReader();
             reader.onload = (e) => {
                 const img = new Image();
                 img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    let width = img.width, height = img.height;
-                    const MAX = 400; 
-                    if (width > height && width > MAX) { height *= MAX / width; width = MAX; } 
-                    else if (height > MAX) { width *= MAX / height; height = MAX; }
-                    canvas.width = width; canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-                    
+                    const canvas = document.createElement('canvas'); let w = img.width, h = img.height; const MAX = 400; 
+                    if (w > h && w > MAX) { h *= MAX / w; w = MAX; } else if (h > MAX) { w *= MAX / h; h = MAX; }
+                    canvas.width = w; canvas.height = h; canvas.getContext('2d').drawImage(img, 0, 0, w, h);
                     myProfile.photoURL = canvas.toDataURL('image/jpeg', 0.8);
-                    document.getElementById('profilePreview').src = myProfile.photoURL;
-                    saveProfile(false); // Guardado silencioso
-                };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
+                    document.getElementById('profilePreview').src = myProfile.photoURL; saveProfile(false);
+                }; img.src = e.target.result;
+            }; reader.readAsDataURL(file);
         };
 
         // Data Layer
@@ -658,6 +619,7 @@
                 else {
                     myProfile.displayName = currentUser.displayName || 'Usuario';
                     myProfile.photoURL = currentUser.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${uid}`;
+                    myProfile.successfulTrades = 0;
                     await setDoc(userRef, myProfile);
                 }
                 updateProfileUI();
@@ -669,107 +631,91 @@
             myProfile.displayName = document.getElementById('profName').value;
             myProfile.status = document.getElementById('profStatus').value;
             try {
-                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', currentUser.uid), myProfile);
-                updateProfileUI(); 
-                if(showMsg) showMessage("Perfil actualizado con éxito");
-            } catch (e) {
-                if(showMsg) showMessage("Error al guardar perfil", true);
-            }
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', currentUser.uid), myProfile, {merge:true});
+                updateProfileUI(); if(showMsg) showMessage("Perfil actualizado con éxito");
+            } catch (e) { if(showMsg) showMessage("Error al guardar perfil", true); }
         };
 
         function updateProfileUI() {
             document.getElementById('profName').value = myProfile.displayName || '';
             document.getElementById('profStatus').value = myProfile.status || '';
             document.getElementById('profilePreview').src = myProfile.photoURL || '';
+            document.getElementById('profRepText').innerText = myProfile.successfulTrades || 0;
+            document.getElementById('hdrRep').innerText = myProfile.successfulTrades || 0;
         }
 
         function startRealtimeListeners() {
-            onSnapshot(collection(db, 'artifacts', appId, 'users', currentUser.uid, 'privateItems'), (snapshot) => {
-                inventory.private = [];
-                snapshot.forEach(doc => inventory.private.push({ ...doc.data(), id: doc.id }));
-                renderGrids();
-            });
-
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'users'), (snapshot) => {
-                allUsers = {}; snapshot.forEach(doc => allUsers[doc.id] = doc.data());
+            clearListeners();
+            unsubPrivate = onSnapshot(collection(db, 'artifacts', appId, 'users', currentUser.uid, 'privateItems'), (snap) => {
+                inventory.private = []; snap.forEach(doc => inventory.private.push({ ...doc.data(), id: doc.id })); renderGrids();
+            }, (error) => console.error(error));
+            
+            unsubUsers = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'users'), (snap) => {
+                allUsers = {}; snap.forEach(doc => { allUsers[doc.id] = doc.data(); });
                 renderFeed();
-            });
-
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'publicItems'), (snapshot) => {
+                if(document.getElementById('view-chats').classList.contains('active')) renderChatsView();
+                if(myProfile.successfulTrades !== allUsers[currentUser.uid]?.successfulTrades) {
+                    myProfile.successfulTrades = allUsers[currentUser.uid]?.successfulTrades || 0;
+                    updateProfileUI();
+                }
+            }, (error) => console.error(error));
+            
+            unsubPublic = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'publicItems'), (snap) => {
                 allPublicItems = []; inventory.public = [];
-                snapshot.forEach(doc => {
-                    const item = { ...doc.data(), id: doc.id };
-                    allPublicItems.push(item);
+                snap.forEach(doc => {
+                    const item = { ...doc.data(), id: doc.id }; allPublicItems.push(item);
                     if (item.uid === currentUser.uid) inventory.public.push(item);
                 });
-                renderGrids(); renderFeed(); renderSearch();
+                renderGrids(); renderFeed(); 
                 if(currentTradeOfferId) renderTradeModal(currentTradeOfferId);
-            });
-
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'offers'), (snapshot) => {
+            }, (error) => console.error(error));
+            
+            unsubOffers = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'offers'), (snap) => {
                 allOffers = [];
-                snapshot.forEach(doc => {
+                snap.forEach(doc => {
                     const data = doc.data();
-                    if(data.initiatorId === currentUser.uid || data.receiverId === currentUser.uid) {
-                        allOffers.push({ ...data, id: doc.id });
-                    }
+                    if(data.initiatorId === currentUser.uid || data.receiverId === currentUser.uid) allOffers.push({ ...data, id: doc.id });
                 });
-                updateNotifBadge();
-                renderNotifList();
+                updateNotifBadge(); renderNotifList();
                 if(currentTradeOfferId) renderTradeModal(currentTradeOfferId);
-            });
-
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'chats'), (snapshot) => {
+            }, (error) => console.error(error));
+            
+            unsubChats = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'chats'), (snap) => {
                 allChats = [];
-                snapshot.forEach(doc => {
+                snap.forEach(doc => {
                     const data = doc.data();
-                    if(data.participants && data.participants.includes(currentUser.uid)) {
-                        allChats.push({ ...data, id: doc.id });
-                    }
+                    if(data.participants && data.participants.includes(currentUser.uid)) allChats.push({ ...data, id: doc.id });
                 });
                 renderNotifList();
+                if(document.getElementById('view-chats').classList.contains('active')) renderChatsView();
                 if(currentChatId) renderChatModal(currentChatId);
-            });
+            }, (error) => console.error(error));
         }
 
         // --- Grids & Drag/Drop ---
         function resizeGrids() {
-            const container = document.getElementById('view-backpack');
-            if(!container) return;
-            let aw = container.clientWidth - 40; 
-            if(aw <= 0) return;
-            if (aw > 450) aw = 450; 
+            const container = document.getElementById('view-backpack'); if(!container) return;
+            let aw = container.clientWidth - 40; if(aw <= 0) return; if (aw > 450) aw = 450; 
             cellWidth = Math.floor(aw / GRID_COLS); cellHeight = cellWidth; 
-            
             document.querySelectorAll('.re-grid').forEach(g => {
-                g.style.gridTemplateColumns = `repeat(${GRID_COLS}, ${cellWidth}px)`;
-                g.style.gridTemplateRows = `repeat(${GRID_ROWS}, ${cellHeight}px)`;
+                g.style.gridTemplateColumns = `repeat(${GRID_COLS}, ${cellWidth}px)`; g.style.gridTemplateRows = `repeat(${GRID_ROWS}, ${cellHeight}px)`;
                 g.style.width = `${cellWidth * GRID_COLS}px`; g.style.height = `${cellHeight * GRID_ROWS}px`;
-                g.innerHTML = '';
-                for(let i=0; i<GRID_COLS*GRID_ROWS; i++) {
-                    const c = document.createElement('div'); c.className = 're-cell'; g.appendChild(c);
-                }
-            });
-            renderGrids();
+                g.innerHTML = ''; for(let i=0; i<GRID_COLS*GRID_ROWS; i++) { const c = document.createElement('div'); c.className = 're-cell'; g.appendChild(c); }
+            }); renderGrids();
         }
 
         function renderGrids() {
             if (cellWidth === 0) return;
             const draw = (items, gridId) => {
-                const c = document.getElementById(gridId);
-                if(!c) return;
+                const c = document.getElementById(gridId); if(!c) return;
                 c.querySelectorAll('.re-item').forEach(el => el.remove());
                 items.forEach(item => {
-                    const div = document.createElement('div');
-                    div.className = 're-item';
-                    div.style.width = `${(item.w * cellWidth) - 2}px`; div.style.height = `${(item.h * cellHeight) - 2}px`;
-                    div.style.left = `${item.x * cellWidth + 1}px`; div.style.top = `${item.y * cellHeight + 1}px`;
+                    const div = document.createElement('div'); div.className = 're-item';
+                    div.style.width = `${(item.w * cellWidth) - 3}px`; div.style.height = `${(item.h * cellHeight) - 3}px`;
+                    div.style.left = `${item.x * cellWidth + 1.5}px`; div.style.top = `${item.y * cellHeight + 1.5}px`;
                     div.dataset.id = item.id; div.dataset.grid = gridId === 'grid-private' ? 'private' : 'public';
-                    if(item.photos && item.photos[0]) {
-                        const img = document.createElement('img'); img.src = item.photos[0]; div.appendChild(img);
-                    }
-                    div.addEventListener('pointerdown', handleDragStart);
-                    c.appendChild(div);
+                    if(item.photos && item.photos[0]) { const img = document.createElement('img'); img.src = item.photos[0]; div.appendChild(img); }
+                    div.addEventListener('pointerdown', handleDragStart); c.appendChild(div);
                 });
             };
             draw(inventory.private, 'grid-private'); draw(inventory.public, 'grid-public');
@@ -778,70 +724,53 @@
         let isDraggingItem = false, dragItemData = null, dragClone = null, dragOffset = {x:0, y:0};
         function handleDragStart(e) {
             if (e.button !== 0 && e.type !== 'touchstart' && !e.pointerType) return;
-            isDraggingItem = true;
-            dragItemData = (e.currentTarget.dataset.grid === 'private' ? inventory.private : inventory.public).find(i => i.id === e.currentTarget.dataset.id);
+            isDraggingItem = true; dragItemData = (e.currentTarget.dataset.grid === 'private' ? inventory.private : inventory.public).find(i => i.id === e.currentTarget.dataset.id);
             if(!dragItemData) return;
-            e.currentTarget.style.opacity = '0.3';
-            const rect = e.currentTarget.getBoundingClientRect();
-            const cx = e.clientX || (e.touches && e.touches[0].clientX);
-            const cy = e.clientY || (e.touches && e.touches[0].clientY);
+            e.currentTarget.style.opacity = '0.3'; const rect = e.currentTarget.getBoundingClientRect();
+            const cx = e.clientX || (e.touches && e.touches[0].clientX); const cy = e.clientY || (e.touches && e.touches[0].clientY);
             dragOffset.x = cx - rect.left; dragOffset.y = cy - rect.top;
-            dragClone = e.currentTarget.cloneNode(true);
-            dragClone.className = 're-item drag-clone';
+            dragClone = e.currentTarget.cloneNode(true); dragClone.className = 're-item drag-clone';
             dragClone.style.width = `${rect.width}px`; dragClone.style.height = `${rect.height}px`;
             dragClone.style.left = `${cx - dragOffset.x}px`; dragClone.style.top = `${cy - dragOffset.y}px`;
             document.body.appendChild(dragClone);
-            document.addEventListener('pointermove', handleItemDragMove, {passive: false});
-            document.addEventListener('pointerup', handleItemDragEnd);
-            document.addEventListener('touchmove', handleItemDragMove, {passive: false});
-            document.addEventListener('touchend', handleItemDragEnd);
+            document.addEventListener('pointermove', handleItemDragMove, {passive: false}); document.addEventListener('pointerup', handleItemDragEnd);
+            document.addEventListener('touchmove', handleItemDragMove, {passive: false}); document.addEventListener('touchend', handleItemDragEnd);
         }
         function handleItemDragMove(e) {
             if (!isDraggingItem || !dragClone) return;
-            const cx = e.clientX || (e.touches && e.touches[0].clientX);
-            const cy = e.clientY || (e.touches && e.touches[0].clientY);
-            dragClone.style.left = `${cx - dragOffset.x}px`; dragClone.style.top = `${cy - dragOffset.y}px`;
-            e.preventDefault(); 
+            const cx = e.clientX || (e.touches && e.touches[0].clientX); const cy = e.clientY || (e.touches && e.touches[0].clientY);
+            dragClone.style.left = `${cx - dragOffset.x}px`; dragClone.style.top = `${cy - dragOffset.y}px`; e.preventDefault(); 
         }
         async function handleItemDragEnd(e) {
-            if (!isDraggingItem) return;
-            isDraggingItem = false;
+            if (!isDraggingItem) return; isDraggingItem = false;
             document.removeEventListener('pointermove', handleItemDragMove); document.removeEventListener('pointerup', handleItemDragEnd);
             document.removeEventListener('touchmove', handleItemDragMove); document.removeEventListener('touchend', handleItemDragEnd);
-            const cx = e.clientX || (e.changedTouches && e.changedTouches[0].clientX);
-            const cy = e.clientY || (e.changedTouches && e.changedTouches[0].clientY);
+            const cx = e.clientX || (e.changedTouches && e.changedTouches[0].clientX); const cy = e.clientY || (e.changedTouches && e.changedTouches[0].clientY);
             dragClone.remove(); dragClone = null;
             const targetGridElem = document.elementsFromPoint(cx, cy).find(el => el.classList.contains('re-grid'));
-            renderGrids();
-            if (!targetGridElem) return;
+            renderGrids(); if (!targetGridElem) return;
             const gridRect = targetGridElem.getBoundingClientRect();
-            let cellX = Math.round(((cx - dragOffset.x) - gridRect.left) / cellWidth);
-            let cellY = Math.round(((cy - dragOffset.y) - gridRect.top) / cellHeight);
-            
+            let cellX = Math.round(((cx - dragOffset.x) - gridRect.left) / cellWidth); let cellY = Math.round(((cy - dragOffset.y) - gridRect.top) / cellHeight);
             const targetGridType = targetGridElem.dataset.grid;
-            const isValid = (targetX, targetY) => {
-                if (targetX < 0 || targetY < 0 || targetX + dragItemData.w > GRID_COLS || targetY + dragItemData.h > GRID_ROWS) return false;
+            const isValid = (tx, ty) => {
+                if (tx < 0 || ty < 0 || tx + dragItemData.w > GRID_COLS || ty + dragItemData.h > GRID_ROWS) return false;
                 const items = targetGridType === 'private' ? inventory.private : inventory.public;
-                return !items.some(i => i.id !== dragItemData.id && targetX < i.x + i.w && targetX + dragItemData.w > i.x && targetY < i.y + i.h && targetY + dragItemData.h > i.y);
+                return !items.some(i => i.id !== dragItemData.id && tx < i.x + i.w && tx + dragItemData.w > i.x && ty < i.y + i.h && ty + dragItemData.h > i.y);
             };
-
             if (isValid(cellX, cellY)) {
                 const oldGridType = inventory.private.find(i => i.id === dragItemData.id) ? 'private' : 'public';
                 const newItemData = { ...dragItemData, x: cellX, y: cellY }; delete newItemData.id;
                 try {
                     if (oldGridType !== targetGridType) {
-                        if (oldGridType === 'public') {
-                            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'publicItems', dragItemData.id));
-                            await setDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'privateItems', dragItemData.id), newItemData);
-                        } else {
-                            await deleteDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'privateItems', dragItemData.id));
-                            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'publicItems', dragItemData.id), newItemData);
-                        }
+                        const deletePath = oldGridType === 'public' ? ['public','data','publicItems'] : ['users',currentUser.uid,'privateItems'];
+                        const addPath = targetGridType === 'public' ? ['public','data','publicItems'] : ['users',currentUser.uid,'privateItems'];
+                        await deleteDoc(doc(db, 'artifacts', appId, ...deletePath, dragItemData.id));
+                        await setDoc(doc(db, 'artifacts', appId, ...addPath, dragItemData.id), newItemData);
                     } else {
                         const path = oldGridType === 'public' ? ['public','data','publicItems'] : ['users',currentUser.uid,'privateItems'];
                         await setDoc(doc(db, 'artifacts', appId, ...path, dragItemData.id), newItemData, { merge: true });
                     }
-                } catch (e) { showMessage("Error moviendo item", true); }
+                } catch (e) {}
             } else showMessage("Espacio ocupado", true);
         }
 
@@ -853,68 +782,61 @@
         window.closeAddItemModal = () => document.getElementById('addItemModal').classList.add('hidden');
         window.submitNewItem = async () => {
             if(!currentUser) return;
-            const name = document.getElementById('newItemName').value.trim();
-            const loc = document.getElementById('newItemLocation').value.trim();
+            const name = document.getElementById('newItemName').value.trim(); const loc = document.getElementById('newItemLocation').value.trim();
             const sizeStr = document.getElementById('newItemSize').value;
-            if(!name || !loc || !currentItemPhotoBase64) return showMessage("Faltan datos o subir la foto", true);
-            const [w, h] = sizeStr.split(',').map(Number);
-            let tx = 0, ty = 0, found = false;
+            if(!name || !loc || !currentItemPhotoBase64) return showMessage("Faltan datos o foto", true);
+            const [w, h] = sizeStr.split(',').map(Number); let tx = 0, ty = 0, found = false;
             for(let y=0; y<=GRID_ROWS-h; y++) {
                 for(let x=0; x<=GRID_COLS-w; x++) {
-                    if(!inventory.private.some(i => x < i.x + i.w && x + w > i.x && y < i.y + i.h && y + h > i.y)) {
-                        tx = x; ty = y; found = true; break;
-                    }
-                }
-                if(found) break;
+                    if(!inventory.private.some(i => x < i.x + i.w && x + w > i.x && y < i.y + i.h && y + h > i.y)) { tx = x; ty = y; found = true; break; }
+                } if(found) break;
             }
-            if(!found) return showMessage("Inventario lleno", true);
+            if(!found) return showMessage("Inventario privado lleno", true);
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'users', currentUser.uid, 'privateItems'), {
-                    uid: currentUser.uid, name, location: loc, photos: [currentItemPhotoBase64], w, h, x: tx, y: ty, points: (w*h)*10
+                    uid: currentUser.uid, name, location: loc, photos: [currentItemPhotoBase64], w, h, x: tx, y: ty
                 });
                 closeAddItemModal(); document.getElementById('newItemName').value = ''; document.getElementById('newItemLocation').value = '';
-                showMessage("Item guardado en tu mochila");
-            } catch (e) { showMessage("Error de red", true); }
+                showMessage("Item guardado en mochila privada");
+            } catch (e) {}
         };
 
         // --- Feed & Overlay Cards ---
         window.toggleFeedCard = (el) => { el.classList.toggle('expanded'); };
 
         function renderFeed() {
-            const container = document.getElementById('feedContainer');
-            const emptyState = document.getElementById('feedEmpty');
-            let feedItems = allPublicItems.filter(item => item.uid !== currentUser.uid);
+            const container = document.getElementById('feedContainer'); const emptyState = document.getElementById('feedEmpty');
+            let feedItems = currentUser ? allPublicItems.filter(item => item.uid !== currentUser.uid) : allPublicItems;
             if (feedItems.length === 0) { container.innerHTML = ''; emptyState.classList.remove('hidden'); return; }
-            emptyState.classList.add('hidden');
+            emptyState.classList.add('hidden'); container.innerHTML = '';
             
-            container.innerHTML = '';
             feedItems.forEach(item => {
-                const user = allUsers[item.uid] || { displayName: 'Anónimo', photoURL: '' };
-                const post = document.createElement('div');
-                post.className = 'feed-item';
+                const user = allUsers[item.uid] || { displayName: 'Anónimo', photoURL: '', successfulTrades: 0 };
+                const post = document.createElement('div'); post.className = 'feed-item';
                 post.innerHTML = `
                     <img src="${item.photos[0] || ''}" class="feed-photo">
                     <div class="absolute bottom-0 w-full h-2/3 feed-gradient pointer-events-none"></div>
                     
-                    <!-- Tarjeta Info Flotante -->
-                    <div class="absolute bottom-[5rem] left-4 right-20 feed-card glass-bubble rounded-[2rem] p-4 cursor-pointer shadow-2xl" onclick="toggleFeedCard(this)">
+                    <div class="absolute bottom-[6rem] left-4 right-20 feed-card glass-panel rounded-[2rem] p-4 cursor-pointer shadow-2xl" onclick="toggleFeedCard(this)">
                         <div class="flex items-center space-x-3 mb-2">
                             <img src="${user.photoURL}" class="w-12 h-12 rounded-full border-2 border-[var(--primary)] object-cover bg-black">
                             <div class="flex-1 overflow-hidden">
-                                <h3 class="text-xl font-bold text-white truncate">${user.displayName}</h3>
-                                <p class="text-xs text-[var(--secondary)] truncate font-semibold uppercase tracking-wider flex items-center gap-1">
-                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.243-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                                <h3 class="text-lg font-bold text-white truncate flex items-center gap-2">
+                                    ${user.displayName}
+                                    <span class="text-[10px] bg-[var(--primary)] text-black px-2 py-0.5 rounded-full font-bold">⭐ ${user.successfulTrades||0}</span>
+                                </h3>
+                                <p class="text-xs text-[var(--text-light)] truncate font-semibold uppercase tracking-wider flex items-center gap-1 mt-0.5">
+                                    <svg class="w-3 h-3 text-[var(--secondary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.243-4.243a8 8 0 1111.314 0z"></path></svg>
                                     ${item.location || 'Sin ubicación'}
                                 </p>
                             </div>
                         </div>
-                        <h2 class="text-3xl text-[var(--primary)] font-black truncate mt-3 tracking-tight">${item.name}</h2>
+                        <h2 class="text-3xl text-white font-black truncate mt-3 tracking-tight">${item.name}</h2>
                         <p class="text-[var(--text-light)] mt-3 text-sm leading-relaxed">"Busco: ${user.status || 'Ofertas'}"</p>
                     </div>
 
-                    <!-- Botones Acción Derecha -->
-                    <div class="absolute bottom-[6rem] right-4 flex flex-col space-y-6">
-                        <button onclick="initiateTrade('${item.id}', '${item.uid}')" class="w-14 h-14 rounded-full bg-[var(--primary)] shadow-[0_0_20px_rgba(253,224,71,0.4)] flex items-center justify-center hover:scale-105 transition-transform text-black">
+                    <div class="absolute bottom-[7rem] right-4 flex flex-col space-y-6">
+                        <button onclick="${currentUser ? `initiateTrade('${item.id}', '${item.uid}')` : `document.getElementById('loginOverlay').classList.remove('hidden')`}" class="w-14 h-14 rounded-full bg-[var(--primary)] shadow-[0_0_20px_rgba(99,102,241,0.5)] flex items-center justify-center hover:scale-105 transition-transform text-white">
                             <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
                         </button>
                     </div>
@@ -923,225 +845,225 @@
             });
         }
 
+        // --- Vista de Chats (Bandeja de Mensajes) ---
+        function renderChatsView() {
+            const container = document.getElementById('chatsListContainer');
+            const emptyState = document.getElementById('chatsEmpty');
+            if(allChats.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            emptyState.classList.add('hidden');
+            container.innerHTML = '';
+
+            // Sort by latest interactions (we assume later items in array or we can just list them)
+            [...allChats].reverse().forEach(chat => {
+                const otherUid = chat.participants.find(id => id !== currentUser.uid);
+                const user = allUsers[otherUid] || { displayName: 'Usuario', photoURL: '' };
+                const isFinished = chat.status && chat.status !== 'active';
+                const lastMsg = chat.messages.length > 0 ? chat.messages[chat.messages.length-1].text : 'Sin mensajes';
+
+                const div = document.createElement('div');
+                div.className = `glass-panel p-4 rounded-[1.5rem] cursor-pointer hover:border-[var(--primary)] transition-colors flex items-center gap-4 ${isFinished ? 'opacity-60' : ''}`;
+                div.onclick = () => openChat(chat.id);
+                div.innerHTML = `
+                    <div class="relative shrink-0">
+                        <img src="${user.photoURL}" class="w-14 h-14 rounded-full object-cover border border-[var(--border-color)]">
+                        ${!isFinished ? `<div class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-[var(--secondary)] border-2 border-[var(--panel-bg)] rounded-full"></div>` : ''}
+                    </div>
+                    <div class="flex-1 overflow-hidden">
+                        <h4 class="text-white font-bold text-lg truncate">${user.displayName}</h4>
+                        <p class="text-[var(--text-light)] text-sm truncate">${lastMsg}</p>
+                    </div>
+                    ${isFinished ? `<span class="text-xs bg-[var(--panel-bg)] px-2 py-1 rounded-md text-[var(--text-light)] uppercase tracking-wide">Finalizado</span>` : `<svg class="w-5 h-5 text-[var(--primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>`}
+                `;
+                container.appendChild(div);
+            });
+        }
+
         // --- Sistema de Ofertas (Trade) ---
         window.initiateTrade = async (targetItemId, targetUserId) => {
-            if(!currentUser) return showMessage("Debes iniciar sesión", true);
-            // Check if active offer exists
-            let existing = allOffers.find(o => 
-                (o.initiatorId === currentUser.uid && o.receiverId === targetUserId) ||
-                (o.receiverId === currentUser.uid && o.initiatorId === targetUserId)
-            );
-            
+            let existing = allOffers.find(o => (o.initiatorId === currentUser.uid && o.receiverId === targetUserId) || (o.receiverId === currentUser.uid && o.initiatorId === targetUserId));
             if(existing && existing.status === 'negotiating') {
-                currentTradeOfferId = existing.id;
-                document.getElementById('tradeModal').classList.remove('hidden');
-                renderTradeModal(existing.id);
+                currentTradeOfferId = existing.id; document.getElementById('tradeModal').classList.remove('hidden'); renderTradeModal(existing.id);
             } else {
                 try {
-                    const newOfferRef = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'offers'), {
-                        status: 'negotiating', initiatorId: currentUser.uid, receiverId: targetUserId,
-                        initiatorItems: [], receiverItems: [targetItemId], lastUpdatedBy: currentUser.uid
-                    });
-                    currentTradeOfferId = newOfferRef.id;
-                    document.getElementById('tradeModal').classList.remove('hidden');
-                    renderTradeModal(newOfferRef.id);
-                } catch(e) { 
-                    console.error(e);
-                    showMessage("Asegúrate de actualizar las Reglas de Firebase (ver chat de la IA)", true); 
-                }
+                    const ref = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'offers'), { status: 'negotiating', initiatorId: currentUser.uid, receiverId: targetUserId, initiatorItems: [], receiverItems: [targetItemId], lastUpdatedBy: currentUser.uid });
+                    currentTradeOfferId = ref.id; document.getElementById('tradeModal').classList.remove('hidden'); renderTradeModal(ref.id);
+                } catch(e) {}
             }
         };
-
-        window.closeTradeModal = () => {
-            document.getElementById('tradeModal').classList.add('hidden');
-            currentTradeOfferId = null;
-        };
+        window.closeTradeModal = () => { document.getElementById('tradeModal').classList.add('hidden'); currentTradeOfferId = null; };
 
         function renderTradeModal(offerId) {
-            const offer = allOffers.find(o => o.id === offerId);
-            if(!offer || offer.status !== 'negotiating') { closeTradeModal(); return; }
+            const offer = allOffers.find(o => o.id === offerId); if(!offer || offer.status !== 'negotiating') { closeTradeModal(); return; }
+            const isInit = offer.initiatorId === currentUser.uid;
+            const otherUId = isInit ? offer.receiverId : offer.initiatorId;
+            const myItems = isInit ? offer.initiatorItems : offer.receiverItems;
+            const otherItems = isInit ? offer.receiverItems : offer.initiatorItems;
 
-            const isInitiator = offer.initiatorId === currentUser.uid;
-            const otherUserId = isInitiator ? offer.receiverId : offer.initiatorId;
-            const myItemIds = isInitiator ? offer.initiatorItems : offer.receiverItems;
-            const otherItemIds = isInitiator ? offer.receiverItems : offer.initiatorItems;
+            document.getElementById('tradeOtherName').innerText = `Oferta de ${allUsers[otherUId]?.displayName || 'Usuario'}`;
+            const renderItem = (item, isMine) => `<div class="w-[60px] h-[60px] bg-[var(--panel-bg)] rounded-2xl border border-[var(--border-color)] overflow-hidden cursor-pointer hover:border-[var(--primary)] transition-colors" ${isMine?`onclick="toggleTradeItem('${item.id}')"`:''}><img src="${item.photos[0]}" class="w-full h-full object-cover"></div>`;
+            
+            document.getElementById('tradeOtherItems').innerHTML = otherItems.map(id => renderItem(allPublicItems.find(i=>i.id===id),false)).join('') || '<span class="text-xs text-[var(--text-light)]">Vacío</span>';
+            document.getElementById('tradeMyItems').innerHTML = myItems.map(id => renderItem(allPublicItems.find(i=>i.id===id),true)).join('') || '<span class="text-xs text-[var(--text-light)]">Vacío</span>';
+            document.getElementById('tradeInventory').innerHTML = inventory.public.map(item => `<div onclick="toggleTradeItem('${item.id}')" class="w-[60px] h-[60px] shrink-0 rounded-2xl overflow-hidden cursor-pointer border-2 transition-all ${myItems.includes(item.id)?'border-[var(--primary)] opacity-40 scale-95':'border-transparent hover:border-[var(--primary)]'}"><img src="${item.photos[0]}" class="w-full h-full object-cover"></div>`).join('') || '<span class="text-xs text-[var(--text-light)]">Mostrador vacío.</span>';
 
-            document.getElementById('tradeOtherName').innerText = `OFERTA DE ${allUsers[otherUserId]?.displayName?.toUpperCase() || 'USUARIO'}`;
-
-            const renderSmallItem = (item, isMine) => {
-                if(!item) return '';
-                const onclick = isMine ? `onclick="toggleTradeItem('${item.id}')"` : '';
-                return `<div class="w-[72px] h-[72px] bg-[var(--bg-color)] rounded-2xl border border-[var(--border-color)] overflow-hidden relative cursor-pointer hover:border-[var(--primary)] transition-colors shadow-lg" ${onclick}>
-                            <img src="${item.photos[0]}" class="w-full h-full object-cover">
-                        </div>`;
-            };
-
-            // Other side
-            const otherItemsHtml = otherItemIds.map(id => renderSmallItem(allPublicItems.find(i => i.id === id), false)).join('');
-            document.getElementById('tradeOtherItems').innerHTML = otherItemsHtml || '<span class="text-[var(--border-color)] font-bold text-sm">Vacío</span>';
-
-            // My side
-            const myItemsHtml = myItemIds.map(id => renderSmallItem(allPublicItems.find(i => i.id === id), true)).join('');
-            document.getElementById('tradeMyItems').innerHTML = myItemsHtml || '<span class="text-[var(--border-color)] font-bold text-sm">Vacío</span>';
-
-            // My inventory selection
-            const invHtml = inventory.public.map(item => {
-                const isSelected = myItemIds.includes(item.id);
-                return `<div onclick="toggleTradeItem('${item.id}')" class="w-[72px] h-[72px] shrink-0 rounded-2xl overflow-hidden cursor-pointer border-2 transition-all shadow-md ${isSelected ? 'border-[var(--primary)] opacity-40 scale-95' : 'border-[var(--border-color)] hover:border-[var(--primary)]'}">
-                            <img src="${item.photos[0]}" class="w-full h-full object-cover">
-                        </div>`;
-            }).join('');
-            document.getElementById('tradeInventory').innerHTML = invHtml || '<span class="text-[var(--border-color)] text-sm">Tu mostrador público está vacío. Sube items primero.</span>';
-
-            // Status updates
             const btnAccept = document.getElementById('btnAcceptTrade');
-            if(offer.lastUpdatedBy === currentUser.uid) {
-                btnAccept.innerText = "ESPERANDO..."; btnAccept.disabled = true; btnAccept.classList.add('opacity-50');
-            } else {
-                btnAccept.innerText = "ACEPTAR TRATO"; btnAccept.disabled = false; btnAccept.classList.remove('opacity-50');
-            }
+            if(offer.lastUpdatedBy === currentUser.uid) { btnAccept.innerText = "Esperando..."; btnAccept.disabled = true; btnAccept.classList.add('opacity-50'); } 
+            else { btnAccept.innerText = "Aceptar Trato"; btnAccept.disabled = false; btnAccept.classList.remove('opacity-50'); }
         }
 
         window.toggleTradeItem = async (itemId) => {
-            const offer = allOffers.find(o => o.id === currentTradeOfferId);
-            if(!offer) return;
-            const isInitiator = offer.initiatorId === currentUser.uid;
-            let currentItems = isInitiator ? [...offer.initiatorItems] : [...offer.receiverItems];
-            
-            if(currentItems.includes(itemId)) currentItems = currentItems.filter(id => id !== itemId);
-            else currentItems.push(itemId);
-
+            const offer = allOffers.find(o => o.id === currentTradeOfferId); if(!offer) return;
+            const isInit = offer.initiatorId === currentUser.uid;
+            let currentItems = isInit ? [...offer.initiatorItems] : [...offer.receiverItems];
+            if(currentItems.includes(itemId)) currentItems = currentItems.filter(id => id !== itemId); else currentItems.push(itemId);
             const updates = { lastUpdatedBy: currentUser.uid };
-            if(isInitiator) updates.initiatorItems = currentItems; else updates.receiverItems = currentItems;
-            
-            try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'offers', offer.id), updates); }
-            catch(e) { showMessage("Error actualizando", true); }
+            if(isInit) updates.initiatorItems = currentItems; else updates.receiverItems = currentItems;
+            try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'offers', offer.id), updates); } catch(e) {}
         };
-
         window.cancelTrade = async () => {
-            if(!currentTradeOfferId) return;
-            try {
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'offers', currentTradeOfferId), { status: 'cancelled' });
-                closeTradeModal();
-            } catch(e) { showMessage("Error cancelando", true); }
+            try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'offers', currentTradeOfferId), { status: 'cancelled' }); closeTradeModal(); } catch(e) {}
         };
-
         window.acceptTrade = async () => {
-            if(!currentTradeOfferId) return;
             const offer = allOffers.find(o => o.id === currentTradeOfferId);
             try {
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'offers', currentTradeOfferId), { status: 'accepted' });
-                // Create Chat
                 const chatRef = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'chats'), {
-                    participants: [offer.initiatorId, offer.receiverId], messages: []
+                    participants: [offer.initiatorId, offer.receiverId], messages: [], finishedBy: [], status: 'active', offerId: currentTradeOfferId
                 });
-                closeTradeModal(); openChat(chatRef.id);
-            } catch(e) { showMessage("Error aceptando", true); }
+                closeTradeModal(); switchTab('chats'); openChat(chatRef.id);
+            } catch(e) {}
         };
 
         // --- Notificaciones ---
-        window.toggleNotifications = () => {
-            const el = document.getElementById('notifModal');
-            el.classList.contains('hidden') ? el.classList.remove('hidden') : el.classList.add('hidden');
-        };
-
+        window.toggleNotifications = () => { const el = document.getElementById('notifModal'); el.classList.contains('hidden') ? el.classList.remove('hidden') : el.classList.add('hidden'); };
         function updateNotifBadge() {
             if(!currentUser) return;
-            const pendingOffers = allOffers.some(o => o.status === 'negotiating' && o.lastUpdatedBy !== currentUser.uid);
-            document.getElementById('notifBadge').style.display = pendingOffers ? 'block' : 'none';
+            const pending = allOffers.some(o => o.status === 'negotiating' && o.lastUpdatedBy !== currentUser.uid);
+            document.getElementById('notifBadge').style.display = pending ? 'block' : 'none';
         }
-
         function renderNotifList() {
-            const list = document.getElementById('notifList');
-            list.innerHTML = '';
-            
-            const activeOffers = allOffers.filter(o => o.status === 'negotiating');
-            activeOffers.forEach(o => {
-                const isMyTurn = o.lastUpdatedBy !== currentUser.uid;
-                const otherUid = o.initiatorId === currentUser.uid ? o.receiverId : o.initiatorId;
+            const list = document.getElementById('notifList'); list.innerHTML = '';
+            allOffers.filter(o => o.status === 'negotiating').forEach(o => {
+                const isMyTurn = o.lastUpdatedBy !== currentUser.uid; const otherUid = o.initiatorId === currentUser.uid ? o.receiverId : o.initiatorId;
                 const name = allUsers[otherUid]?.displayName || 'Alguien';
                 const div = document.createElement('div');
                 div.className = `p-4 rounded-3xl border cursor-pointer transition-colors ${isMyTurn ? 'bg-[var(--primary)]/10 border-[var(--primary)]' : 'bg-[var(--panel-light)] border-transparent hover:border-[var(--border-color)]'}`;
-                div.innerHTML = `<p class="font-bold text-white flex items-center gap-2"><svg class="w-4 h-4 text-[var(--primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg> Oferta de ${name}</p><p class="text-sm mt-1 text-[var(--text-light)]">${isMyTurn ? 'Esperando tu respuesta...' : 'Negociando...'}</p>`;
+                div.innerHTML = `<p class="font-bold text-white flex items-center gap-2">🤝 Oferta de ${name}</p><p class="text-sm mt-1 text-[var(--text-light)]">${isMyTurn ? 'Esperando tu respuesta...' : 'Negociando...'}</p>`;
                 div.onclick = () => { toggleNotifications(); currentTradeOfferId = o.id; document.getElementById('tradeModal').classList.remove('hidden'); renderTradeModal(o.id); };
                 list.appendChild(div);
             });
-
-            allChats.forEach(c => {
-                const otherUid = c.participants.find(id => id !== currentUser.uid);
-                const name = allUsers[otherUid]?.displayName || 'Usuario';
-                const div = document.createElement('div');
-                div.className = "p-4 rounded-3xl bg-[var(--panel-light)] border border-transparent cursor-pointer hover:border-[var(--secondary)] transition-colors";
-                div.innerHTML = `<p class="font-bold text-white flex items-center gap-2"><svg class="w-4 h-4 text-[var(--secondary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg> Chat: ${name}</p>`;
-                div.onclick = () => { toggleNotifications(); openChat(c.id); };
-                list.appendChild(div);
-            });
-
-            if(list.innerHTML === '') list.innerHTML = '<div class="text-center py-8 text-[var(--border-color)]"><svg class="w-12 h-12 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg><p class="font-medium">No tienes notificaciones</p></div>';
+            if(list.innerHTML === '') list.innerHTML = '<p class="text-center py-6 text-sm text-[var(--text-light)]">No tienes notificaciones</p>';
         }
 
-        // --- Chat ---
-        window.openChat = (chatId) => {
-            currentChatId = chatId;
-            document.getElementById('chatModal').classList.remove('hidden');
-            renderChatModal(chatId);
-        };
-        window.closeChat = () => {
-            document.getElementById('chatModal').classList.add('hidden');
-            currentChatId = null;
-        };
+        // --- Chat & Reputation ---
+        window.openChat = (chatId) => { currentChatId = chatId; document.getElementById('chatModal').classList.remove('hidden'); renderChatModal(chatId); };
+        window.closeChat = () => { document.getElementById('chatModal').classList.add('hidden'); currentChatId = null; };
 
         function renderChatModal(chatId) {
-            const chat = allChats.find(c => c.id === chatId);
-            if(!chat) return;
+            const chat = allChats.find(c => c.id === chatId); if(!chat) return;
             const otherUid = chat.participants.find(id => id !== currentUser.uid);
             document.getElementById('chatTitle').innerText = allUsers[otherUid]?.displayName || 'Chat';
+            
+            const isCompleted = chat.status === 'completed';
+            const isCancelled = chat.status === 'cancelled';
+            const isReported = chat.status === 'reported';
+            const isFinishedByMe = chat.finishedBy?.includes(currentUser.uid);
+
+            // Controladores UI
+            const btnConcluir = document.getElementById('btnConcluirTrato');
+            const inputCont = document.getElementById('chatInputContainer');
+            const banner = document.getElementById('chatActionBanner');
+
+            // Visibilidad Botón Concluir (Solo si está activo y no lo marqué aún)
+            if(chat.status === 'active' && !isFinishedByMe) {
+                btnConcluir.classList.remove('hidden');
+            } else {
+                btnConcluir.classList.add('hidden');
+            }
+
+            // Visibilidad Input (Solo activo)
+            if(chat.status === 'active') {
+                inputCont.classList.remove('hidden');
+            } else {
+                inputCont.classList.add('hidden');
+            }
+
+            // Banner Inferior Informativo
+            banner.classList.remove('hidden', 'text-[var(--secondary)]', 'text-[var(--danger)]', 'text-[#F59E0B]', 'text-[var(--text-light)]');
+            if (isCompleted) {
+                banner.innerText = "✨ ¡Transacción Exitosa! Ambos sumaron reputación.";
+                banner.classList.add('text-[var(--secondary)]');
+            } else if (isReported) {
+                banner.innerText = "⚠️ Trato reportado a moderación.";
+                banner.classList.add('text-[var(--danger)]');
+            } else if (isCancelled) {
+                banner.innerText = "Trato cancelado por falta de acuerdo.";
+                banner.classList.add('text-[#F59E0B]');
+            } else if (isFinishedByMe) {
+                banner.innerText = "Esperando a la otra parte para finalizar...";
+                banner.classList.add('text-[var(--text-light)]');
+            } else {
+                banner.classList.add('hidden');
+            }
             
             const msgsBox = document.getElementById('chatMessages');
             msgsBox.innerHTML = chat.messages.map(m => {
                 const isMe = m.sender === currentUser.uid;
-                return `<div class="w-full flex ${isMe ? 'justify-end' : 'justify-start'}">
-                            <div class="max-w-[80%] p-4 rounded-3xl text-sm ${isMe ? 'bg-[var(--primary)] text-black rounded-tr-sm' : 'bg-[var(--panel-light)] border border-[var(--border-color)] text-white rounded-tl-sm'}">
-                                ${m.text}
-                            </div>
-                        </div>`;
+                return `<div class="w-full flex ${isMe ? 'justify-end' : 'justify-start'}"><div class="text-[15px] shadow-sm ${isMe ? 'chat-bubble-me' : 'chat-bubble-other'}">${m.text}</div></div>`;
             }).join('');
             msgsBox.scrollTop = msgsBox.scrollHeight;
         }
 
         window.sendChatMessage = async () => {
             if(!currentChatId) return;
-            const inp = document.getElementById('chatInput');
-            const txt = inp.value.trim();
-            if(!txt) return;
-            
+            const inp = document.getElementById('chatInput'); const txt = inp.value.trim(); if(!txt) return;
             const chat = allChats.find(c => c.id === currentChatId);
-            const newMsgs = [...chat.messages, { sender: currentUser.uid, text: txt }];
-            
-            try {
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'chats', currentChatId), { messages: newMsgs });
-                inp.value = '';
-            } catch(e) {}
+            try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'chats', currentChatId), { messages: [...chat.messages, { sender: currentUser.uid, text: txt }] }); inp.value = ''; } catch(e) {}
         };
 
-        // --- Buscar ---
-        document.getElementById('searchInput').addEventListener('input', renderSearch);
-        function renderSearch() {
-            const queryTxt = document.getElementById('searchInput').value.toLowerCase();
-            const container = document.getElementById('searchResults');
-            if(!queryTxt) { container.innerHTML = ''; return; }
-            const results = allPublicItems.filter(item => {
-                const user = allUsers[item.uid];
-                return item.name.toLowerCase().includes(queryTxt) || (user && user.status && user.status.toLowerCase().includes(queryTxt));
-            });
-            container.innerHTML = results.map(item => `
-                <div class="bg-[var(--panel-bg)] border border-[var(--border-color)] p-3 rounded-3xl flex flex-col items-center hover:border-[var(--primary)] transition-colors">
-                    <img src="${item.photos[0]}" class="w-full h-28 object-cover rounded-[1.5rem] mb-3">
-                    <h4 class="text-white font-bold truncate w-full text-center text-lg">${item.name}</h4>
-                    <span class="text-xs text-[var(--text-light)] truncate bg-[var(--panel-light)] px-3 py-1 rounded-full mt-1">De: ${allUsers[item.uid]?.displayName || 'Anon'}</span>
-                </div>
-            `).join('');
-        }
+        // Modal Opciones de Conclusión
+        window.openConclusionModal = () => document.getElementById('conclusionModal').classList.remove('hidden');
+        window.closeConclusionModal = () => document.getElementById('conclusionModal').classList.add('hidden');
+
+        window.finalizeTransaction = async (type) => {
+            if(!currentChatId) return;
+            const chatRef = doc(db, 'artifacts', appId, 'public', 'data', 'chats', currentChatId);
+            const chatData = allChats.find(c => c.id === currentChatId);
+            closeConclusionModal();
+
+            try {
+                if(type === 'success') {
+                    // Agrego mi voto
+                    await updateDoc(chatRef, { finishedBy: arrayUnion(currentUser.uid) });
+                    
+                    // Si el otro ya había votado success también, la array ahora tiene 2 (yo y el otro)
+                    // Hacemos el check manual ya que el arrayUnion puede tomar unos ms en sincronizar al cliente local
+                    const othersVotes = chatData.finishedBy || [];
+                    if(othersVotes.length >= 1) {
+                        // ¡Ambos votaron! Cerrar trato y dar puntos a ambos.
+                        await updateDoc(chatRef, { status: 'completed' });
+                        // Dar punto al current user
+                        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', currentUser.uid), { successfulTrades: increment(1) });
+                        // Dar punto al otro usuario
+                        const otherUid = chatData.participants.find(id => id !== currentUser.uid);
+                        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', otherUid), { successfulTrades: increment(1) });
+                        showMessage("¡Trato cerrado con éxito!");
+                    } else {
+                        showMessage("Marcado exitoso. Esperando a la otra parte.");
+                    }
+                } else if(type === 'cancelled') {
+                    await updateDoc(chatRef, { status: 'cancelled' });
+                    showMessage("El trato fue marcado como cancelado.");
+                } else if(type === 'reported') {
+                    await updateDoc(chatRef, { status: 'reported', reportedBy: arrayUnion(currentUser.uid) });
+                    showMessage("Usuario reportado.", true);
+                }
+            } catch (e) { showMessage("Error procesando acción", true); }
+        };
 
     </script>
 </body>
