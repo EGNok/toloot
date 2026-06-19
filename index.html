@@ -3,22 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ToLoot</title>
+    <title>ToLoot - El Trueque Digital</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0B0F19;      
-            --panel-bg: #151C2C;      
-            --panel-light: #1E293B;   
-            --primary: #6366F1;       
-            --primary-dark: #4F46E5;  
-            --secondary: #10B981;     
-            --danger: #F43F5E;        
-            --border-color: rgba(255, 255, 255, 0.08);  
-            --text-main: #F8FAFC;     
-            --text-light: #94A3B8;    
-            --grid-line: rgba(255, 255, 255, 0.03); 
+            --bg-color: #DDE5B6;      /* Verde crema (Pistacho suave) */
+            --panel-bg: #FDF8E1;      /* Crema claro (Papel) */
+            --panel-light: #FFFFFF;   /* Blanco puro */
+            --primary: #FF6B6B;       /* Rojo Coral Retro */
+            --primary-dark: #E55A5A;  
+            --secondary: #4ECDC4;     /* Turquesa vintage */
+            --danger: #FF3366;        
+            --border-color: #111827;  /* Negro fuerte para bordes */
+            --text-main: #111827;     /* Texto principal negro */
+            --text-light: #4B5563;    /* Gris oscuro */
+            --grid-line: rgba(17, 24, 39, 0.2); 
+            
+            --neo-border: 3px solid var(--border-color);
+            --neo-shadow: 4px 4px 0px var(--border-color);
+            --neo-shadow-hover: 2px 2px 0px var(--border-color);
         }
 
         html, body {
@@ -28,32 +32,59 @@
             font-family: 'Outfit', sans-serif; touch-action: manipulation;
         }
 
-        .glass-panel {
-            background: rgba(21, 28, 44, 0.7);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--border-color);
+        /* Neobrutalism Components */
+        .neo-panel {
+            background-color: var(--panel-bg);
+            border: var(--neo-border);
+            border-radius: 12px;
+            box-shadow: var(--neo-shadow);
         }
 
-        .sleek-btn {
-            background-color: var(--primary); color: white; border-radius: 9999px;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer; font-weight: 600; display: inline-flex;
-            align-items: center; justify-content: center; border: none;
+        .neo-window-header {
+            background-color: var(--panel-bg);
+            border-bottom: var(--neo-border);
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border-top-left-radius: 9px;
+            border-top-right-radius: 9px;
         }
-        .sleek-btn:active { transform: scale(0.95); }
-        .sleek-btn-success { background-color: var(--secondary); color: white; }
-        .sleek-btn-danger { background-color: var(--danger); color: white; }
-        .sleek-btn-outline { background-color: transparent; border: 1px solid var(--text-light); color: var(--text-main); }
-        .sleek-btn-warning { background-color: #F59E0B; color: white; } 
+        .neo-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--border-color); }
+        .neo-dot.red { background-color: #FF5F56; }
+        .neo-dot.yellow { background-color: #FFBD2E; }
+        .neo-dot.green { background-color: #27C93F; }
 
-        .sleek-input {
-            background-color: rgba(0,0,0,0.2); border: 1px solid var(--border-color);
-            color: var(--text-main); border-radius: 16px; padding: 14px 16px; transition: all 0.3s;
+        .neo-btn {
+            background-color: var(--primary); color: white; border-radius: 8px;
+            border: var(--neo-border); box-shadow: var(--neo-shadow);
+            transition: all 0.1s ease-in-out;
+            cursor: pointer; font-weight: 800; display: inline-flex;
+            align-items: center; justify-content: center; text-transform: uppercase;
         }
-        .sleek-input:focus {
-            outline: none; border-color: var(--primary); background-color: rgba(99, 102, 241, 0.05);
-            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        .neo-btn:active { transform: translate(2px, 2px); box-shadow: var(--neo-shadow-hover); }
+        .neo-btn-success { background-color: var(--secondary); color: var(--text-main); }
+        .neo-btn-danger { background-color: var(--danger); color: white; }
+        .neo-btn-outline { background-color: var(--panel-light); color: var(--text-main); }
+        .neo-btn-warning { background-color: #FFD166; color: var(--text-main); } 
+
+        .neo-input {
+            background-color: var(--panel-light); border: var(--neo-border);
+            color: var(--text-main); border-radius: 8px; padding: 12px 16px; 
+            font-weight: 600; font-size: 16px; transition: all 0.2s; box-shadow: inset 2px 2px 0px rgba(0,0,0,0.05);
         }
+        .neo-input:focus { outline: none; background-color: #fff; box-shadow: 2px 2px 0px var(--border-color); }
+
+        .neo-pill {
+            background-color: var(--panel-light); border: 2px solid var(--border-color);
+            color: var(--text-main); font-weight: 800; padding: 6px 16px; border-radius: 999px;
+            box-shadow: 2px 2px 0px var(--border-color); white-space: nowrap; transition: all 0.1s;
+        }
+        .neo-pill.active { background-color: var(--primary); color: white; }
+        .neo-pill:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0px var(--border-color); }
+
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { scrollbar-width: none; }
 
         /* Vistas */
         .view-section {
@@ -64,82 +95,89 @@
         #view-backpack.active { display: flex; flex-direction: column; padding-bottom: 0; padding-top: 4rem; }
         #view-feed { padding: 0; }
         
-        .feed-wrapper { width: 100%; height: 100%; position: relative; }
-        @media (min-width: 640px) {
-            .feed-wrapper {
-                max-width: 420px; margin: 0 auto; height: calc(100dvh - 2rem);
-                margin-top: 1rem; border-radius: 32px; overflow: hidden;
-                border: 1px solid var(--border-color); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            }
-        }
+        .feed-wrapper { width: 100%; height: 100%; position: relative; background-color: #000; }
 
-        .feed-container { height: 100%; scroll-snap-type: y mandatory; overflow-y: auto; scrollbar-width: none; }
+        /* TIKTOK STYLE FEED */
+        .feed-container { height: 100%; width: 100%; scroll-snap-type: y mandatory; overflow-y: auto; scrollbar-width: none; }
         .feed-container::-webkit-scrollbar { display: none; }
-        .feed-item { height: 100%; width: 100%; scroll-snap-align: start; position: relative; background-color: #000; }
-        .feed-photo { width: 100%; height: 100%; object-fit: cover; }
-        .feed-gradient { background: linear-gradient(to top, var(--bg-color) 0%, rgba(11,15,25,0.7) 40%, transparent 100%); }
+        .feed-item { height: 100dvh; width: 100vw; scroll-snap-align: start; position: relative; background-color: var(--bg-color); overflow: hidden; }
         
-        .feed-card {
-            opacity: 0.9; max-height: 90px; overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .feed-card.expanded {
-            opacity: 1; max-height: 400px; background: rgba(21, 28, 44, 0.95); border-color: rgba(99, 102, 241, 0.4);
-        }
+        .feed-carousel { display: flex; width: 100%; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+        .feed-carousel::-webkit-scrollbar { display: none; }
+        .feed-photo-container { flex: 0 0 100vw; height: 100%; scroll-snap-align: center; position: relative; }
+        .feed-photo { width: 100%; height: 100%; object-fit: cover; }
+        
+        /* Gradiente para leer el texto sobre fotos claras o oscuras */
+        .feed-gradient { position: absolute; bottom: 0; left: 0; right: 0; height: 60%; background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.4) 50%, transparent 100%); pointer-events: none; }
 
-        /* Inventario */
+        /* Tarjeta de info flotante tipo neo */
+        .feed-card {
+            position: absolute; bottom: 100px; left: 16px; right: 80px;
+            background: var(--panel-bg); border: var(--neo-border); border-radius: 12px;
+            padding: 12px; box-shadow: var(--neo-shadow); color: var(--text-main);
+            max-height: 110px; overflow: hidden; transition: all 0.3s ease; opacity: 0.95;
+        }
+        .feed-card.expanded { max-height: 400px; opacity: 1; z-index: 10; }
+
+        .carousel-indicators { position: absolute; top: 16px; left: 50%; transform: translateX(-50%); display: flex; gap: 4px; z-index: 10; }
+        .car-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.5); border: 1px solid rgba(0,0,0,0.5); }
+        .car-dot.active { background: var(--primary); border-color: #000; transform: scale(1.2); }
+
+        /* Inventario Tetris */
         .inventory-view { touch-action: none; }
         .re-grid {
-            display: grid; background-color: rgba(0,0,0,0.2);
-            border: 1px solid var(--border-color); border-radius: 16px;
+            display: grid; background-color: var(--panel-light);
+            border: var(--neo-border); border-radius: 8px; box-shadow: inset 4px 4px 0px rgba(0,0,0,0.05);
             position: relative; margin: 0 auto; overflow: hidden; box-sizing: content-box;
         }
         .re-cell { border-right: 1px solid var(--grid-line); border-bottom: 1px solid var(--grid-line); box-sizing: border-box; }
         .re-item {
-            position: absolute; background-color: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 12px;
+            position: absolute; background-color: var(--panel-bg);
+            border: 2px solid var(--border-color); border-radius: 8px;
             display: flex; align-items: center; justify-content: center;
             cursor: grab; user-select: none; touch-action: none; transition: transform 0.1s; overflow: hidden;
+            box-shadow: 2px 2px 0px rgba(0,0,0,0.3);
         }
         .re-item:active { cursor: grabbing; transform: scale(0.92); border-color: var(--primary); }
-        .re-item img { width: 90%; height: 90%; object-fit: contain; pointer-events: none; border-radius: 8px; }
+        .re-item img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
 
-        .drag-clone { position: fixed; pointer-events: none; z-index: 1000; box-shadow: 0 20px 40px rgba(0,0,0,0.8); transform: scale(1.05); }
-        ::-webkit-scrollbar { display: none; }
+        .drag-clone { position: fixed; pointer-events: none; z-index: 1000; box-shadow: 10px 10px 0px rgba(0,0,0,0.4); transform: scale(1.05); border-width: 3px; }
 
-        /* Iconos Nav */
-        .nav-icon { color: var(--text-light); transition: all 0.3s; }
+        /* Iconos Nav Bottom */
+        .nav-icon { color: var(--text-main); transition: all 0.2s; }
         .nav-btn.active .nav-icon { color: white; }
+        .nav-btn.active { background-color: var(--primary); border-color: var(--border-color); }
         
-        .custom-checkbox { width: 20px; height: 20px; border-radius: 6px; border: 2px solid var(--primary); cursor: pointer; appearance: none; outline: none; background-color: rgba(0,0,0,0.2); position: relative; }
-        .custom-checkbox:checked { background-color: var(--primary); }
-        .custom-checkbox:checked::after { content: '✓'; position: absolute; color: white; font-size: 14px; top: -1px; left: 3px; font-weight: bold; }
-
-        .chat-bubble-me { background-color: var(--primary); color: white; border-radius: 20px 20px 4px 20px; padding: 10px 16px; max-width: 80%; }
-        .chat-bubble-other { background-color: var(--panel-light); border: 1px solid var(--border-color); color: white; border-radius: 20px 20px 20px 4px; padding: 10px 16px; max-width: 80%; }
+        .chat-bubble-me { background-color: var(--primary); color: white; border: 2px solid var(--border-color); border-radius: 16px 16px 4px 16px; padding: 10px 16px; max-width: 80%; box-shadow: 2px 2px 0px var(--border-color); font-weight: 600; }
+        .chat-bubble-other { background-color: var(--panel-light); color: var(--text-main); border: 2px solid var(--border-color); border-radius: 16px 16px 16px 4px; padding: 10px 16px; max-width: 80%; box-shadow: 2px 2px 0px var(--border-color); font-weight: 600; }
         
-        details > summary { list-style: none; }
-        details > summary::-webkit-details-marker { display: none; }
-
-        .del-btn-hover:hover { color: var(--danger); background: rgba(244, 63, 94, 0.1); }
+        details > summary { list-style: none; } details > summary::-webkit-details-marker { display: none; }
     </style>
 </head>
 <body>
 
-    <!-- Header -->
-    <header class="fixed top-0 left-0 right-0 z-40 flex justify-between items-center px-5 py-4 pointer-events-none bg-gradient-to-b from-black/60 to-transparent">
-        <h1 class="text-3xl tracking-widest font-extrabold text-white pointer-events-auto drop-shadow-lg">
-            TOLOOT<span class="text-[var(--primary)]">.</span>
-        </h1>
-        <div class="pointer-events-auto flex items-center gap-3">
-            <div id="userRepHeader" class="hidden glass-panel px-3 py-1.5 rounded-full flex items-center gap-1 border border-[var(--primary)]/30">
-                <span class="text-xs text-[var(--primary)]">⭐</span>
-                <span id="hdrRep" class="text-sm font-bold text-white">0</span>
+    <!-- Header Flotante -->
+    <header class="fixed top-0 left-0 right-0 z-40 flex flex-col pointer-events-none">
+        <!-- Top Bar -->
+        <div class="flex justify-between items-center px-4 py-3 bg-gradient-to-b from-black/60 to-transparent">
+            <h1 class="text-3xl tracking-tighter font-black text-white pointer-events-auto" style="text-shadow: 2px 2px 0px #000;">
+                TOLOOT<span class="text-[var(--primary)]">.</span>
+            </h1>
+            <div class="pointer-events-auto flex items-center gap-2">
+                <div id="userRepHeader" class="hidden bg-white border-2 border-black px-2 py-1 rounded-md flex items-center gap-1 shadow-[2px_2px_0px_#000]">
+                    <span class="text-xs">⭐</span>
+                    <span id="hdrRep" class="text-sm font-black text-black">0</span>
+                </div>
+                <button onclick="toggleNotifications()" class="bg-[var(--panel-bg)] border-2 border-black w-10 h-10 flex items-center justify-center rounded-lg relative shadow-[2px_2px_0px_#000] active:translate-y-1 active:shadow-none transition-all">
+                    <svg class="w-5 h-5 text-black" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                    <div id="notifBadge" class="absolute -top-1 -right-1 w-3 h-3 bg-[var(--danger)] border border-black rounded-full hidden"></div>
+                </button>
             </div>
-            <button onclick="toggleNotifications()" class="glass-panel w-11 h-11 flex items-center justify-center rounded-full relative hover:bg-white/10 transition-colors">
-                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
-                <div id="notifBadge" class="absolute top-2 right-2 w-2.5 h-2.5 bg-[var(--danger)] rounded-full hidden"></div>
-            </button>
+        </div>
+
+        <!-- Category Filter (Solo visible en Feed) -->
+        <div id="categoryFilter" class="w-full overflow-x-auto hide-scrollbar px-4 pb-2 pointer-events-auto hidden space-x-2">
+            <!-- Inyectado por JS -->
         </div>
     </header>
 
@@ -151,46 +189,46 @@
             <div class="feed-wrapper">
                 <div id="feedContainer" class="feed-container w-full"></div>
                 <div id="feedEmpty" class="hidden h-full flex flex-col items-center justify-center text-center p-8 bg-[var(--bg-color)]">
-                    <div class="w-20 h-20 bg-[var(--panel-light)] rounded-full flex items-center justify-center mb-6">
-                        <svg class="w-10 h-10 text-[var(--text-light)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    <div class="neo-panel p-6 flex flex-col items-center">
+                        <svg class="w-12 h-12 mb-4 text-black" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                        <p class="text-xl font-black text-black mb-2 uppercase">Nada por aquí</p>
+                        <p class="text-[var(--text-light)] text-sm font-semibold">Cambia de categoría o sé el primero en subir algo.</p>
                     </div>
-                    <p class="text-xl font-bold text-white mb-2">Aún no hay objetos</p>
-                    <p class="text-[var(--text-light)] text-sm mb-8">Sé el primero en iniciar un intercambio.</p>
                 </div>
             </div>
         </div>
 
         <!-- PANTALLA: CHATS (Bandeja de Mensajes) -->
-        <div id="view-chats" class="view-section">
-            <div class="max-w-md mx-auto w-full px-5">
-                <h2 class="text-3xl font-extrabold mb-6 text-white tracking-wide">Mensajes</h2>
-                <div id="chatsListContainer" class="flex flex-col gap-3">
+        <div id="view-chats" class="view-section bg-[var(--bg-color)]">
+            <div class="max-w-md mx-auto w-full px-5 pb-20">
+                <h2 class="text-3xl font-black mb-6 text-black tracking-tight uppercase" style="text-shadow: 2px 2px 0px #fff;">Mensajes</h2>
+                <div id="chatsListContainer" class="flex flex-col gap-4">
                     <!-- Lista de chats inyectada por JS -->
                 </div>
-                <div id="chatsEmpty" class="hidden flex flex-col items-center justify-center text-center p-8 mt-10">
-                    <svg class="w-16 h-16 text-[var(--text-light)] mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
-                    <p class="text-[var(--text-light)]">No tienes conversaciones activas.</p>
-                    <button onclick="switchTab('feed')" class="mt-4 px-6 py-2 sleek-btn sleek-btn-outline rounded-full text-sm">Explorar el mercado</button>
+                <div id="chatsEmpty" class="hidden neo-panel p-8 flex flex-col items-center text-center mt-10">
+                    <p class="text-black font-black uppercase mb-2">Buzón Vacío</p>
+                    <p class="text-sm font-semibold text-[var(--text-light)] mb-4">Inicia un trueque para chatear.</p>
+                    <button onclick="switchTab('feed')" class="px-6 py-2 neo-btn text-sm">Ver Mercado</button>
                 </div>
             </div>
         </div>
 
         <!-- PANTALLA: MOCHILA -->
-        <div id="view-backpack" class="view-section inventory-view">
+        <div id="view-backpack" class="view-section inventory-view bg-[var(--bg-color)]">
             <div class="flex-1 overflow-y-auto px-4 py-2 flex flex-col relative w-full pb-8" id="public-area">
                 <div class="max-w-xl mx-auto w-full">
-                    <div class="flex justify-between items-center mb-4 mt-2">
+                    <div class="flex justify-between items-end mb-4 mt-2">
                         <div>
-                            <h2 class="text-2xl font-bold text-white">Mostrador</h2>
-                            <p class="text-xs text-[var(--text-light)] flex gap-2 items-center">
-                                El mundo puede ver esto
-                                <span class="bg-[var(--primary)] text-white font-bold px-2 py-0.5 rounded-full text-[10px]" id="layoutScoreDisplay">Pts: 0</span>
+                            <h2 class="text-3xl font-black text-black tracking-tighter uppercase" style="text-shadow: 2px 2px 0px #fff;">Mostrador</h2>
+                            <p class="text-xs text-black font-bold flex gap-2 items-center uppercase tracking-wide mt-1">
+                                Público
+                                <span class="bg-[var(--primary)] text-white border border-black font-black px-2 py-0.5 rounded text-[10px] shadow-[1px_1px_0px_#000]" id="layoutScoreDisplay">PTS: 0</span>
                             </p>
                         </div>
-                        <button onclick="openAddItemModal()" class="px-5 py-2 text-sm sleek-btn shadow-[0_0_15px_rgba(99,102,241,0.3)]">+ Añadir</button>
+                        <button onclick="openAddItemModal()" class="px-4 py-2 text-sm neo-btn">+ Añadir</button>
                     </div>
-                    <!-- Contenedor adaptado a celular para no causar overflow -->
-                    <div class="p-2 bg-[var(--panel-bg)] rounded-[2rem] w-full flex justify-center border border-[var(--border-color)] overflow-hidden">
+                    <!-- Contenedor adaptado a celular -->
+                    <div class="p-2 neo-panel w-full flex justify-center overflow-hidden">
                         <div id="grid-public-container" class="w-full flex justify-center overflow-hidden touch-none">
                             <div id="grid-public" class="re-grid" data-grid="public"></div>
                         </div>
@@ -198,66 +236,73 @@
                 </div>
             </div>
 
-            <div id="drawer-handle" class="w-full h-10 glass-panel cursor-ns-resize flex items-center justify-center shrink-0 rounded-t-[2rem] border-t border-[var(--border-color)] touch-none relative z-20 shadow-[0_-10px_40px_rgba(0,0,0,0.8)]">
-                <div class="w-12 h-1 bg-[var(--text-light)] rounded-full opacity-30"></div>
+            <!-- Manija del Cajón Privado -->
+            <div id="drawer-handle" class="w-full h-10 bg-[var(--secondary)] cursor-ns-resize flex items-center justify-center shrink-0 border-t-[3px] border-black rounded-t-[16px] touch-none relative z-20 shadow-[0_-4px_0px_rgba(0,0,0,0.1)]">
+                <div class="w-16 h-1.5 bg-black rounded-full opacity-50"></div>
+                <div class="absolute right-4 text-[10px] font-black uppercase text-black">Desliza</div>
             </div>
 
-            <div id="private-area" class="h-[40vh] overflow-y-auto px-4 py-5 bg-[var(--panel-light)] shrink-0 flex flex-col relative w-full pb-28 z-10">
+            <div id="private-area" class="h-[40vh] overflow-y-auto px-4 py-5 bg-[var(--panel-bg)] shrink-0 flex flex-col relative w-full pb-28 z-10 border-t-0 border-black">
                 <div class="max-w-xl mx-auto w-full">
                     <div class="flex items-center justify-between mb-4">
-                        <h2 class="text-lg font-bold text-white">Inventario Privado</h2>
-                        <span class="text-[10px] text-[var(--text-main)] font-medium bg-[var(--panel-bg)] px-2 py-1 rounded-full border border-[var(--border-color)]">Toca para rotar, arrastra al mostrador</span>
+                        <h2 class="text-xl font-black text-black uppercase">Mochila Privada</h2>
+                        <span class="text-[9px] text-black font-black uppercase bg-white px-2 py-1 border-2 border-black rounded shadow-[2px_2px_0px_#000]">Toca para rotar</span>
                     </div>
-                    <!-- Contenedor adaptado a celular -->
-                    <div class="p-2 bg-[var(--bg-color)] rounded-[2rem] w-full flex justify-center shadow-inner border border-[var(--border-color)] overflow-hidden">
+                    <div class="p-2 bg-white border-[3px] border-black rounded-xl w-full flex justify-center overflow-hidden shadow-inner">
                          <div id="grid-private-container" class="w-full flex justify-center overflow-hidden touch-none">
-                             <div id="grid-private" class="re-grid" data-grid="private"></div>
+                             <div id="grid-private" class="re-grid bg-gray-100" data-grid="private"></div>
                          </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- PANTALLA: TU PERFIL (Privado) -->
-        <div id="view-profile" class="view-section">
-            <div class="max-w-md mx-auto w-full px-5">
-                <h2 class="text-3xl font-extrabold mb-6 text-white tracking-wide">Tu Perfil</h2>
-                <div class="glass-panel p-6 rounded-[2rem] w-full shadow-2xl">
-                    <div class="flex justify-center mb-6">
-                        <div class="relative cursor-pointer group" onclick="document.getElementById('profilePicInput').click()">
-                            <img id="profilePreview" src="https://api.dicebear.com/7.x/avataaars/svg?seed=fallback" class="w-28 h-28 object-cover rounded-full border-2 border-[var(--primary)] shadow-[0_0_20px_rgba(99,102,241,0.2)]">
-                            <div class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                            </div>
-                            <input type="file" id="profilePicInput" class="hidden" accept="image/*" onchange="handleProfilePic(event)">
-                        </div>
+        <!-- PANTALLA: TU PERFIL -->
+        <div id="view-profile" class="view-section bg-[var(--bg-color)]">
+            <div class="max-w-md mx-auto w-full px-5 pb-20">
+                <h2 class="text-3xl font-black mb-6 text-black tracking-tighter uppercase" style="text-shadow: 2px 2px 0px #fff;">Tu Perfil</h2>
+                <div class="neo-panel w-full p-0 overflow-hidden">
+                    <div class="neo-window-header">
+                        <div class="neo-dot red"></div><div class="neo-dot yellow"></div><div class="neo-dot green"></div>
+                        <span class="ml-auto text-xs font-bold uppercase tracking-widest text-[var(--text-main)]">ID_USER</span>
                     </div>
                     
-                    <div class="flex justify-center gap-6 mb-8 border-y border-[var(--border-color)] py-4">
-                        <div class="text-center">
-                            <p class="text-xs text-[var(--text-light)] uppercase tracking-wider mb-1">Tratos Exitosos</p>
-                            <p class="text-2xl font-black text-[var(--secondary)]" id="profRepText">0</p>
-                        </div>
-                        <div class="w-px bg-[var(--border-color)]"></div>
-                        <div class="text-center">
-                            <p class="text-xs text-[var(--text-light)] uppercase tracking-wider mb-1">Pts Mostrador</p>
-                            <p class="text-2xl font-black text-[var(--primary)]" id="profLayoutText">0</p>
-                        </div>
-                    </div>
-
-                    <div class="space-y-4">
-                        <div>
-                            <label class="text-[var(--text-light)] text-xs font-semibold ml-2 uppercase">Nombre de Usuario</label>
-                            <input type="text" id="profName" class="w-full text-md sleek-input mt-1">
-                        </div>
-                        <div>
-                            <label class="text-[var(--text-light)] text-xs font-semibold ml-2 uppercase">Bio / ¿Qué buscas?</label>
-                            <textarea id="profStatus" rows="3" class="w-full text-md sleek-input mt-1 resize-none" placeholder="Busco tecnología, ofrezco ropa..."></textarea>
+                    <div class="p-6">
+                        <div class="flex justify-center mb-6">
+                            <div class="relative cursor-pointer group" onclick="document.getElementById('profilePicInput').click()">
+                                <img id="profilePreview" src="https://api.dicebear.com/7.x/avataaars/svg?seed=fallback" class="w-28 h-28 object-cover rounded-xl border-[3px] border-black shadow-[4px_4px_0px_#000] bg-white">
+                                <div class="absolute inset-0 bg-black/50 rounded-xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path></svg>
+                                </div>
+                                <input type="file" id="profilePicInput" class="hidden" accept="image/*" onchange="handleProfilePic(event)">
+                            </div>
                         </div>
                         
-                        <div class="pt-6 space-y-3">
-                            <button onclick="saveProfile()" class="py-3.5 text-md sleek-btn w-full shadow-[0_5px_15px_rgba(99,102,241,0.2)]">Guardar Cambios</button>
-                            <button onclick="logout()" class="py-3.5 text-md sleek-btn sleek-btn-outline w-full">Cerrar Sesión</button>
+                        <div class="flex justify-center gap-4 mb-6">
+                            <div class="bg-white border-2 border-black rounded-lg p-3 text-center flex-1 shadow-[2px_2px_0px_#000]">
+                                <p class="text-[10px] font-black uppercase tracking-wider mb-1">Tratos</p>
+                                <p class="text-2xl font-black text-[var(--secondary)]" id="profRepText" style="-webkit-text-stroke: 1px black;">0</p>
+                            </div>
+                            <div class="bg-white border-2 border-black rounded-lg p-3 text-center flex-1 shadow-[2px_2px_0px_#000]">
+                                <p class="text-[10px] font-black uppercase tracking-wider mb-1">Tetris Pts</p>
+                                <p class="text-2xl font-black text-[var(--primary)]" id="profLayoutText" style="-webkit-text-stroke: 1px black;">0</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-black text-[11px] font-black uppercase mb-1 block">Nombre Comercial</label>
+                                <input type="text" id="profName" class="w-full neo-input">
+                            </div>
+                            <div>
+                                <label class="text-black text-[11px] font-black uppercase mb-1 block">Busco / Ofrezco</label>
+                                <textarea id="profStatus" rows="3" class="w-full neo-input resize-none" placeholder="Colecciono cartas Pokémon, ofrezco consolas..."></textarea>
+                            </div>
+                            
+                            <div class="pt-4 space-y-3">
+                                <button onclick="saveProfile()" class="py-3 w-full neo-btn text-lg">Guardar</button>
+                                <button onclick="logout()" class="py-3 w-full neo-btn neo-btn-danger text-lg">Salir</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -267,258 +312,203 @@
     </main>
 
     <!-- Barra Navegación -->
-    <nav class="fixed bottom-5 left-1/2 transform -translate-x-1/2 glass-panel rounded-full px-2 py-2 flex space-x-1 z-30 shadow-[0_20px_40px_rgba(0,0,0,0.8)] items-center w-[92%] max-w-[380px] justify-between">
-        <button onclick="switchTab('feed')" class="nav-btn w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 active bg-[var(--primary)]" data-tab="feed">
-            <svg class="w-6 h-6 nav-icon text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+    <nav class="fixed bottom-4 left-1/2 transform -translate-x-1/2 neo-panel rounded-2xl px-2 py-2 flex space-x-2 z-30 shadow-[6px_6px_0px_rgba(0,0,0,1)] items-center w-[92%] max-w-[350px] justify-between">
+        <button onclick="switchTab('feed')" class="nav-btn w-12 h-12 rounded-xl flex items-center justify-center transition-all border-2 border-transparent active" data-tab="feed">
+            <svg class="w-6 h-6 nav-icon" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
         </button>
-        <button onclick="requireAuth('chats')" class="nav-btn w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-white/5" data-tab="chats">
-            <svg class="w-6 h-6 nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+        <button onclick="requireAuth('chats')" class="nav-btn w-12 h-12 rounded-xl flex items-center justify-center transition-all border-2 border-transparent" data-tab="chats">
+            <svg class="w-6 h-6 nav-icon" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
         </button>
-        <button onclick="requireAuth('backpack')" class="nav-btn w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-white/5" data-tab="backpack">
-            <svg class="w-6 h-6 nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+        <button onclick="requireAuth('backpack')" class="nav-btn w-12 h-12 rounded-xl flex items-center justify-center transition-all border-2 border-transparent" data-tab="backpack">
+            <svg class="w-6 h-6 nav-icon" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
         </button>
-        <button onclick="requireAuth('profile')" class="nav-btn w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300 hover:bg-white/5" data-tab="profile">
-            <svg class="w-6 h-6 nav-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+        <button onclick="requireAuth('profile')" class="nav-btn w-12 h-12 rounded-xl flex items-center justify-center transition-all border-2 border-transparent" data-tab="profile">
+            <svg class="w-6 h-6 nav-icon" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
         </button>
     </nav>
 
-    <!-- MODAL: Perfil Público (Otros usuarios) -->
-    <div id="publicProfileModal" class="fixed inset-0 bg-black/80 z-[105] hidden flex flex-col items-center justify-center px-4 backdrop-blur-md">
-        <div class="glass-panel w-full max-w-sm rounded-[2rem] p-6 shadow-2xl flex flex-col items-center relative">
-            <button onclick="closePublicProfile()" class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center bg-white/5 rounded-full text-[var(--text-light)] hover:text-white">✕</button>
-            
-            <img id="pubProfImg" src="" class="w-24 h-24 object-cover rounded-full border-2 border-[var(--primary)] shadow-[0_0_20px_rgba(99,102,241,0.2)] mb-4 mt-2">
-            <h3 id="pubProfName" class="text-2xl font-bold text-white mb-1">Usuario</h3>
-            <p id="pubProfStatus" class="text-sm text-[var(--text-light)] text-center mb-4 italic">"Sin biografía"</p>
-            
-            <div class="bg-black/30 rounded-2xl w-full p-4 mb-4 flex justify-between items-center border border-[var(--border-color)]">
-                <span class="text-sm text-[var(--text-light)] font-bold uppercase tracking-wider">Tratos Exitosos</span>
-                <span class="text-2xl font-black text-[var(--secondary)]" id="pubProfRep">0</span>
-            </div>
-
-            <details class="w-full bg-[var(--panel-bg)] rounded-xl border border-[var(--border-color)] overflow-hidden group">
-                <summary class="p-3 text-sm font-bold text-white cursor-pointer flex justify-between items-center hover:bg-white/5 transition-colors">
-                    <span class="flex items-center gap-2">
-                        <svg class="w-4 h-4 text-[var(--danger)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                        Reportes de la comunidad
-                    </span>
-                    <svg class="w-4 h-4 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </summary>
-                <div class="p-3 bg-black/20 border-t border-[var(--border-color)] max-h-40 overflow-y-auto" id="pubProfReportsList"></div>
-            </details>
-        </div>
-    </div>
+    <!-- MODALES VARIOS CON ESTÉTICA NEOBRUTALISTA -->
 
     <!-- MODAL: Notificaciones -->
-    <div id="notifModal" class="fixed inset-0 bg-black/80 z-[60] hidden flex flex-col items-center justify-start pt-20 px-4 backdrop-blur-md">
-        <div class="w-full max-w-md glass-panel rounded-[2rem] p-5 flex flex-col max-h-[75vh] shadow-2xl">
-            <div class="flex justify-between items-center mb-6 px-2 border-b border-[var(--border-color)] pb-4">
-                <h2 class="text-xl font-bold text-white">Notificaciones</h2>
-                <button onclick="toggleNotifications()" class="w-8 h-8 flex items-center justify-center bg-white/5 rounded-full text-[var(--text-light)] hover:text-white">✕</button>
+    <div id="notifModal" class="fixed inset-0 bg-[var(--bg-color)] z-[60] hidden flex flex-col items-center justify-start pt-20 px-4">
+        <div class="w-full max-w-md neo-panel p-0 flex flex-col max-h-[75vh]">
+            <div class="neo-window-header">
+                <span class="text-sm font-black uppercase text-black pl-2">Alertas</span>
+                <button onclick="toggleNotifications()" class="ml-auto w-6 h-6 border-2 border-black bg-[var(--danger)] text-white font-bold flex items-center justify-center">X</button>
             </div>
-            <div id="notifList" class="flex-1 overflow-y-auto space-y-3 pr-2 pb-4"></div>
+            <div class="p-4 flex-1 overflow-y-auto bg-white">
+                <div id="notifList" class="space-y-3"></div>
+            </div>
         </div>
     </div>
 
     <!-- MODAL: Mesa de Trato (Negociación Cruzada) -->
     <div id="tradeModal" class="fixed inset-0 bg-[var(--bg-color)] z-[70] hidden flex flex-col">
-        <div class="flex justify-between items-center p-5 border-b border-[var(--border-color)] bg-black/40 backdrop-blur-md">
-            <h2 class="text-xl font-black text-[var(--primary)] tracking-wider">MESA DE TRATO</h2>
-            <button onclick="closeTradeModal()" class="text-[var(--text-light)] w-8 h-8 flex items-center justify-center bg-white/5 rounded-full hover:text-white">✕</button>
+        <div class="neo-window-header rounded-none">
+            <span class="text-lg font-black uppercase text-black tracking-wider pl-2" style="-webkit-text-stroke: 0.5px white;">🤝 MESA DE TRUQUE</span>
+            <button onclick="closeTradeModal()" class="ml-auto w-8 h-8 border-2 border-black bg-[var(--danger)] text-white font-bold text-lg flex items-center justify-center active:translate-y-1">X</button>
         </div>
         
-        <div class="flex-1 overflow-y-auto p-5 space-y-5 bg-gradient-to-b from-transparent to-[var(--panel-bg)]">
-            <!-- Lo que recibes de la otra persona -->
-            <div class="bg-[var(--panel-light)] rounded-3xl p-4 border border-[var(--border-color)] relative shadow-lg">
-                <div class="absolute -top-3 left-6 bg-[var(--panel-bg)] px-3 py-1 rounded-full text-xs font-bold text-[var(--text-light)] border border-[var(--border-color)]" id="tradeOtherName">Lo que recibes</div>
-                <div id="tradeTheirSelected" class="flex flex-wrap gap-2 min-h-[50px] mt-3"></div>
+        <div class="flex-1 overflow-y-auto p-4 space-y-6 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+CjxwYXRoIGQ9Ik0wIDEwaDIwdjFIMHoiIGZpbGw9IiMwMDAiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPgo8cGF0aCBkPSJNMTAgMHYyMGgxVjB6IiBmaWxsPSIjMDAwIiBmaWxsLW9wYWNpdHk9IjAuMDUiLz4KPC9zdmc+')]">
+            
+            <!-- Lo que recibes -->
+            <div class="neo-panel p-4 bg-white relative">
+                <div class="absolute -top-3 left-4 bg-[var(--secondary)] px-3 py-1 border-2 border-black text-xs font-black uppercase text-black shadow-[2px_2px_0px_#000]" id="tradeOtherName">Recibes</div>
+                <div id="tradeTheirSelected" class="flex flex-wrap gap-2 min-h-[60px] mt-2"></div>
             </div>
             
-            <div class="text-center text-xl text-[var(--primary)] font-bold opacity-30">⇅</div>
-            
-            <!-- Lo que ofreces tú -->
-            <div class="bg-[var(--primary)]/10 rounded-3xl p-4 border border-[var(--primary)]/30 relative shadow-lg">
-                <div class="absolute -top-3 left-6 bg-[var(--primary)] px-3 py-1 rounded-full text-xs font-bold text-white shadow-[0_0_10px_rgba(99,102,241,0.5)]">Tus objetos ofrecidos</div>
-                <div id="tradeMySelected" class="flex flex-wrap gap-2 min-h-[50px] mt-3"></div>
+            <div class="text-center">
+                <span class="inline-block bg-white border-2 border-black rounded-full px-3 py-1 text-xl font-black shadow-[2px_2px_0px_#000]">⇅</span>
             </div>
             
-            <div class="pt-4 space-y-4">
-                <!-- Mostrador de él/ella para elegir -->
-                <div>
-                    <h3 class="text-[10px] font-bold text-[var(--text-light)] mb-2 pl-2 uppercase tracking-wide" id="tradeTheirInvTitle">Elegir de su mostrador:</h3>
-                    <div id="tradeTheirInventory" class="flex overflow-x-auto space-x-2 pb-2 scrollbar-hide"></div>
+            <!-- Lo que ofreces -->
+            <div class="neo-panel p-4 bg-white relative">
+                <div class="absolute -top-3 left-4 bg-[var(--primary)] px-3 py-1 border-2 border-black text-xs font-black uppercase text-white shadow-[2px_2px_0px_#000]">Tus objetos</div>
+                <div id="tradeMySelected" class="flex flex-wrap gap-2 min-h-[60px] mt-2"></div>
+            </div>
+            
+            <div class="pt-2 space-y-4">
+                <div class="bg-[var(--panel-bg)] border-2 border-black p-3 rounded-xl shadow-[4px_4px_0px_#000]">
+                    <h3 class="text-[10px] font-black text-black mb-2 uppercase tracking-widest" id="tradeTheirInvTitle">Su Mostrador:</h3>
+                    <div id="tradeTheirInventory" class="flex overflow-x-auto space-x-2 pb-2 hide-scrollbar"></div>
                 </div>
-                <!-- Tu mostrador para elegir -->
-                <div>
-                    <h3 class="text-[10px] font-bold text-[var(--text-light)] mb-2 pl-2 uppercase tracking-wide">Elegir de tu mostrador:</h3>
-                    <div id="tradeMyInventory" class="flex overflow-x-auto space-x-2 pb-2 scrollbar-hide"></div>
+                <div class="bg-[var(--panel-bg)] border-2 border-black p-3 rounded-xl shadow-[4px_4px_0px_#000]">
+                    <h3 class="text-[10px] font-black text-black mb-2 uppercase tracking-widest">Tu Mostrador:</h3>
+                    <div id="tradeMyInventory" class="flex overflow-x-auto space-x-2 pb-2 hide-scrollbar"></div>
                 </div>
             </div>
         </div>
 
-        <div class="p-4 bg-[var(--panel-bg)] border-t border-[var(--border-color)] flex space-x-2 pb-8">
-            <button id="btnDeclineTrade" onclick="declineTrade()" class="w-14 h-14 flex-shrink-0 sleek-btn sleek-btn-danger rounded-2xl flex items-center justify-center shadow-lg" title="Rechazar Oferta">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-            <button id="btnAcceptTrade" onclick="acceptTrade()" class="flex-1 py-3.5 sleek-btn rounded-2xl shadow-lg shadow-[var(--primary)]/30 font-bold text-lg">Aceptar Trato</button>
+        <div class="p-4 bg-white border-t-[3px] border-black flex space-x-3 pb-8 shadow-[0_-4px_0px_rgba(0,0,0,0.1)]">
+            <button id="btnDeclineTrade" onclick="declineTrade()" class="w-14 h-14 shrink-0 neo-btn neo-btn-danger text-2xl">X</button>
+            <button id="btnAcceptTrade" onclick="acceptTrade()" class="flex-1 py-3 neo-btn neo-btn-success text-xl">Confirmar</button>
         </div>
     </div>
 
     <!-- MODAL: Chat -->
     <div id="chatModal" class="fixed inset-0 bg-[var(--bg-color)] z-[80] hidden flex flex-col">
-        <div class="flex justify-between items-center p-4 bg-[var(--panel-bg)] border-b border-[var(--border-color)]">
-            <h2 class="text-lg font-bold text-white flex items-center gap-2 cursor-pointer" id="chatTitleContainer">
-                <span class="w-2.5 h-2.5 bg-[var(--secondary)] rounded-full shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
-                <img id="chatTitleImg" src="" class="w-8 h-8 rounded-full border border-[var(--border-color)] object-cover">
-                <span id="chatTitle">Chat</span>
-            </h2>
-            <div class="flex items-center gap-2">
-                <button id="btnConcluirTrato" onclick="openConclusionModal()" class="px-4 py-1.5 sleek-btn rounded-full text-xs font-bold shadow-[0_0_10px_rgba(99,102,241,0.4)]">Concluir Trato</button>
-                <button onclick="closeChat()" class="text-[var(--text-light)] w-8 h-8 flex items-center justify-center bg-white/5 rounded-full hover:text-white transition-colors">✕</button>
+        <div class="neo-window-header rounded-none p-3">
+            <img id="chatTitleImg" src="" class="w-8 h-8 rounded-full border-2 border-black bg-white object-cover">
+            <span id="chatTitle" class="text-sm font-black text-black uppercase ml-2">Chat</span>
+            
+            <div class="ml-auto flex items-center gap-2">
+                <button id="btnConcluirTrato" onclick="openConclusionModal()" class="px-3 py-1.5 neo-btn neo-btn-warning text-[10px]">Cerrar Trato</button>
+                <button onclick="closeChat()" class="w-8 h-8 border-2 border-black bg-[var(--danger)] text-white font-bold flex items-center justify-center active:translate-y-1">X</button>
             </div>
         </div>
         
-        <div id="chatActionBanner" class="bg-[var(--panel-light)] border-b border-[var(--border-color)] p-2 hidden justify-center shadow-md text-sm font-bold"></div>
-        <div id="chatMessages" class="flex-1 overflow-y-auto p-5 space-y-4 flex flex-col bg-gradient-to-b from-transparent to-black/20"></div>
+        <div id="chatActionBanner" class="bg-black text-white border-b-2 border-black p-2 hidden justify-center text-xs font-black uppercase tracking-wider"></div>
+        <div id="chatMessages" class="flex-1 overflow-y-auto p-4 space-y-4 flex flex-col bg-[var(--panel-bg)] bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMCIgaGVpZ2h0PSIyMCI+CjxwYXRoIGQ9Ik0wIDEwaDIwdjFIMHoiIGZpbGw9IiMwMDAiIGZpbGwtb3BhY2l0eT0iMC4wNSIvPgo8cGF0aCBkPSJNMTAgMHYyMGgxVjB6IiBmaWxsPSIjMDAwIiBmaWxsLW9wYWNpdHk9IjAuMDUiLz4KPC9zdmc+')]"></div>
         
-        <div id="chatInputContainer" class="p-3 bg-[var(--panel-bg)] flex space-x-2 pb-6 border-t border-[var(--border-color)]">
-            <input type="text" id="chatInput" placeholder="Acuerda un lugar público..." class="flex-1 sleek-input rounded-full text-sm">
-            <button onclick="sendChatMessage()" class="w-12 h-12 sleek-btn rounded-full flex items-center justify-center shrink-0">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
-            </button>
+        <div id="chatInputContainer" class="p-3 bg-white border-t-[3px] border-black flex space-x-2 pb-6">
+            <input type="text" id="chatInput" placeholder="Escribe un mensaje..." class="flex-1 neo-input rounded-xl text-sm">
+            <button onclick="sendChatMessage()" class="w-12 h-12 neo-btn rounded-xl text-xl">➤</button>
         </div>
     </div>
 
-    <!-- MODAL: Opciones de Conclusión de Trato -->
-    <div id="conclusionModal" class="fixed inset-0 bg-black/60 z-[85] hidden flex flex-col items-center justify-end pb-8 px-4 backdrop-blur-sm">
-        <div class="glass-panel w-full max-w-sm rounded-[2rem] p-6 shadow-2xl flex flex-col gap-3 animate-[slideUp_0.3s_ease-out]">
-            <h3 class="text-center text-white font-bold mb-2">¿Cómo finalizó el intercambio?</h3>
-            <button onclick="finalizeTransaction('success')" class="w-full py-3.5 sleek-btn sleek-btn-success rounded-xl font-bold flex flex-col items-center leading-tight">
-                <span>✨ Trato Exitoso</span>
-                <span class="text-[9px] opacity-80 mt-1 font-normal">Suma reputación y consume el stock de los objetos.</span>
-            </button>
-            <button onclick="finalizeTransaction('cancelled')" class="w-full py-3.5 sleek-btn sleek-btn-warning rounded-xl font-bold mt-2">No hubo trato</button>
-            <button onclick="openReportModal()" class="w-full py-3.5 sleek-btn sleek-btn-danger rounded-xl font-bold">⚠️ Reportar problema</button>
-            <button onclick="closeConclusionModal()" class="w-full py-3 mt-2 sleek-btn sleek-btn-outline rounded-xl">Cancelar</button>
-        </div>
-    </div>
-
-    <!-- MODAL: Redactar Reporte -->
-    <div id="reportModal" class="fixed inset-0 bg-black/80 z-[95] hidden flex flex-col items-center justify-center px-4 backdrop-blur-md">
-        <div class="glass-panel w-full max-w-sm rounded-[2rem] p-6 shadow-2xl flex flex-col border-t-4 border-t-[var(--danger)]">
-            <h3 class="text-white font-bold text-xl mb-2 flex items-center gap-2">
-                <svg class="w-6 h-6 text-[var(--danger)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                Reportar Usuario
-            </h3>
-            <p class="text-xs text-[var(--text-light)] mb-4">Por favor, describe el problema. Este texto será visible en el perfil del usuario para alertar a la comunidad.</p>
-            <textarea id="reportReasonInput" rows="4" class="w-full sleek-input text-sm resize-none mb-4" placeholder="Ej: No se presentó al lugar acordado..."></textarea>
-            <div class="flex gap-2">
-                <button onclick="closeReportModal()" class="flex-1 py-3 sleek-btn sleek-btn-outline rounded-xl">Cancelar</button>
-                <button onclick="submitReport()" class="flex-1 py-3 sleek-btn sleek-btn-danger rounded-xl font-bold">Enviar Reporte</button>
+    <!-- MODAL: Conclusión -->
+    <div id="conclusionModal" class="fixed inset-0 bg-black/80 z-[85] hidden flex flex-col items-center justify-end pb-8 px-4">
+        <div class="neo-panel w-full max-w-sm flex flex-col p-0">
+            <div class="neo-window-header"><span class="font-black uppercase text-black pl-2">Fin del Trueque</span></div>
+            <div class="p-5 flex flex-col gap-3 bg-white">
+                <button onclick="finalizeTransaction('success')" class="w-full py-3 neo-btn neo-btn-success text-sm flex flex-col items-center">
+                    <span>✨ TRATO EXITOSO</span>
+                    <span class="text-[9px] mt-1 font-bold normal-case">Objetos intercambiados</span>
+                </button>
+                <button onclick="finalizeTransaction('cancelled')" class="w-full py-3 neo-btn bg-gray-300 text-black text-sm">Cancelar Trato</button>
+                <button onclick="openReportModal()" class="w-full py-3 neo-btn neo-btn-danger text-sm">⚠️ Reportar Problema</button>
+                <button onclick="closeConclusionModal()" class="w-full py-2 mt-2 neo-btn neo-btn-outline text-xs">Atrás</button>
             </div>
         </div>
     </div>
 
     <!-- MODAL: Agregar Objeto -->
-    <div id="addItemModal" class="fixed inset-0 bg-black/80 z-[90] hidden flex justify-center items-center p-4 backdrop-blur-md">
-        <div class="glass-panel w-full max-w-sm rounded-[2rem] overflow-hidden shadow-2xl">
-            <div class="flex justify-between items-center p-5 border-b border-[var(--border-color)]">
-                <span class="font-bold text-xl text-white">Nuevo Item</span>
-                <button onclick="closeAddItemModal()" class="text-[var(--text-light)] bg-white/5 w-8 h-8 flex items-center justify-center rounded-full">✕</button>
+    <div id="addItemModal" class="fixed inset-0 bg-black/80 z-[90] hidden flex justify-center items-center p-4">
+        <div class="neo-panel w-full max-w-sm flex flex-col overflow-hidden max-h-[90vh]">
+            <div class="neo-window-header">
+                <div class="neo-dot red"></div><div class="neo-dot yellow"></div><div class="neo-dot green"></div>
+                <span class="ml-2 font-black text-black uppercase">Nuevo Artículo</span>
+                <button onclick="closeAddItemModal()" class="ml-auto text-black font-bold text-xl px-2">✕</button>
             </div>
-            <div class="p-5 space-y-4">
-                <input type="text" id="newItemName" placeholder="Nombre del Objeto" class="w-full text-md sleek-input">
-                <div class="relative">
-                    <svg class="w-4 h-4 absolute left-4 top-4 text-[var(--text-light)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.243-4.243a8 8 0 1111.314 0z"></path></svg>
-                    <input type="text" id="newItemLocation" placeholder="Ubicación aproximada" class="w-full text-md sleek-input pl-11">
+            <div class="p-5 space-y-4 bg-white overflow-y-auto">
+                <div>
+                    <label class="text-[10px] font-black text-black uppercase mb-1 block">¿Qué es?</label>
+                    <input type="text" id="newItemName" placeholder="Ej: Gameboy Color" class="w-full text-sm neo-input">
+                </div>
+                
+                <div class="flex gap-2">
+                    <div class="flex-1">
+                        <label class="text-[10px] font-black text-black uppercase mb-1 block">Categoría</label>
+                        <select id="newItemCategory" class="w-full text-sm neo-input p-2.5">
+                            <option value="Antigüedades">Antigüedades</option>
+                            <option value="Cartas/TCG">Cartas/TCG</option>
+                            <option value="Juguetes/Figuras">Juguetes/Figuras</option>
+                            <option value="Cómics/Libros">Cómics/Libros</option>
+                            <option value="Monedas">Monedas</option>
+                            <option value="Electrónica">Electrónica</option>
+                            <option value="Otros">Otros</option>
+                        </select>
+                    </div>
+                    <div class="flex-1">
+                        <label class="text-[10px] font-black text-black uppercase mb-1 block">Ciudad/Barrio</label>
+                        <input type="text" id="newItemLocation" placeholder="Ej: Zona Sur" class="w-full text-sm neo-input p-2.5">
+                    </div>
                 </div>
                 
                 <div class="flex gap-3">
                     <div class="flex-1">
-                        <label class="text-[10px] text-[var(--text-light)] uppercase font-bold ml-2">Tamaño</label>
-                        <select id="newItemSize" class="w-full text-sm sleek-input mt-1">
+                        <label class="text-[10px] font-black text-black uppercase mb-1 block">Tamaño (Tetris)</label>
+                        <select id="newItemSize" class="w-full text-sm neo-input p-2.5">
                             <option value="1,1">Pequeño (1x1)</option>
                             <option value="1,2">Alargado (1x2)</option>
                             <option value="2,2">Cuadrado (2x2)</option>
                             <option value="2,3">Grande (2x3)</option>
                         </select>
                     </div>
-                    <div class="w-24">
-                        <label class="text-[10px] text-[var(--text-light)] uppercase font-bold ml-2">Cantidad</label>
-                        <input type="number" id="newItemQuantity" min="1" value="1" class="w-full text-sm sleek-input mt-1 text-center">
+                    <div class="w-20">
+                        <label class="text-[10px] font-black text-black uppercase mb-1 block">Cant.</label>
+                        <input type="number" id="newItemQuantity" min="1" value="1" class="w-full text-sm neo-input p-2.5 text-center">
                     </div>
                 </div>
 
-                <div class="border border-[var(--border-color)] p-4 bg-black/20 rounded-2xl flex flex-col items-center border-dashed">
-                    <input type="file" id="cameraInput" accept="image/*" capture="environment" class="hidden" onchange="handleItemPhoto(event)">
-                    <button onclick="document.getElementById('cameraInput').click()" class="w-full py-2.5 text-xs font-bold tracking-wider uppercase sleek-btn sleek-btn-outline rounded-xl">
-                        + Subir Fotografía
+                <div class="border-[3px] border-black p-3 bg-[var(--panel-bg)] rounded-xl flex flex-col items-center border-dashed">
+                    <input type="file" id="cameraInput" accept="image/*" multiple class="hidden" onchange="handleMultiplePhotos(event)">
+                    <button onclick="document.getElementById('cameraInput').click()" class="w-full py-2.5 text-xs neo-btn neo-btn-outline mb-2">
+                        + Agregar Fotos (Máx 4)
                     </button>
-                    <img id="newItemPicPreview" class="hidden w-full h-32 object-cover bg-black mt-3 rounded-xl border border-[var(--border-color)]">
+                    <!-- Contenedor de miniaturas -->
+                    <div id="photoPreviewsContainer" class="flex gap-2 overflow-x-auto w-full hide-scrollbar py-2 hidden">
+                        <!-- Las fotos aparecerán aquí -->
+                    </div>
                 </div>
                 
-                <button onclick="submitNewItem()" class="w-full py-3.5 text-md sleek-btn shadow-lg mt-2">Guardar en Mochila</button>
+                <button onclick="submitNewItem()" class="w-full py-3 text-lg neo-btn mt-2">Guardar</button>
             </div>
         </div>
     </div>
 
-    <!-- Login Overlay & Footer Legales -->
-    <div id="loginOverlay" class="fixed inset-0 bg-black/90 z-[100] flex flex-col items-center justify-center px-5 hidden backdrop-blur-md">
-        <div class="glass-panel rounded-[2rem] p-8 max-w-sm w-full border border-[var(--border-color)] shadow-2xl relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[var(--primary)] to-transparent opacity-70"></div>
+    <!-- Login Overlay -->
+    <div id="loginOverlay" class="fixed inset-0 bg-black/95 z-[100] flex flex-col items-center justify-center px-5 hidden">
+        <div class="neo-panel p-8 max-w-sm w-full bg-white text-center">
+            <h1 class="text-5xl font-black mb-2 text-black tracking-tighter" style="text-shadow: 3px 3px 0px var(--primary);">TOLOOT<span class="text-[var(--primary)]">.</span></h1>
+            <p class="text-sm mb-8 text-black font-bold uppercase tracking-wide">El Trueque Digital</p>
             
-            <h1 class="text-5xl font-black mb-2 text-white tracking-tight mt-2">TOLOOT<span class="text-[var(--primary)]">.</span></h1>
-            <p class="text-sm mb-8 text-[var(--text-light)] leading-relaxed">Inicia sesión para chatear, ofertar en el mercado y construir tu reputación.</p>
-            
-            <button onclick="handleLoginClick()" class="w-full py-3.5 text-md sleek-btn flex items-center justify-center gap-3 shadow-[0_0_20px_rgba(99,102,241,0.3)]">
+            <button onclick="handleLoginClick()" class="w-full py-3.5 text-sm neo-btn bg-white text-black hover:bg-gray-100 flex items-center justify-center gap-3">
                 <svg class="w-5 h-5" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"></path><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"></path><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"></path><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"></path></svg>
-                Entrar con Google
+                Google Auth
             </button>
-            <button onclick="closeLogin()" class="mt-5 text-xs text-[var(--text-light)] w-full text-center hover:text-white transition-colors">Continuar como invitado</button>
-        </div>
-
-        <div class="absolute bottom-6 w-full flex justify-between px-8 text-[11px] font-semibold tracking-widest text-[var(--text-light)]">
-            <span>© 2026 TOLOOT_</span>
-            <div class="flex gap-4">
-                <span onclick="openTerms()" class="cursor-pointer hover:text-white uppercase">Privacidad</span>
-                <span onclick="openTerms()" class="cursor-pointer hover:text-white uppercase">Términos</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL: Términos -->
-    <div id="termsModal" class="fixed inset-0 bg-black/90 z-[110] flex flex-col items-center justify-center p-5 hidden backdrop-blur-md">
-        <div class="bg-[var(--primary)] w-full max-w-md max-h-[85vh] rounded-md flex flex-col shadow-2xl border-4 border-[var(--primary)] overflow-hidden">
-            <div class="bg-[var(--primary)] p-2 flex justify-between items-center text-black font-bold">
-                <span class="pl-2">/LEGAL.TXT</span>
-                <button onclick="closeTerms()" class="w-6 h-6 border-2 border-black bg-[var(--danger)] cursor-pointer"></button>
-            </div>
-            <div class="bg-[#FDF6E3] flex-1 p-6 overflow-y-auto text-sm text-black space-y-4">
-                <h2 class="text-xl font-black border-b-2 border-black pb-2">PRIVACIDAD Y TÉRMINOS</h2>
-                <p>Bienvenido a <b>ToLoot</b>. Al utilizar esta plataforma, aceptas nuestras políticas y condiciones de uso.</p>
-                <h3 class="font-bold text-blue-600">> POLÍTICA DE PRIVACIDAD</h3>
-                <ul class="list-disc pl-4 space-y-2">
-                    <li><b>Datos recopilados:</b> Al iniciar sesión, almacenamos tu perfil público básico. No recopilamos contraseñas ni contactos.</li>
-                    <li><b>Almacenamiento:</b> Utilizamos Google Firebase. Tus chats son privados entre las partes.</li>
-                </ul>
-                <h3 class="font-bold text-red-600 mt-4">> TÉRMINOS DE SERVICIO (NORMAS)</h3>
-                <ul class="list-disc pl-4 space-y-2">
-                    <li><b>Respeto:</b> Prohibido el acoso, amenazas o lenguaje de odio en los chats.</li>
-                    <li><b>Contenido Seguro:</b> Prohibido subir material ilegal, armas o explícito.</li>
-                    <li><b>Responsabilidad de Tratos:</b> ToLoot solo conecta usuarios. Los encuentros físicos son bajo responsabilidad de los usuarios. Acuerde siempre en lugares públicos e iluminados.</li>
-                </ul>
-            </div>
+            <button onclick="closeLogin()" class="mt-6 text-xs text-black font-black underline uppercase">Ver como invitado</button>
         </div>
     </div>
 
     <!-- Loader -->
     <div id="loadingOverlay" class="fixed inset-0 bg-[var(--bg-color)] z-[120] flex flex-col items-center justify-center">
-        <div class="w-10 h-10 border-4 border-[var(--panel-light)] border-t-[var(--primary)] rounded-full animate-spin"></div>
+        <div class="w-12 h-12 border-[4px] border-black border-t-[var(--primary)] rounded-full animate-spin bg-white"></div>
     </div>
 
     <!-- Alertas -->
-    <div id="msgBox" class="fixed top-20 left-1/2 transform -translate-x-1/2 glass-panel px-5 py-3 z-[130] hidden rounded-full shadow-2xl transition-opacity duration-300 pointer-events-none border-l-4 border-l-[var(--primary)]">
-        <p id="msgText" class="text-white text-sm font-semibold tracking-wide"></p>
+    <div id="msgBox" class="fixed top-20 left-1/2 transform -translate-x-1/2 neo-panel bg-white px-5 py-3 z-[130] hidden rounded-xl shadow-[4px_4px_0px_#000] border-[3px] border-black transition-opacity duration-300 pointer-events-none">
+        <p id="msgText" class="text-black text-sm font-black uppercase tracking-wide"></p>
     </div>
 
     <script type="module">
@@ -543,7 +533,8 @@
         // State
         let currentUser = null;
         let myProfile = { displayName: 'Nuevo', photoURL: '', status: '', successfulTrades: 0, reports: [], layoutScore: 0 };
-        let currentItemPhotoBase64 = null; 
+        
+        let currentItemPhotos = []; // ARRAY para múltiples fotos
         
         let inventory = { private: [], public: [] };
         let allPublicItems = []; 
@@ -553,6 +544,10 @@
 
         let currentTradeOfferId = null;
         let currentChatId = null;
+
+        // Categorías
+        const CATEGORIES = ['Todo', 'Antigüedades', 'Cartas/TCG', 'Juguetes/Figuras', 'Cómics/Libros', 'Monedas', 'Electrónica', 'Otros'];
+        let activeCategoryFilter = 'Todo';
 
         let unsubPrivate = null, unsubUsers = null, unsubPublic = null, unsubOffers = null, unsubChats = null;
         function clearListeners() {
@@ -567,10 +562,30 @@
         const GRID_ROWS = 6; 
         let cellWidth = 0; let cellHeight = 0;
 
+        // Inicializar Categorías UI
+        function initCategoryFilter() {
+            const container = document.getElementById('categoryFilter');
+            container.innerHTML = CATEGORIES.map(cat => 
+                `<button onclick="setCategoryFilter('${cat}')" class="neo-pill ${cat === activeCategoryFilter ? 'active' : ''}" data-cat="${cat}">${cat}</button>`
+            ).join('');
+        }
+
+        window.setCategoryFilter = (cat) => {
+            activeCategoryFilter = cat;
+            document.querySelectorAll('#categoryFilter .neo-pill').forEach(el => {
+                if(el.dataset.cat === cat) el.classList.add('active');
+                else el.classList.remove('active');
+            });
+            renderFeed();
+        };
+
+        initCategoryFilter();
+
         // UI Utils
         window.showMessage = (text, isError = false) => {
             const box = document.getElementById('msgBox');
-            box.style.borderLeftColor = isError ? 'var(--danger)' : 'var(--secondary)';
+            box.style.borderBottomColor = isError ? 'var(--danger)' : 'var(--secondary)';
+            box.style.borderBottomWidth = '4px';
             document.getElementById('msgText').innerText = text;
             box.style.display = 'block'; setTimeout(() => box.style.opacity = '1', 10);
             setTimeout(() => { box.style.opacity = '0'; setTimeout(() => box.style.display = 'none', 300); }, 3500);
@@ -578,17 +593,21 @@
 
         window.switchTab = (tabId) => {
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(el => {
-                el.classList.remove('bg-[var(--primary)]'); el.querySelector('svg').classList.remove('text-white');
-                el.classList.add('hover:bg-white/5');
-            });
+            document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
             document.getElementById(`view-${tabId}`).classList.add('active');
+            
             const activeBtn = document.querySelector(`[data-tab="${tabId}"]`);
-            activeBtn.classList.remove('hover:bg-white/5'); activeBtn.classList.add('bg-[var(--primary)]');
-            activeBtn.querySelector('svg').classList.add('text-white');
+            activeBtn.classList.add('active');
+
+            const catFilter = document.getElementById('categoryFilter');
+            if(tabId === 'feed') {
+                catFilter.classList.remove('hidden');
+                renderFeed();
+            } else {
+                catFilter.classList.add('hidden');
+            }
 
             if (tabId === 'backpack') setTimeout(resizeGrids, 50); 
-            else if (tabId === 'feed') renderFeed();
             else if (tabId === 'chats') renderChatsView();
         };
 
@@ -597,11 +616,9 @@
             switchTab(tabId);
         };
 
-        window.openTerms = () => document.getElementById('termsModal').classList.remove('hidden');
-        window.closeTerms = () => document.getElementById('termsModal').classList.add('hidden');
         window.closeLogin = () => document.getElementById('loginOverlay').classList.add('hidden');
 
-        // Drawer
+        // Drawer Logic
         const handle = document.getElementById('drawer-handle');
         const privateArea = document.getElementById('private-area');
         let isResizingDrawer = false; let startY, startHeight;
@@ -610,7 +627,7 @@
             if (!isResizingDrawer) return;
             const cy = e.clientY || (e.touches && e.touches[0].clientY);
             let newHeight = startHeight - (cy - startY);
-            if (newHeight > window.innerHeight * 0.70) newHeight = window.innerHeight * 0.70;
+            if (newHeight > window.innerHeight * 0.75) newHeight = window.innerHeight * 0.75;
             if (newHeight < 60) newHeight = 60;
             privateArea.style.height = `${newHeight}px`; e.preventDefault(); 
         };
@@ -655,21 +672,52 @@
             }, (error) => {});
         }
 
-        // Photo Inputs
-        window.handleItemPhoto = (event) => {
-            const file = event.target.files[0]; if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const img = new Image();
-                img.onload = () => {
-                    const canvas = document.createElement('canvas'); let w = img.width, h = img.height; const MAX = 600;
-                    if (w > h && w > MAX) { h *= MAX / w; w = MAX; } else if (h > MAX) { w *= MAX / h; h = MAX; }
-                    canvas.width = w; canvas.height = h; canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                    currentItemPhotoBase64 = canvas.toDataURL('image/jpeg', 0.6);
-                    document.getElementById('newItemPicPreview').src = currentItemPhotoBase64; 
-                    document.getElementById('newItemPicPreview').classList.remove('hidden');
-                }; img.src = e.target.result;
-            }; reader.readAsDataURL(file);
+        // --- Múltiples Fotos ---
+        window.handleMultiplePhotos = (event) => {
+            const files = Array.from(event.target.files);
+            if (!files.length) return;
+            
+            const remainingSlots = 4 - currentItemPhotos.length;
+            const filesToProcess = files.slice(0, remainingSlots);
+
+            if(files.length > remainingSlots) {
+                showMessage("Máximo 4 fotos. Solo se añadirán las primeras.", true);
+            }
+
+            filesToProcess.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas'); let w = img.width, h = img.height; const MAX = 600;
+                        if (w > h && w > MAX) { h *= MAX / w; w = MAX; } else if (h > MAX) { w *= MAX / h; h = MAX; }
+                        canvas.width = w; canvas.height = h; canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                        
+                        currentItemPhotos.push(canvas.toDataURL('image/jpeg', 0.6));
+                        renderPhotoPreviews();
+                    }; img.src = e.target.result;
+                }; reader.readAsDataURL(file);
+            });
+        };
+
+        function renderPhotoPreviews() {
+            const container = document.getElementById('photoPreviewsContainer');
+            if (currentItemPhotos.length === 0) {
+                container.classList.add('hidden');
+                return;
+            }
+            container.classList.remove('hidden');
+            container.innerHTML = currentItemPhotos.map((photo, index) => `
+                <div class="relative w-16 h-16 shrink-0 border-2 border-black rounded-lg overflow-hidden">
+                    <img src="${photo}" class="w-full h-full object-cover">
+                    <button onclick="removePhoto(${index})" class="absolute top-0 right-0 bg-red-500 text-white w-4 h-4 flex items-center justify-center text-[10px] font-bold">X</button>
+                </div>
+            `).join('');
+        }
+
+        window.removePhoto = (index) => {
+            currentItemPhotos.splice(index, 1);
+            renderPhotoPreviews();
         };
 
         window.handleProfilePic = (event) => {
@@ -711,7 +759,7 @@
             myProfile.status = document.getElementById('profStatus').value;
             try {
                 await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', currentUser.uid), myProfile, {merge:true});
-                updateProfileUI(); if(showMsg) showMessage("Perfil actualizado con éxito");
+                updateProfileUI(); if(showMsg) showMessage("Perfil actualizado");
             } catch (e) { if(showMsg) showMessage("Error al guardar perfil", true); }
         };
 
@@ -722,30 +770,9 @@
             document.getElementById('profRepText').innerText = myProfile.successfulTrades || 0;
             document.getElementById('hdrRep').innerText = myProfile.successfulTrades || 0;
             document.getElementById('profLayoutText').innerText = myProfile.layoutScore || 0;
-            document.getElementById('layoutScoreDisplay').innerText = `Pts: ${myProfile.layoutScore || 0}`;
+            document.getElementById('layoutScoreDisplay').innerText = `PTS: ${myProfile.layoutScore || 0}`;
         }
 
-        // Perfil Público Modal
-        window.openUserProfile = (uid) => {
-            const user = allUsers[uid];
-            if(!user) return;
-            document.getElementById('pubProfImg').src = user.photoURL || '';
-            document.getElementById('pubProfName').innerText = user.displayName || 'Usuario';
-            document.getElementById('pubProfStatus').innerText = user.status ? `"${user.status}"` : '"Sin biografía"';
-            document.getElementById('pubProfRep').innerText = user.successfulTrades || 0;
-
-            const repList = document.getElementById('pubProfReportsList');
-            if (user.reports && user.reports.length > 0) {
-                repList.innerHTML = user.reports.map(r => `<div class="text-xs text-[var(--text-light)] py-1.5 border-b border-[var(--border-color)] last:border-0">- ${r}</div>`).join('');
-            } else {
-                repList.innerHTML = `<div class="text-xs text-[var(--secondary)] font-bold text-center py-2">Este usuario no tiene reportes. ¡Un miembro confiable!</div>`;
-            }
-            
-            document.getElementById('publicProfileModal').classList.remove('hidden');
-        };
-        window.closePublicProfile = () => document.getElementById('publicProfileModal').classList.add('hidden');
-
-        // Scoring Tetris Logic
         async function calculateTetrisScore() {
             if(!currentUser) return;
             let grid = Array(GRID_ROWS).fill(0).map(() => Array(GRID_COLS).fill(false));
@@ -794,7 +821,7 @@
                     if (item.uid === currentUser.uid) inventory.public.push(item);
                 });
                 renderGrids(); renderFeed(); 
-                calculateTetrisScore(); // Recalcular puntos cuando cambia el mostrador
+                calculateTetrisScore(); 
                 
                 if(currentTradeOfferId) renderTradeModal(currentTradeOfferId);
                 if(document.getElementById('view-chats').classList.contains('active')) renderChatsView();
@@ -825,8 +852,8 @@
         // --- Grids & Drag/Drop Ajustado a Mobile ---
         function resizeGrids() {
             const container = document.getElementById('view-backpack'); if(!container) return;
-            // Para asegurar que encaje en celulares sin scroll-x, quitamos 32px que son los padding laterales
-            let aw = Math.min(window.innerWidth - 32, 450); 
+            // Cálculo ajustado con márgenes del diseño nuevo
+            let aw = Math.min(window.innerWidth - 48, 400); 
             cellWidth = Math.floor(aw / GRID_COLS); 
             cellHeight = cellWidth; 
             
@@ -844,12 +871,12 @@
                 c.querySelectorAll('.re-item').forEach(el => el.remove());
                 items.forEach(item => {
                     const div = document.createElement('div'); div.className = 're-item';
-                    div.style.width = `${(item.w * cellWidth) - 3}px`; div.style.height = `${(item.h * cellHeight) - 3}px`;
-                    div.style.left = `${item.x * cellWidth + 1.5}px`; div.style.top = `${item.y * cellHeight + 1.5}px`;
+                    div.style.width = `${(item.w * cellWidth) - 4}px`; div.style.height = `${(item.h * cellHeight) - 4}px`;
+                    div.style.left = `${item.x * cellWidth + 2}px`; div.style.top = `${item.y * cellHeight + 2}px`;
                     div.dataset.id = item.id; div.dataset.grid = gridId === 'grid-private' ? 'private' : 'public';
                     
                     if(item.photos && item.photos[0]) { const img = document.createElement('img'); img.src = item.photos[0]; div.appendChild(img); }
-                    if(item.quantity > 1) { div.innerHTML += `<span class="absolute top-1 right-1 bg-black/80 text-white font-bold text-[9px] px-1.5 py-0.5 rounded shadow">x${item.quantity}</span>`; }
+                    if(item.quantity > 1) { div.innerHTML += `<span class="absolute top-1 right-1 bg-black text-white font-bold text-[10px] px-1.5 py-0.5 rounded shadow">x${item.quantity}</span>`; }
                     
                     div.addEventListener('pointerdown', handleDragStart); c.appendChild(div);
                 });
@@ -869,7 +896,7 @@
             const cy = e.clientY ?? (e.touches && e.touches[0].clientY);
             dragStartX = cx; dragStartY = cy; dragStartTime = Date.now();
             
-            document.body.style.overflow = 'hidden'; // Evita scroll en celular
+            document.body.style.overflow = 'hidden';
 
             e.currentTarget.style.opacity = '0.3'; const rect = e.currentTarget.getBoundingClientRect();
             dragOffset.x = cx - rect.left; dragOffset.y = cy - rect.top;
@@ -902,7 +929,6 @@
             const oldGridType = inventory.private.find(i => i.id === dragItemData.id) ? 'private' : 'public';
             const oldItems = oldGridType === 'private' ? inventory.private : inventory.public;
 
-            // --- Lógica de Rotación (Click corto sin moverse mucho) ---
             if (Date.now() - dragStartTime < 250 && Math.hypot(cx - dragStartX, cy - dragStartY) < 10) {
                 const newW = dragItemData.h; const newH = dragItemData.w;
                 const canRotate = !oldItems.some(i => i.id !== dragItemData.id && dragItemData.x < i.x + i.w && dragItemData.x + newW > i.x && dragItemData.y < i.y + i.h && dragItemData.y + newH > i.y) && (dragItemData.x + newW <= GRID_COLS) && (dragItemData.y + newH <= GRID_ROWS);
@@ -910,25 +936,17 @@
                 if(canRotate) {
                     const path = oldGridType === 'public' ? ['public','data','publicItems'] : ['users',currentUser.uid,'privateItems'];
                     updateDoc(doc(db, 'artifacts', appId, ...path, dragItemData.id), { w: newW, h: newH });
-                } else {
-                    showMessage("No hay espacio para rotarlo aquí", true);
-                }
-                return;
+                } else { showMessage("No hay espacio para rotar", true); } return;
             }
 
-            // --- Lógica de Drop (Cálculo exacto para celulares) ---
             const pubRect = document.getElementById('grid-public').getBoundingClientRect();
             const privRect = document.getElementById('grid-private').getBoundingClientRect();
             let targetGridType = null; let targetRect = null;
             
-            if (cx >= pubRect.left && cx <= pubRect.right && cy >= pubRect.top && cy <= pubRect.bottom) {
-                targetGridType = 'public'; targetRect = pubRect;
-            } else if (cx >= privRect.left && cx <= privRect.right && cy >= privRect.top && cy <= privRect.bottom) {
-                targetGridType = 'private'; targetRect = privRect;
-            }
+            if (cx >= pubRect.left && cx <= pubRect.right && cy >= pubRect.top && cy <= pubRect.bottom) { targetGridType = 'public'; targetRect = pubRect; } 
+            else if (cx >= privRect.left && cx <= privRect.right && cy >= privRect.top && cy <= privRect.bottom) { targetGridType = 'private'; targetRect = privRect; }
 
             if (targetGridType) {
-                // Calcular posición usando el borde superior izquierdo de la caja
                 let cellX = Math.round(((cx - dragOffset.x) - targetRect.left) / cellWidth); 
                 let cellY = Math.round(((cy - dragOffset.y) - targetRect.top) / cellHeight);
                 const items = targetGridType === 'private' ? inventory.private : inventory.public;
@@ -957,18 +975,22 @@
 
         // Add Item
         window.openAddItemModal = () => {
-            currentItemPhotoBase64 = null; document.getElementById('newItemPicPreview').classList.add('hidden');
+            currentItemPhotos = []; renderPhotoPreviews();
             document.getElementById('cameraInput').value = ''; document.getElementById('addItemModal').classList.remove('hidden');
         };
         window.closeAddItemModal = () => document.getElementById('addItemModal').classList.add('hidden');
+        
         window.submitNewItem = async () => {
             if(!currentUser) return;
-            const name = document.getElementById('newItemName').value.trim(); const loc = document.getElementById('newItemLocation').value.trim();
+            const name = document.getElementById('newItemName').value.trim(); 
+            const loc = document.getElementById('newItemLocation').value.trim();
+            const category = document.getElementById('newItemCategory').value;
             const sizeStr = document.getElementById('newItemSize').value;
             const quantity = parseInt(document.getElementById('newItemQuantity').value) || 1;
             
-            if(!name || !loc || !currentItemPhotoBase64) return showMessage("Faltan datos o foto", true);
+            if(!name || !loc || currentItemPhotos.length === 0) return showMessage("Faltan datos o fotos", true);
             const [w, h] = sizeStr.split(',').map(Number); let tx = 0, ty = 0, found = false;
+            
             for(let y=0; y<=GRID_ROWS-h; y++) {
                 for(let x=0; x<=GRID_COLS-w; x++) {
                     if(!inventory.private.some(i => x < i.x + i.w && x + w > i.x && y < i.y + i.h && y + h > i.y)) { tx = x; ty = y; found = true; break; }
@@ -977,65 +999,74 @@
             if(!found) return showMessage("Inventario privado lleno", true);
             try {
                 await addDoc(collection(db, 'artifacts', appId, 'users', currentUser.uid, 'privateItems'), {
-                    uid: currentUser.uid, name, location: loc, photos: [currentItemPhotoBase64], w, h, x: tx, y: ty, quantity
+                    uid: currentUser.uid, name, location: loc, category, photos: currentItemPhotos, w, h, x: tx, y: ty, quantity
                 });
                 closeAddItemModal(); document.getElementById('newItemName').value = ''; document.getElementById('newItemLocation').value = ''; document.getElementById('newItemQuantity').value = '1';
-                showMessage("Item guardado en mochila privada");
+                showMessage("Artículo guardado");
             } catch (e) {}
         };
 
-        // --- Feed & Overlay Cards ---
-        window.toggleFeedCard = (el) => { el.classList.toggle('expanded'); };
+        // --- Feed estilo TikTok (Múltiples fotos) ---
+        window.handleCarouselScroll = (el) => {
+            const index = Math.round(el.scrollLeft / el.clientWidth);
+            const dots = el.parentElement.querySelectorAll('.car-dot');
+            dots.forEach((dot, i) => {
+                if(i === index) dot.classList.add('active'); else dot.classList.remove('active');
+            });
+        };
 
         function renderFeed() {
             const container = document.getElementById('feedContainer'); const emptyState = document.getElementById('feedEmpty');
+            
             let feedItems = currentUser ? allPublicItems.filter(item => item.uid !== currentUser.uid) : allPublicItems;
+            
+            // Aplicar Filtro de Categoría
+            if (activeCategoryFilter !== 'Todo') {
+                feedItems = feedItems.filter(item => item.category === activeCategoryFilter);
+            }
+
             if (feedItems.length === 0) { container.innerHTML = ''; emptyState.classList.remove('hidden'); return; }
             emptyState.classList.add('hidden'); container.innerHTML = '';
             
-            // Ordenar por Puntuación del Mostrador (Tetris Score) de mayor a menor
+            // Ordenar por Puntuación del Mostrador
             feedItems.sort((a, b) => {
                 const scoreA = allUsers[a.uid]?.layoutScore || 0;
                 const scoreB = allUsers[b.uid]?.layoutScore || 0;
                 return scoreB - scoreA;
             });
 
-            feedItems.forEach(item => {
+            feedItems.forEach((item, index) => {
                 const user = allUsers[item.uid] || { displayName: 'Anónimo', photoURL: '', successfulTrades: 0, layoutScore: 0 };
                 const post = document.createElement('div'); post.className = 'feed-item';
                 
-                let qtyBadge = item.quantity > 1 ? `<span class="bg-black/80 text-white font-bold text-[10px] px-2 py-1 rounded shadow ml-2">Stock: ${item.quantity}</span>` : '';
+                const photosHtml = item.photos.map(p => `<div class="feed-photo-container"><img src="${p}" class="feed-photo"></div>`).join('');
+                const dotsHtml = item.photos.length > 1 ? `<div class="carousel-indicators">${item.photos.map((_, i) => `<div class="car-dot ${i===0?'active':''}"></div>`).join('')}</div>` : '';
 
                 post.innerHTML = `
-                    <img src="${item.photos[0] || ''}" class="feed-photo">
-                    <div class="absolute bottom-0 w-full h-2/3 feed-gradient pointer-events-none"></div>
+                    <div class="feed-carousel" onscroll="handleCarouselScroll(this)">
+                        ${photosHtml}
+                    </div>
+                    ${dotsHtml}
+                    <div class="feed-gradient"></div>
                     
-                    <div class="absolute bottom-[6rem] left-4 right-20 feed-card glass-panel rounded-[2rem] p-4 shadow-2xl" onclick="toggleFeedCard(this)">
-                        <div class="flex items-center space-x-3 mb-2 cursor-pointer" onclick="event.stopPropagation(); openUserProfile('${item.uid}')">
-                            <img src="${user.photoURL}" class="w-12 h-12 rounded-full border-2 border-[var(--primary)] object-cover bg-black">
+                    <div class="feed-card">
+                        <div class="flex items-center gap-3 mb-1">
+                            <img src="${user.photoURL}" class="w-10 h-10 rounded-lg border-2 border-black object-cover bg-white">
                             <div class="flex-1 overflow-hidden">
-                                <h3 class="text-lg font-bold text-white truncate flex items-center gap-2 hover:text-[var(--primary)] transition-colors">
-                                    ${user.displayName}
-                                    <span class="text-[10px] bg-[var(--primary)] text-black px-2 py-0.5 rounded-full font-bold">⭐ ${user.successfulTrades||0}</span>
-                                </h3>
-                                <div class="text-xs text-[var(--text-light)] truncate font-semibold uppercase tracking-wider flex items-center gap-1 mt-0.5">
-                                    <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.location)}" target="_blank" onclick="event.stopPropagation()" class="text-[var(--primary)] hover:underline flex items-center gap-1">
-                                        <svg class="w-3 h-3 text-[var(--secondary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.243-4.243a8 8 0 1111.314 0z"></path></svg>
-                                        ${item.location || 'Sin ubicación'}
-                                    </a>
+                                <h3 class="text-sm font-black text-black uppercase truncate leading-tight">${user.displayName}</h3>
+                                <div class="text-[10px] text-black font-black uppercase tracking-wider flex items-center gap-1">
+                                    <span class="bg-[var(--secondary)] border border-black px-1.5 rounded-sm">⭐ ${user.successfulTrades||0}</span>
+                                    <span class="bg-yellow-300 border border-black px-1.5 rounded-sm truncate">${item.location || 'Local'}</span>
                                 </div>
                             </div>
                         </div>
-                        <h2 class="text-3xl text-white font-black truncate mt-3 tracking-tight flex items-center">${item.name} ${qtyBadge}</h2>
-                        <div class="flex items-center gap-2 mt-2">
-                            <span class="text-[10px] bg-white/10 text-white px-2 py-1 rounded-md font-bold tracking-wider">PTS MOSTRADOR: ${user.layoutScore || 0}</span>
-                        </div>
-                        <p class="text-[var(--text-light)] mt-3 text-sm leading-relaxed">"Busco: ${user.status || 'Ofertas'}"</p>
+                        <h2 class="text-2xl text-black font-black uppercase tracking-tighter truncate">${item.name} ${item.quantity > 1 ? `<span class="text-xs bg-black text-white px-2 rounded align-middle">x${item.quantity}</span>` : ''}</h2>
+                        <span class="text-[10px] font-black uppercase tracking-widest text-[var(--text-light)] block mt-1">${item.category || 'Varios'}</span>
                     </div>
 
-                    <div class="absolute bottom-[7rem] right-4 flex flex-col space-y-6">
-                        <button onclick="${currentUser ? `initiateTrade('${item.id}', '${item.uid}', '${item.name.replace(/'/g, "\\'")}')` : `document.getElementById('loginOverlay').classList.remove('hidden')`}" class="w-14 h-14 rounded-full bg-[var(--primary)] shadow-[0_0_20px_rgba(99,102,241,0.5)] flex items-center justify-center hover:scale-105 transition-transform text-white">
-                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                    <div class="absolute bottom-[110px] right-4 flex flex-col space-y-4 z-20">
+                        <button onclick="${currentUser ? `initiateTrade('${item.id}', '${item.uid}', '${item.name.replace(/'/g, "\\'")}')` : `document.getElementById('loginOverlay').classList.remove('hidden')`}" class="w-14 h-14 rounded-full bg-[var(--primary)] border-[3px] border-black shadow-[4px_4px_0px_#000] flex items-center justify-center hover:scale-105 active:translate-y-1 transition-transform text-white">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
                         </button>
                     </div>
                 `;
@@ -1043,49 +1074,36 @@
             });
         }
 
-        // --- Vista de Chats (Bandeja de Mensajes) ---
+        // --- Vista de Chats ---
         function renderChatsView() {
             const container = document.getElementById('chatsListContainer');
             const emptyState = document.getElementById('chatsEmpty');
-            
-            // Ocultar chats si los eliminamos
             const visibleChats = allChats.filter(c => !(c.hiddenFor || []).includes(currentUser.uid));
             
-            if(visibleChats.length === 0) {
-                container.innerHTML = '';
-                emptyState.classList.remove('hidden');
-                return;
-            }
-            emptyState.classList.add('hidden');
-            container.innerHTML = '';
+            if(visibleChats.length === 0) { container.innerHTML = ''; emptyState.classList.remove('hidden'); return; }
+            emptyState.classList.add('hidden'); container.innerHTML = '';
 
             [...visibleChats].reverse().forEach(chat => {
                 const otherUid = chat.participants.find(id => id !== currentUser.uid);
                 const user = allUsers[otherUid] || { displayName: 'Usuario', photoURL: '' };
                 const isFinished = chat.status && chat.status !== 'active';
                 const lastMsg = chat.messages.length > 0 ? chat.messages[chat.messages.length-1].text : 'Sin mensajes';
-                
                 const offerInfo = allOffers.find(o => o.id === chat.offerId);
-                const itemName = offerInfo?.receiverItemName || 'Objeto eliminado';
 
                 const div = document.createElement('div');
-                div.className = `glass-panel p-4 rounded-[1.5rem] cursor-pointer hover:border-[var(--primary)] transition-colors flex items-center gap-4 relative group ${isFinished ? 'opacity-60' : ''}`;
+                div.className = `neo-panel p-4 cursor-pointer hover:bg-gray-50 transition-colors flex items-center gap-4 relative group ${isFinished ? 'opacity-75 bg-gray-200' : 'bg-white'}`;
                 div.onclick = () => openChat(chat.id);
                 div.innerHTML = `
-                    <div class="relative shrink-0" onclick="event.stopPropagation(); openUserProfile('${otherUid}')">
-                        <img src="${user.photoURL}" class="w-14 h-14 rounded-full object-cover border border-[var(--border-color)]">
-                        ${!isFinished ? `<div class="absolute bottom-0 right-0 w-3.5 h-3.5 bg-[var(--secondary)] border-2 border-[var(--panel-bg)] rounded-full"></div>` : ''}
+                    <div class="relative shrink-0">
+                        <img src="${user.photoURL}" class="w-14 h-14 rounded-xl object-cover border-2 border-black">
+                        ${!isFinished ? `<div class="absolute -bottom-1 -right-1 w-4 h-4 bg-[var(--secondary)] border-2 border-black rounded-full"></div>` : ''}
                     </div>
                     <div class="flex-1 overflow-hidden pr-6">
-                        <div class="flex items-center gap-2">
-                            <h4 class="text-white font-bold text-lg truncate">${user.displayName}</h4>
-                        </div>
-                        <p class="text-[10px] text-[var(--primary)] font-bold uppercase tracking-wider truncate mb-0.5">Ref: ${itemName}</p>
-                        <p class="text-[var(--text-light)] text-sm truncate">${lastMsg}</p>
+                        <h4 class="text-black font-black uppercase text-lg truncate">${user.displayName}</h4>
+                        <p class="text-[10px] text-[var(--primary)] font-black uppercase tracking-wider truncate mb-1">Ref: ${offerInfo?.receiverItemName || 'Objeto'}</p>
+                        <p class="text-[var(--text-light)] text-sm truncate font-semibold">${lastMsg}</p>
                     </div>
-                    ${isFinished ? `<span class="text-[10px] bg-[var(--panel-bg)] px-2 py-1 rounded-md text-[var(--text-light)] uppercase tracking-wide">Fin</span>` : `<svg class="w-5 h-5 text-[var(--primary)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>`}
-                    
-                    ${isFinished ? `<button onclick="event.stopPropagation(); deleteChat('${chat.id}')" class="absolute top-2 right-2 w-6 h-6 flex items-center justify-center text-[var(--text-light)] del-btn-hover rounded-full transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>` : ''}
+                    ${isFinished ? `<button onclick="event.stopPropagation(); deleteChat('${chat.id}')" class="absolute top-2 right-2 w-8 h-8 border-2 border-black bg-[var(--danger)] text-white font-bold flex items-center justify-center">X</button>` : ''}
                 `;
                 container.appendChild(div);
             });
@@ -1095,36 +1113,24 @@
              try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'chats', id), { hiddenFor: arrayUnion(currentUser.uid) }); } catch(e){}
         };
 
-        // --- Sistema de Ofertas Cruzadas (Turn-based Trade) ---
+        // --- Sistema de Ofertas (Por Turnos) ---
         window.initiateTrade = async (targetItemId, targetUserId, targetItemName) => {
             let existingOffer = allOffers.find(o => o.receiverItems.includes(targetItemId) && o.initiatorId === currentUser.uid && o.status === 'negotiating');
-            if(existingOffer) {
-                currentTradeOfferId = existingOffer.id; 
-                document.getElementById('tradeModal').classList.remove('hidden'); 
-                renderTradeModal(existingOffer.id);
-                return;
-            }
+            if(existingOffer) { currentTradeOfferId = existingOffer.id; document.getElementById('tradeModal').classList.remove('hidden'); renderTradeModal(existingOffer.id); return; }
 
             let existingChat = allChats.find(c => {
                 if(c.status !== 'active') return false;
-                const o = allOffers.find(off => off.id === c.offerId);
-                return o && o.receiverItems.includes(targetItemId) && o.initiatorId === currentUser.uid;
+                const o = allOffers.find(off => off.id === c.offerId); return o && o.receiverItems.includes(targetItemId) && o.initiatorId === currentUser.uid;
             });
-            if(existingChat) {
-                switchTab('chats');
-                openChat(existingChat.id);
-                return;
-            }
+            if(existingChat) { switchTab('chats'); openChat(existingChat.id); return; }
 
             try {
                 const ref = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'offers'), { 
                     status: 'negotiating', initiatorId: currentUser.uid, receiverId: targetUserId, 
                     initiatorItems: [], receiverItems: [targetItemId], receiverItemName: targetItemName || 'Objeto', lastUpdatedBy: currentUser.uid 
                 });
-                currentTradeOfferId = ref.id; 
-                document.getElementById('tradeModal').classList.remove('hidden'); 
-                renderTradeModal(ref.id);
-            } catch(e) { showMessage("Error de conexión", true); }
+                currentTradeOfferId = ref.id; document.getElementById('tradeModal').classList.remove('hidden'); renderTradeModal(ref.id);
+            } catch(e) {}
         };
 
         window.closeTradeModal = () => { document.getElementById('tradeModal').classList.add('hidden'); currentTradeOfferId = null; };
@@ -1139,27 +1145,25 @@
             const myItems = isInit ? (offer.initiatorItems||[]) : (offer.receiverItems||[]);
             const theirItems = isInit ? (offer.receiverItems||[]) : (offer.initiatorItems||[]);
 
-            document.getElementById('tradeOtherName').innerText = `Lo que recibes de ${otherUser?.displayName || 'Usuario'}`;
-            document.getElementById('tradeTheirInvTitle').innerText = `Elegir del mostrador de ${otherUser?.displayName || 'Usuario'}:`;
+            document.getElementById('tradeOtherName').innerText = `De ${otherUser?.displayName || 'Usuario'}`;
+            document.getElementById('tradeTheirInvTitle').innerText = `Mostrador de ${otherUser?.displayName || 'Usuario'}:`;
 
-            // Renderizado de items seleccionados
             const renderItem = (item, isMine) => {
                 if(!item) return '';
-                return `<div class="w-[60px] h-[60px] bg-[var(--panel-bg)] rounded-2xl border border-[var(--border-color)] overflow-hidden cursor-pointer hover:border-[var(--primary)] transition-colors relative" onclick="toggleTradeItem('${item.id}', ${isMine})">
+                return `<div class="w-[60px] h-[60px] bg-white rounded-lg border-2 border-black overflow-hidden cursor-pointer relative shadow-[2px_2px_0px_#000]" onclick="toggleTradeItem('${item.id}', ${isMine})">
                     <img src="${item.photos[0]}" class="w-full h-full object-cover">
-                    ${item.quantity > 1 ? `<span class="absolute bottom-0.5 right-0.5 bg-black/80 text-[8px] font-bold text-white px-1 rounded shadow">x1</span>` : ''}
+                    ${item.quantity > 1 ? `<span class="absolute bottom-0 right-0 bg-black text-[8px] font-bold text-white px-1">x1</span>` : ''}
                 </div>`;
             };
             
-            document.getElementById('tradeTheirSelected').innerHTML = theirItems.map(id => renderItem(allPublicItems.find(i=>i.id===id), false)).join('') || '<span class="text-xs text-[var(--text-light)] py-2">Vacío</span>';
-            document.getElementById('tradeMySelected').innerHTML = myItems.map(id => renderItem(allPublicItems.find(i=>i.id===id), true)).join('') || '<span class="text-xs text-[var(--text-light)] py-2">Vacío</span>';
+            document.getElementById('tradeTheirSelected').innerHTML = theirItems.map(id => renderItem(allPublicItems.find(i=>i.id===id), false)).join('') || '<span class="text-xs font-black uppercase text-gray-400 py-4">Vacío</span>';
+            document.getElementById('tradeMySelected').innerHTML = myItems.map(id => renderItem(allPublicItems.find(i=>i.id===id), true)).join('') || '<span class="text-xs font-black uppercase text-gray-400 py-4">Vacío</span>';
             
-            // Renderizado de las dos tiras (Mi inventario y el suyo)
             const myFullInventory = allPublicItems.filter(i => i.uid === currentUser.uid);
             const theirFullInventory = allPublicItems.filter(i => i.uid === otherUId);
 
             const renderInventoryStrip = (inventoryList, selectedArr, isMine) => {
-                return inventoryList.map(item => `<div onclick="toggleTradeItem('${item.id}', ${isMine})" class="w-[60px] h-[60px] shrink-0 rounded-2xl overflow-hidden cursor-pointer border-2 transition-all relative ${selectedArr.includes(item.id)?'border-[var(--primary)] opacity-40 scale-95':'border-transparent hover:border-[var(--primary)]'}"><img src="${item.photos[0]}" class="w-full h-full object-cover">${item.quantity > 1 ? `<span class="absolute top-0.5 right-0.5 bg-black/80 text-[8px] font-bold text-white px-1 rounded">x${item.quantity}</span>` : ''}</div>`).join('') || '<span class="text-xs text-[var(--text-light)]">Mostrador vacío.</span>';
+                return inventoryList.map(item => `<div onclick="toggleTradeItem('${item.id}', ${isMine})" class="w-[60px] h-[60px] shrink-0 rounded-lg overflow-hidden cursor-pointer border-2 transition-all relative ${selectedArr.includes(item.id)?'border-[var(--primary)] opacity-50':'border-black bg-white'}"><img src="${item.photos[0]}" class="w-full h-full object-cover"></div>`).join('') || '<span class="text-xs text-gray-400 font-bold">Mostrador vacío.</span>';
             };
 
             document.getElementById('tradeMyInventory').innerHTML = renderInventoryStrip(myFullInventory, myItems, true);
@@ -1167,9 +1171,9 @@
 
             const btnAccept = document.getElementById('btnAcceptTrade');
             if(offer.lastUpdatedBy === currentUser.uid) { 
-                btnAccept.innerText = "Esperando Respuesta..."; btnAccept.disabled = true; btnAccept.classList.add('opacity-50'); 
+                btnAccept.innerText = "ESPERANDO..."; btnAccept.disabled = true; btnAccept.classList.add('opacity-50', 'bg-gray-400'); btnAccept.classList.remove('neo-btn-success');
             } else { 
-                btnAccept.innerText = "Aceptar Trato"; btnAccept.disabled = false; btnAccept.classList.remove('opacity-50'); 
+                btnAccept.innerText = "ACEPTAR TRATO"; btnAccept.disabled = false; btnAccept.classList.remove('opacity-50', 'bg-gray-400'); btnAccept.classList.add('neo-btn-success');
             }
         }
 
@@ -1177,7 +1181,6 @@
             const offer = allOffers.find(o => o.id === currentTradeOfferId); if(!offer) return;
             const isInit = offer.initiatorId === currentUser.uid;
             
-            // Determinar si estoy modificando MIS items o SUS items en la oferta
             let currentItems = isMine 
                 ? (isInit ? [...(offer.initiatorItems||[])] : [...(offer.receiverItems||[])])
                 : (isInit ? [...(offer.receiverItems||[])] : [...(offer.initiatorItems||[])]);
@@ -1186,12 +1189,8 @@
             else currentItems.push(itemId);
             
             const updates = { lastUpdatedBy: currentUser.uid, status: 'negotiating' };
-            
-            if(isMine) {
-                if(isInit) updates.initiatorItems = currentItems; else updates.receiverItems = currentItems;
-            } else {
-                if(isInit) updates.receiverItems = currentItems; else updates.initiatorItems = currentItems;
-            }
+            if(isMine) { if(isInit) updates.initiatorItems = currentItems; else updates.receiverItems = currentItems; } 
+            else { if(isInit) updates.receiverItems = currentItems; else updates.initiatorItems = currentItems; }
             
             try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'offers', offer.id), updates); } catch(e) {}
         };
@@ -1220,23 +1219,22 @@
         }
         function renderNotifList() {
             const list = document.getElementById('notifList'); list.innerHTML = '';
-            
             const visibleOffers = allOffers.filter(o => o.status === 'negotiating' && !(o.dismissedBy || []).includes(currentUser.uid));
             
             visibleOffers.forEach(o => {
                 const isMyTurn = o.lastUpdatedBy !== currentUser.uid; const otherUid = o.initiatorId === currentUser.uid ? o.receiverId : o.initiatorId;
                 const name = allUsers[otherUid]?.displayName || 'Alguien';
                 const div = document.createElement('div');
-                div.className = `p-4 rounded-3xl border cursor-pointer transition-colors relative ${isMyTurn ? 'bg-[var(--primary)]/10 border-[var(--primary)]' : 'bg-[var(--panel-light)] border-transparent hover:border-[var(--border-color)]'}`;
+                div.className = `p-3 rounded-lg border-2 border-black cursor-pointer relative shadow-[2px_2px_0px_#000] ${isMyTurn ? 'bg-[var(--primary)] text-white' : 'bg-gray-100 text-black'}`;
                 div.innerHTML = `
-                    <p class="font-bold text-white flex items-center gap-2">🤝 Oferta de ${name}</p>
-                    <p class="text-sm mt-1 text-[var(--text-light)] pr-6">${isMyTurn ? 'Requiere tu respuesta...' : 'Negociando...'}</p>
-                    <button onclick="event.stopPropagation(); deleteNotif('${o.id}')" class="absolute top-4 right-4 w-6 h-6 flex items-center justify-center text-[var(--text-light)] del-btn-hover rounded-full transition-colors"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+                    <p class="font-black uppercase">🤝 Oferta de ${name}</p>
+                    <p class="text-xs mt-1 font-bold">${isMyTurn ? 'Tu turno de responder' : 'Esperando respuesta...'}</p>
+                    <button onclick="event.stopPropagation(); deleteNotif('${o.id}')" class="absolute top-3 right-3 w-6 h-6 border-2 border-black bg-[var(--danger)] text-white font-bold flex items-center justify-center">X</button>
                 `;
                 div.onclick = () => { toggleNotifications(); currentTradeOfferId = o.id; document.getElementById('tradeModal').classList.remove('hidden'); renderTradeModal(o.id); };
                 list.appendChild(div);
             });
-            if(list.innerHTML === '') list.innerHTML = '<p class="text-center py-6 text-sm text-[var(--text-light)]">No tienes notificaciones</p>';
+            if(list.innerHTML === '') list.innerHTML = '<p class="text-center py-6 text-sm font-bold uppercase text-gray-400">Sin notificaciones</p>';
         }
 
         window.deleteNotif = async (id) => {
@@ -1252,41 +1250,25 @@
             const otherUid = chat.participants.find(id => id !== currentUser.uid);
             document.getElementById('chatTitleImg').src = allUsers[otherUid]?.photoURL || '';
             document.getElementById('chatTitle').innerText = allUsers[otherUid]?.displayName || 'Chat';
-            document.getElementById('chatTitleContainer').onclick = () => openUserProfile(otherUid);
             
-            const isCompleted = chat.status === 'completed';
-            const isCancelled = chat.status === 'cancelled';
-            const isReported = chat.status === 'reported';
-            const isFinishedByMe = chat.finishedBy?.includes(currentUser.uid);
+            const isCompleted = chat.status === 'completed'; const isCancelled = chat.status === 'cancelled'; const isReported = chat.status === 'reported'; const isFinishedByMe = chat.finishedBy?.includes(currentUser.uid);
 
-            const btnConcluir = document.getElementById('btnConcluirTrato');
-            const inputCont = document.getElementById('chatInputContainer');
-            const banner = document.getElementById('chatActionBanner');
+            const btnConcluir = document.getElementById('btnConcluirTrato'); const inputCont = document.getElementById('chatInputContainer'); const banner = document.getElementById('chatActionBanner');
 
             if(chat.status === 'active' && !isFinishedByMe) { btnConcluir.classList.remove('hidden'); } else { btnConcluir.classList.add('hidden'); }
             if(chat.status === 'active') { inputCont.classList.remove('hidden'); } else { inputCont.classList.add('hidden'); }
 
-            banner.classList.remove('hidden', 'text-[var(--secondary)]', 'text-[var(--danger)]', 'text-[#F59E0B]', 'text-[var(--text-light)]');
-            if (isCompleted) {
-                banner.innerText = "✨ ¡Transacción Exitosa! Ambos sumaron reputación.";
-                banner.classList.add('text-[var(--secondary)]');
-            } else if (isReported) {
-                banner.innerText = "⚠️ Trato reportado a moderación.";
-                banner.classList.add('text-[var(--danger)]');
-            } else if (isCancelled) {
-                banner.innerText = "Trato cancelado por falta de acuerdo.";
-                banner.classList.add('text-[#F59E0B]');
-            } else if (isFinishedByMe) {
-                banner.innerText = "Esperando a la otra parte para finalizar...";
-                banner.classList.add('text-[var(--text-light)]');
-            } else {
-                banner.classList.add('hidden');
-            }
+            banner.classList.remove('hidden', 'bg-[var(--secondary)]', 'bg-[var(--danger)]', 'bg-[#F59E0B]', 'bg-gray-400');
+            if (isCompleted) { banner.innerText = "✨ ¡Transacción Exitosa!"; banner.classList.add('bg-[var(--secondary)]'); } 
+            else if (isReported) { banner.innerText = "⚠️ Trato reportado."; banner.classList.add('bg-[var(--danger)]'); } 
+            else if (isCancelled) { banner.innerText = "Trato cancelado."; banner.classList.add('bg-[#F59E0B]'); } 
+            else if (isFinishedByMe) { banner.innerText = "Esperando a la otra parte..."; banner.classList.add('bg-gray-400'); } 
+            else { banner.classList.add('hidden'); }
             
             const msgsBox = document.getElementById('chatMessages');
             msgsBox.innerHTML = chat.messages.map(m => {
                 const isMe = m.sender === currentUser.uid;
-                return `<div class="w-full flex ${isMe ? 'justify-end' : 'justify-start'}"><div class="text-[15px] shadow-sm ${isMe ? 'chat-bubble-me' : 'chat-bubble-other'}">${m.text}</div></div>`;
+                return `<div class="w-full flex ${isMe ? 'justify-end' : 'justify-start'}"><div class="${isMe ? 'chat-bubble-me' : 'chat-bubble-other'}">${m.text}</div></div>`;
             }).join('');
             msgsBox.scrollTop = msgsBox.scrollHeight;
         }
@@ -1301,15 +1283,9 @@
         // --- Modales de Conclusión y Reporte ---
         window.openConclusionModal = () => document.getElementById('conclusionModal').classList.remove('hidden');
         window.closeConclusionModal = () => document.getElementById('conclusionModal').classList.add('hidden');
-        
-        window.openReportModal = () => {
-            closeConclusionModal();
-            document.getElementById('reportReasonInput').value = '';
-            document.getElementById('reportModal').classList.remove('hidden');
-        };
+        window.openReportModal = () => { closeConclusionModal(); document.getElementById('reportModal').classList.remove('hidden'); };
         window.closeReportModal = () => document.getElementById('reportModal').classList.add('hidden');
 
-        // Búsqueda profunda para consumir objetos en ambas mochilas (pública y privada)
         async function processItemConsumption(offerId) {
             try {
                 const offerDoc = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'offers', offerId));
@@ -1328,8 +1304,7 @@
                         const priv1Snap = await getDoc(priv1);
                         if(priv1Snap.exists()) {
                             if(priv1Snap.data().quantity > 1) await updateDoc(priv1, {quantity: increment(-1)});
-                            else await deleteDoc(priv1);
-                            continue;
+                            else await deleteDoc(priv1); continue;
                         }
                         const priv2 = doc(db, 'artifacts', appId, 'users', offer.receiverId, 'privateItems', itemId);
                         const priv2Snap = await getDoc(priv2);
@@ -1339,7 +1314,7 @@
                         }
                     }
                 }
-            } catch(e) { console.error("Error consumiendo objetos", e); }
+            } catch(e) {}
         }
 
         window.finalizeTransaction = async (type) => {
@@ -1350,51 +1325,23 @@
 
             try {
                 if(type === 'success') {
-                    // Agregarnos al arreglo de finalizados
                     await updateDoc(chatRef, { finishedBy: arrayUnion(currentUser.uid) });
-                    
-                    // Comprobación reforzada: leer de base de datos para no tener desfasaje
                     const latestSnap = await getDoc(chatRef);
                     const currentFinishedBy = latestSnap.data().finishedBy || [];
                     
                     if(currentFinishedBy.length >= 2) { 
-                        // Ambos finalizaron el trato
                         await updateDoc(chatRef, { status: 'completed' });
                         await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', currentUser.uid), { successfulTrades: increment(1) });
                         const otherUid = chatData.participants.find(id => id !== currentUser.uid);
                         await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', otherUid), { successfulTrades: increment(1) });
-                        
                         await processItemConsumption(chatData.offerId);
-                        
-                        showMessage("¡Trato cerrado con éxito! Objetos consumidos.");
-                    } else {
-                        showMessage("Marcado exitoso. Esperando a la otra parte.");
-                    }
+                        showMessage("¡Trato cerrado con éxito!");
+                    } else { showMessage("Esperando confirmación del otro usuario."); }
                 } else if(type === 'cancelled') {
-                    await updateDoc(chatRef, { status: 'cancelled' });
-                    showMessage("El trato fue marcado como cancelado.");
+                    await updateDoc(chatRef, { status: 'cancelled' }); showMessage("Trato cancelado.");
                 }
-            } catch (e) { showMessage("Error procesando acción", true); }
+            } catch (e) {}
         };
-
-        window.submitReport = async () => {
-            if(!currentChatId) return;
-            const reason = document.getElementById('reportReasonInput').value.trim();
-            if(!reason) { showMessage("Debes escribir un motivo", true); return; }
-            
-            const chatRef = doc(db, 'artifacts', appId, 'public', 'data', 'chats', currentChatId);
-            const chatData = allChats.find(c => c.id === currentChatId);
-            const otherUid = chatData.participants.find(id => id !== currentUser.uid);
-            
-            closeReportModal();
-            try {
-                await updateDoc(chatRef, { status: 'reported' });
-                const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', otherUid);
-                await updateDoc(userRef, { reports: arrayUnion(reason) });
-                showMessage("Usuario reportado con éxito.", true);
-            } catch (e) { showMessage("Error al enviar reporte", true); }
-        };
-
     </script>
 </body>
 </html>
