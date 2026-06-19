@@ -174,11 +174,6 @@
                 </button>
             </div>
         </div>
-
-        <!-- Category Filter (Solo visible en Feed) -->
-        <div id="categoryFilter" class="w-full overflow-x-auto hide-scrollbar px-4 pb-2 pointer-events-auto hidden space-x-2">
-            <!-- Inyectado por JS -->
-        </div>
     </header>
 
     <!-- Main Content -->
@@ -186,6 +181,17 @@
         
         <!-- PANTALLA: FEED -->
         <div id="view-feed" class="view-section active">
+            
+            <!-- Filtro de Categoría Flotante -->
+            <div id="categoryFilterWrapper" class="absolute top-16 left-4 z-40 pointer-events-auto">
+                <div class="relative">
+                    <select id="categorySelect" onchange="setCategoryFilter(this.value)" class="bg-[var(--panel-bg)]/90 backdrop-blur-sm text-[var(--text-main)] border-2 border-black rounded-xl pl-3 pr-8 py-2 text-xs font-black uppercase shadow-[2px_2px_0px_#000] outline-none appearance-none cursor-pointer">
+                        <!-- Inyectado por JS -->
+                    </select>
+                    <svg class="w-4 h-4 absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none text-black" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+            </div>
+
             <div class="feed-wrapper">
                 <div id="feedContainer" class="feed-container w-full"></div>
                 <div id="feedEmpty" class="hidden h-full flex flex-col items-center justify-center text-center p-8 bg-[var(--bg-color)]">
@@ -564,18 +570,16 @@
 
         // Inicializar Categorías UI
         function initCategoryFilter() {
-            const container = document.getElementById('categoryFilter');
-            container.innerHTML = CATEGORIES.map(cat => 
-                `<button onclick="setCategoryFilter('${cat}')" class="neo-pill ${cat === activeCategoryFilter ? 'active' : ''}" data-cat="${cat}">${cat}</button>`
-            ).join('');
+            const select = document.getElementById('categorySelect');
+            if (select) {
+                select.innerHTML = CATEGORIES.map(cat => 
+                    `<option value="${cat}">${cat}</option>`
+                ).join('');
+            }
         }
 
         window.setCategoryFilter = (cat) => {
             activeCategoryFilter = cat;
-            document.querySelectorAll('#categoryFilter .neo-pill').forEach(el => {
-                if(el.dataset.cat === cat) el.classList.add('active');
-                else el.classList.remove('active');
-            });
             renderFeed();
         };
 
@@ -599,12 +603,12 @@
             const activeBtn = document.querySelector(`[data-tab="${tabId}"]`);
             activeBtn.classList.add('active');
 
-            const catFilter = document.getElementById('categoryFilter');
+            const catFilter = document.getElementById('categoryFilterWrapper');
             if(tabId === 'feed') {
-                catFilter.classList.remove('hidden');
+                if(catFilter) catFilter.classList.remove('hidden');
                 renderFeed();
             } else {
-                catFilter.classList.add('hidden');
+                if(catFilter) catFilter.classList.add('hidden');
             }
 
             if (tabId === 'backpack') setTimeout(resizeGrids, 50); 
@@ -1129,14 +1133,19 @@
                     status: 'negotiating', initiatorId: currentUser.uid, receiverId: targetUserId, 
                     initiatorItems: [], receiverItems: [targetItemId], receiverItemName: targetItemName || 'Objeto', lastUpdatedBy: currentUser.uid 
                 });
-                currentTradeOfferId = ref.id; document.getElementById('tradeModal').classList.remove('hidden'); renderTradeModal(ref.id);
-            } catch(e) {}
+                currentTradeOfferId = ref.id; 
+                document.getElementById('tradeModal').classList.remove('hidden'); 
+                document.getElementById('tradeTheirSelected').innerHTML = '<span class="text-xs font-black uppercase text-[var(--text-light)] py-4">Cargando mesa...</span>';
+                // Esperamos al onSnapshot para renderizar el resto y evitar cierres abruptos
+            } catch(e) { showMessage("Error al iniciar trato", true); }
         };
 
         window.closeTradeModal = () => { document.getElementById('tradeModal').classList.add('hidden'); currentTradeOfferId = null; };
 
         function renderTradeModal(offerId) {
-            const offer = allOffers.find(o => o.id === offerId); if(!offer || offer.status !== 'negotiating') { closeTradeModal(); return; }
+            const offer = allOffers.find(o => o.id === offerId); 
+            if(!offer) return; // Esperar a que Firebase devuelva la data
+            if(offer.status !== 'negotiating') { closeTradeModal(); return; }
             
             const isInit = offer.initiatorId === currentUser.uid;
             const otherUId = isInit ? offer.receiverId : offer.initiatorId;
