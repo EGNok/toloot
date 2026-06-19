@@ -48,6 +48,8 @@
             display: inline-flex; align-items: center; justify-content: center;
         }
         .neo-btn:active { transform: translate(2px, 2px); box-shadow: none; }
+        .neo-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+        
         .neo-btn-primary { background-color: var(--primary); }
         .neo-btn-success { background-color: var(--secondary); }
         .neo-btn-danger { background-color: var(--danger); color: white; }
@@ -260,7 +262,24 @@
             </div>
             <div class="p-4 bg-white border-t-[3px] border-black flex space-x-2">
                 <button onclick="declineTrade()" class="w-14 h-14 shrink-0 neo-btn neo-btn-danger text-xl">X</button>
-                <button id="btnAcceptTrade" onclick="acceptTrade()" class="flex-1 py-3 neo-btn neo-btn-success text-lg">Confirmar</button>
+                <div id="tradeActionButtons" class="flex-1 flex gap-2">
+                    <!-- Los botones dinámicos de turnos se insertan aquí -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- MODAL DETALLE DE OBJETO -->
+        <div id="itemDetailModal" class="absolute inset-0 bg-black/90 z-[75] hidden flex flex-col items-center justify-center p-4">
+            <div class="neo-panel w-full max-w-sm flex flex-col p-3 relative bg-white shadow-[8px_8px_0px_#000]">
+                <button onclick="closeItemDetail()" class="absolute -top-3 -right-3 w-10 h-10 border-[3px] border-black rounded-full bg-[var(--danger)] text-white font-black z-10 hover:scale-105 active:scale-95 transition-transform">X</button>
+                <div class="h-64 w-full border-[3px] border-black rounded-lg overflow-hidden bg-black mb-3">
+                    <img id="detailImg" src="" class="w-full h-full object-contain">
+                </div>
+                <div class="p-2 text-center">
+                    <h3 id="detailName" class="font-black text-3xl uppercase leading-none mb-2">Nombre</h3>
+                    <p id="detailCat" class="text-xs font-black uppercase bg-[var(--primary)] border-[3px] border-black px-2 py-1 rounded inline-block mb-2">Categoría</p>
+                    <p id="detailLoc" class="text-sm font-bold text-[var(--text-light)]">Ubicación</p>
+                </div>
             </div>
         </div>
 
@@ -732,6 +751,177 @@
             });
         }
 
+        // ====== SISTEMA DE OFERTAS POR TURNOS ======
+
+        window.initiateTrade = async (targetItemId, targetUserId, targetItemName) => {
+            let existingOffer = allOffers.find(o => o.receiverItems.includes(targetItemId) && o.initiatorId === currentUser.uid && o.status === 'negotiating');
+            if(existingOffer) { currentTradeOfferId = existingOffer.id; document.getElementById('tradeModal').classList.remove('hidden'); renderTradeModal(existingOffer.id); return; }
+            let existingChat = allChats.find(c => { if(c.status !== 'active') return false; const o = allOffers.find(off => off.id === c.offerId); return o && o.receiverItems.includes(targetItemId) && o.initiatorId === currentUser.uid; });
+            if(existingChat) { switchTab('chats'); openChat(existingChat.id); return; }
+            try {
+                // Al iniciar, tu turno es primero para que puedas armar la oferta
+                const ref = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'offers'), { 
+                    status: 'negotiating', initiatorId: currentUser.uid, receiverId: targetUserId, 
+                    initiatorItems: [], receiverItems: [targetItemId], receiverItemName: targetItemName || 'Objeto', 
+                    currentTurn: currentUser.uid, dismissedBy: [] 
+                });
+                currentTradeOfferId = ref.id; document.getElementById('tradeModal').classList.remove('hidden'); renderTradeModal(ref.id);
+            } catch(e) { showMessage("Error", true); }
+        };
+
+        window.closeTradeModal = () => { document.getElementById('tradeModal').classList.add('hidden'); currentTradeOfferId = null; };
+
+        // Mostrar detalles de objetos
+        window.showItemDetails = (itemId) => {
+            const item = allPublicItems.find(i => i.id === itemId); if (!item) return;
+            document.getElementById('detailImg').src = item.photos[0];
+            document.getElementById('detailName').innerText = item.name;
+            document.getElementById('detailCat').innerText = item.category || 'Varios';
+            document.getElementById('detailLoc').innerText = item.location;
+            document.getElementById('itemDetailModal').classList.remove('hidden');
+        };
+        window.closeItemDetail = () => { document.getElementById('itemDetailModal').classList.add('hidden'); };
+
+        function renderTradeModal(offerId) {
+            const offer = allOffers.find(o => o.id === offerId); if(!offer || offer.status === 'cancelled' || offer.status === 'accepted') { closeTradeModal(); return; }
+            
+            const isInit = offer.initiatorId === currentUser.uid; 
+            const otherUId = isInit ? offer.receiverId : offer.initiatorId; 
+            const otherUser = allUsers[otherUId];
+            
+            const myTurn = offer.currentTurn === currentUser.uid;
+            const isPendingConf = offer.status === 'pending_confirmation';
+
+            const myItems = isInit ? (offer.initiatorItems||[]) : (offer.receiverItems||[]); 
+            const theirItems = isInit ? (offer.receiverItems||[]) : (offer.initiatorItems||[]);
+            
+            document.getElementById('tradeOtherName').innerText = `De ${otherUser?.displayName || 'Usuario'}`;
+            document.getElementById('tradeTheirInvTitle').innerText = `Mostrador de ${otherUser?.displayName || 'Usuario'}`;
+            
+            // Si no es tu turno, tocas y ves detalle. Si es tu turno y es tuyo, tocas y retiras de la mesa.
+            const renderItemTheir = (item) => {
+                if(!item) return '';
+                return `<div class="w-[50px] h-[50px] bg-white rounded-lg border-2 border-black overflow-hidden cursor-pointer relative" onclick="showItemDetails('${item.id}')"><img src="${item.photos[0]}" class="w-full h-full object-cover"></div>`;
+            };
+            const renderItemMine = (item) => {
+                if(!item) return '';
+                return `<div class="w-[50px] h-[50px] bg-white rounded-lg border-2 border-black overflow-hidden cursor-pointer relative" onclick="${myTurn ? `toggleTradeItem('${item.id}', true)` : `showItemDetails('${item.id}')`}"><img src="${item.photos[0]}" class="w-full h-full object-cover"></div>`;
+            };
+            
+            document.getElementById('tradeTheirSelected').innerHTML = theirItems.map(id => renderItemTheir(allPublicItems.find(i=>i.id===id))).join('') || '<span class="text-[10px] font-black uppercase text-[var(--text-light)] py-2">Vacío</span>';
+            document.getElementById('tradeMySelected').innerHTML = myItems.map(id => renderItemMine(allPublicItems.find(i=>i.id===id))).join('') || '<span class="text-[10px] font-black uppercase text-[var(--text-light)] py-2">Vacío</span>';
+            
+            const myFullInventory = allPublicItems.filter(i => i.uid === currentUser.uid); 
+            const theirFullInventory = allPublicItems.filter(i => i.uid === otherUId);
+            
+            // Si no es tu turno, no puedes agregar cosas de los mostradores, solo ves detalle
+            const renderInventoryStrip = (inventoryList, selectedArr, isMine) => {
+                return inventoryList.map(item => `<div onclick="${myTurn ? `toggleTradeItem('${item.id}', ${isMine})` : `showItemDetails('${item.id}')`}" class="w-[50px] h-[50px] shrink-0 rounded-lg overflow-hidden cursor-pointer border-2 transition-all relative ${selectedArr.includes(item.id)?'border-[var(--primary)] opacity-50':'border-black'}"><img src="${item.photos[0]}" class="w-full h-full object-cover"></div>`).join('') || '<span class="text-[10px] font-black uppercase">Vacío</span>';
+            };
+            
+            document.getElementById('tradeMyInventory').innerHTML = renderInventoryStrip(myFullInventory, myItems, true);
+            document.getElementById('tradeTheirInventory').innerHTML = renderInventoryStrip(theirFullInventory, theirItems, false);
+            
+            // Lógica de botones según turno y estado
+            const actionsDiv = document.getElementById('tradeActionButtons');
+            if (!myTurn) {
+                let msg = isPendingConf ? "ESPERANDO CONFIRMACIÓN..." : "ESPERANDO RESPUESTA...";
+                actionsDiv.innerHTML = `<button disabled class="flex-1 py-3 neo-btn bg-gray-300 text-[10px]">${msg}</button>`;
+            } else if (isPendingConf) {
+                actionsDiv.innerHTML = `
+                    <button onclick="modifyTrade()" class="flex-1 py-3 neo-btn bg-white text-[10px]">MODIFICAR</button>
+                    <button onclick="confirmTrade()" class="flex-1 py-3 neo-btn neo-btn-success text-[10px]">CONFIRMAR TRATO</button>
+                `;
+            } else {
+                actionsDiv.innerHTML = `
+                    <button onclick="passTurn()" class="flex-1 py-3 neo-btn neo-btn-primary text-[10px]">ENVIAR OFERTA</button>
+                    <button onclick="acceptTradeStep1()" class="flex-1 py-3 neo-btn neo-btn-success text-[10px]">ACEPTAR TRATO</button>
+                `;
+            }
+        }
+
+        window.toggleTradeItem = async (itemId, isMine) => {
+            const offer = allOffers.find(o => o.id === currentTradeOfferId); if(!offer) return;
+            if (offer.currentTurn !== currentUser.uid) return; // Si no es tu turno, bloqueado
+            const isInit = offer.initiatorId === currentUser.uid;
+            let currentItems = isMine ? (isInit ? [...(offer.initiatorItems||[])] : [...(offer.receiverItems||[])]) : (isInit ? [...(offer.receiverItems||[])] : [...(offer.initiatorItems||[])]);
+            if(currentItems.includes(itemId)) currentItems = currentItems.filter(id => id !== itemId); else currentItems.push(itemId);
+            
+            const updates = {};
+            if(isMine) { if(isInit) updates.initiatorItems = currentItems; else updates.receiverItems = currentItems; } 
+            else { if(isInit) updates.receiverItems = currentItems; else updates.initiatorItems = currentItems; }
+            try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'offers', offer.id), updates); } catch(e) {}
+        };
+        
+        window.passTurn = async () => {
+            const offer = allOffers.find(o => o.id === currentTradeOfferId);
+            const nextTurn = offer.initiatorId === currentUser.uid ? offer.receiverId : offer.initiatorId;
+            try {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'offers', currentTradeOfferId), {
+                    currentTurn: nextTurn, status: 'negotiating', dismissedBy: []
+                });
+                closeTradeModal(); showMessage("Oferta enviada");
+            } catch(e){}
+        };
+
+        window.acceptTradeStep1 = async () => {
+             const offer = allOffers.find(o => o.id === currentTradeOfferId);
+             const nextTurn = offer.initiatorId === currentUser.uid ? offer.receiverId : offer.initiatorId;
+             try {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'offers', currentTradeOfferId), {
+                    currentTurn: nextTurn, status: 'pending_confirmation', dismissedBy: []
+                });
+                closeTradeModal(); showMessage("Esperando confirmación...");
+             } catch(e) {}
+        };
+
+        window.modifyTrade = async () => {
+            // Rechaza la confirmación y vuelve a negociar sin pasar el turno (te toca a ti)
+            try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'offers', currentTradeOfferId), { status: 'negotiating' }); } catch(e){}
+        };
+
+        window.confirmTrade = async () => {
+            const offer = allOffers.find(o => o.id === currentTradeOfferId);
+            try {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'offers', currentTradeOfferId), { status: 'accepted' });
+                const chatRef = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'chats'), { participants: [offer.initiatorId, offer.receiverId], messages: [], finishedBy: [], status: 'active', offerId: currentTradeOfferId });
+                closeTradeModal(); switchTab('chats'); openChat(chatRef.id);
+            } catch(e) {}
+        };
+
+        window.declineTrade = async () => { try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'offers', currentTradeOfferId), { status: 'cancelled' }); closeTradeModal(); } catch(e) {} };
+        
+        // ==========================================
+
+        window.toggleNotifications = () => { const el = document.getElementById('notifModal'); el.classList.contains('hidden') ? el.classList.remove('hidden') : el.classList.add('hidden'); };
+        function updateNotifBadge() {
+            if(!currentUser) return; 
+            const pending = allOffers.some(o => (o.status === 'negotiating' || o.status === 'pending_confirmation') && o.currentTurn === currentUser.uid && !(o.dismissedBy || []).includes(currentUser.uid));
+            document.getElementById('notifBadge').style.display = pending ? 'block' : 'none';
+        }
+        function renderNotifList() {
+            const list = document.getElementById('notifList'); list.innerHTML = '';
+            const visibleOffers = allOffers.filter(o => (o.status === 'negotiating' || o.status === 'pending_confirmation') && !(o.dismissedBy || []).includes(currentUser.uid));
+            visibleOffers.forEach(o => {
+                const isMyTurn = o.currentTurn === currentUser.uid; 
+                const otherUid = o.initiatorId === currentUser.uid ? o.receiverId : o.initiatorId; 
+                const name = allUsers[otherUid]?.displayName || 'Alguien';
+                
+                let actionText = isMyTurn ? (o.status === 'pending_confirmation' ? 'Requiere Confirmación!' : 'Tu turno') : 'Esperando a '+name;
+
+                const div = document.createElement('div');
+                div.className = `p-3 neo-panel cursor-pointer relative ${isMyTurn ? 'bg-[var(--primary)]' : 'bg-white opacity-70'}`;
+                div.innerHTML = `
+                    <p class="font-black text-sm uppercase">Oferta de ${name}</p>
+                    <p class="text-xs font-bold">${actionText}</p>
+                    <button onclick="event.stopPropagation(); deleteNotif('${o.id}')" class="absolute top-2 right-2 w-6 h-6 border-2 border-black bg-[var(--danger)] text-white font-black flex items-center justify-center">X</button>
+                `;
+                div.onclick = () => { toggleNotifications(); currentTradeOfferId = o.id; document.getElementById('tradeModal').classList.remove('hidden'); renderTradeModal(o.id); };
+                list.appendChild(div);
+            });
+        }
+        window.deleteNotif = async (id) => { try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'offers', id), { dismissedBy: arrayUnion(currentUser.uid) }); } catch(e){} };
+
         function renderChatsView() {
             const container = document.getElementById('chatsListContainer'); const emptyState = document.getElementById('chatsEmpty');
             const visibleChats = allChats.filter(c => !(c.hiddenFor || []).includes(currentUser.uid));
@@ -756,86 +946,6 @@
                 container.appendChild(div);
             });
         }
-        
-        window.deleteChat = async (id) => { try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'chats', id), { hiddenFor: arrayUnion(currentUser.uid) }); } catch(e){} };
-
-        window.initiateTrade = async (targetItemId, targetUserId, targetItemName) => {
-            let existingOffer = allOffers.find(o => o.receiverItems.includes(targetItemId) && o.initiatorId === currentUser.uid && o.status === 'negotiating');
-            if(existingOffer) { currentTradeOfferId = existingOffer.id; document.getElementById('tradeModal').classList.remove('hidden'); renderTradeModal(existingOffer.id); return; }
-            let existingChat = allChats.find(c => { if(c.status !== 'active') return false; const o = allOffers.find(off => off.id === c.offerId); return o && o.receiverItems.includes(targetItemId) && o.initiatorId === currentUser.uid; });
-            if(existingChat) { switchTab('chats'); openChat(existingChat.id); return; }
-            try {
-                const ref = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'offers'), { status: 'negotiating', initiatorId: currentUser.uid, receiverId: targetUserId, initiatorItems: [], receiverItems: [targetItemId], receiverItemName: targetItemName || 'Objeto', lastUpdatedBy: currentUser.uid });
-                currentTradeOfferId = ref.id; document.getElementById('tradeModal').classList.remove('hidden'); renderTradeModal(ref.id);
-            } catch(e) { showMessage("Error", true); }
-        };
-
-        window.closeTradeModal = () => { document.getElementById('tradeModal').classList.add('hidden'); currentTradeOfferId = null; };
-
-        function renderTradeModal(offerId) {
-            const offer = allOffers.find(o => o.id === offerId); if(!offer || offer.status !== 'negotiating') { closeTradeModal(); return; }
-            const isInit = offer.initiatorId === currentUser.uid; const otherUId = isInit ? offer.receiverId : offer.initiatorId; const otherUser = allUsers[otherUId];
-            const myItems = isInit ? (offer.initiatorItems||[]) : (offer.receiverItems||[]); const theirItems = isInit ? (offer.receiverItems||[]) : (offer.initiatorItems||[]);
-            document.getElementById('tradeOtherName').innerText = `De ${otherUser?.displayName || 'Usuario'}`;
-            document.getElementById('tradeTheirInvTitle').innerText = `Mostrador de ${otherUser?.displayName || 'Usuario'}`;
-            const renderItem = (item, isMine) => {
-                if(!item) return '';
-                return `<div class="w-[50px] h-[50px] bg-white rounded-lg border-2 border-black overflow-hidden cursor-pointer relative" onclick="toggleTradeItem('${item.id}', ${isMine})"><img src="${item.photos[0]}" class="w-full h-full object-cover"></div>`;
-            };
-            document.getElementById('tradeTheirSelected').innerHTML = theirItems.map(id => renderItem(allPublicItems.find(i=>i.id===id), false)).join('') || '<span class="text-[10px] font-black uppercase text-[var(--text-light)] py-2">Vacío</span>';
-            document.getElementById('tradeMySelected').innerHTML = myItems.map(id => renderItem(allPublicItems.find(i=>i.id===id), true)).join('') || '<span class="text-[10px] font-black uppercase text-[var(--text-light)] py-2">Vacío</span>';
-            const myFullInventory = allPublicItems.filter(i => i.uid === currentUser.uid); const theirFullInventory = allPublicItems.filter(i => i.uid === otherUId);
-            const renderInventoryStrip = (inventoryList, selectedArr, isMine) => {
-                return inventoryList.map(item => `<div onclick="toggleTradeItem('${item.id}', ${isMine})" class="w-[50px] h-[50px] shrink-0 rounded-lg overflow-hidden cursor-pointer border-2 transition-all relative ${selectedArr.includes(item.id)?'border-[var(--primary)] opacity-50':'border-black'}"><img src="${item.photos[0]}" class="w-full h-full object-cover"></div>`).join('') || '<span class="text-[10px] font-black uppercase">Vacío</span>';
-            };
-            document.getElementById('tradeMyInventory').innerHTML = renderInventoryStrip(myFullInventory, myItems, true);
-            document.getElementById('tradeTheirInventory').innerHTML = renderInventoryStrip(theirFullInventory, theirItems, false);
-            const btnAccept = document.getElementById('btnAcceptTrade');
-            if(offer.lastUpdatedBy === currentUser.uid) { btnAccept.innerText = "ESPERANDO..."; btnAccept.disabled = true; btnAccept.classList.add('opacity-50'); } else { btnAccept.innerText = "ACEPTAR"; btnAccept.disabled = false; btnAccept.classList.remove('opacity-50'); }
-        }
-
-        window.toggleTradeItem = async (itemId, isMine) => {
-            const offer = allOffers.find(o => o.id === currentTradeOfferId); if(!offer) return;
-            const isInit = offer.initiatorId === currentUser.uid;
-            let currentItems = isMine ? (isInit ? [...(offer.initiatorItems||[])] : [...(offer.receiverItems||[])]) : (isInit ? [...(offer.receiverItems||[])] : [...(offer.initiatorItems||[])]);
-            if(currentItems.includes(itemId)) currentItems = currentItems.filter(id => id !== itemId); else currentItems.push(itemId);
-            const updates = { lastUpdatedBy: currentUser.uid, status: 'negotiating' };
-            if(isMine) { if(isInit) updates.initiatorItems = currentItems; else updates.receiverItems = currentItems; } else { if(isInit) updates.receiverItems = currentItems; else updates.initiatorItems = currentItems; }
-            try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'offers', offer.id), updates); } catch(e) {}
-        };
-        
-        window.declineTrade = async () => { try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'offers', currentTradeOfferId), { status: 'cancelled' }); closeTradeModal(); } catch(e) {} };
-        window.acceptTrade = async () => {
-            const offer = allOffers.find(o => o.id === currentTradeOfferId);
-            try {
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'offers', currentTradeOfferId), { status: 'accepted' });
-                const chatRef = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'chats'), { participants: [offer.initiatorId, offer.receiverId], messages: [], finishedBy: [], status: 'active', offerId: currentTradeOfferId });
-                closeTradeModal(); switchTab('chats'); openChat(chatRef.id);
-            } catch(e) {}
-        };
-
-        window.toggleNotifications = () => { const el = document.getElementById('notifModal'); el.classList.contains('hidden') ? el.classList.remove('hidden') : el.classList.add('hidden'); };
-        function updateNotifBadge() {
-            if(!currentUser) return; const pending = allOffers.some(o => o.status === 'negotiating' && o.lastUpdatedBy !== currentUser.uid && !(o.dismissedBy || []).includes(currentUser.uid));
-            document.getElementById('notifBadge').style.display = pending ? 'block' : 'none';
-        }
-        function renderNotifList() {
-            const list = document.getElementById('notifList'); list.innerHTML = '';
-            const visibleOffers = allOffers.filter(o => o.status === 'negotiating' && !(o.dismissedBy || []).includes(currentUser.uid));
-            visibleOffers.forEach(o => {
-                const isMyTurn = o.lastUpdatedBy !== currentUser.uid; const otherUid = o.initiatorId === currentUser.uid ? o.receiverId : o.initiatorId; const name = allUsers[otherUid]?.displayName || 'Alguien';
-                const div = document.createElement('div');
-                div.className = `p-3 neo-panel cursor-pointer relative ${isMyTurn ? 'bg-[var(--primary)]' : 'bg-white'}`;
-                div.innerHTML = `
-                    <p class="font-black text-sm uppercase">Oferta de ${name}</p>
-                    <p class="text-xs font-bold">${isMyTurn ? 'Tu turno' : 'Esperando...'}</p>
-                    <button onclick="event.stopPropagation(); deleteNotif('${o.id}')" class="absolute top-2 right-2 w-6 h-6 border-2 border-black bg-[var(--danger)] text-white font-black flex items-center justify-center">X</button>
-                `;
-                div.onclick = () => { toggleNotifications(); currentTradeOfferId = o.id; document.getElementById('tradeModal').classList.remove('hidden'); renderTradeModal(o.id); };
-                list.appendChild(div);
-            });
-        }
-        window.deleteNotif = async (id) => { try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'offers', id), { dismissedBy: arrayUnion(currentUser.uid) }); } catch(e){} };
 
         window.openChat = (chatId) => { currentChatId = chatId; document.getElementById('chatModal').classList.remove('hidden'); renderChatModal(chatId); };
         window.closeChat = () => { document.getElementById('chatModal').classList.add('hidden'); currentChatId = null; };
