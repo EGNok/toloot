@@ -66,8 +66,8 @@
         
         @media (min-width: 768px) {
             .feed-item { flex-direction: row; }
-            .feed-image-section { width: 60%; height: 100%; }
-            .feed-info-section { width: 40%; height: 100%; position: relative !important; bottom: auto !important; border-left: 4px solid black; }
+            .feed-image-section { width: 55%; height: 100%; border-right: 4px solid black; }
+            .feed-info-section { width: 45%; height: 100%; position: relative !important; bottom: auto !important; border-radius: 0 !important; border: none !important; box-shadow: none !important; }
             #view-backpack.active { display: flex; flex-direction: row; padding-bottom: 6rem; }
             .backpack-half { width: 50%; height: 100%; overflow-y: auto; }
             #drawer-handle { display: none !important; }
@@ -76,8 +76,9 @@
 
         @media (max-width: 767px) {
             .feed-image-section { width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1; }
-            .feed-info-section { width: 90%; max-height: 50%; position: absolute; bottom: 6rem; left: 5%; z-index: 10; }
-            .feed-gradient { position: absolute; bottom: 0; left: 0; right: 0; height: 60%; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%); pointer-events: none; z-index: 2; }
+            /* Se ha reducido el tamaño y márgenes del cuadro de info en celular */
+            .feed-info-section { width: 92%; position: absolute; bottom: 5rem; left: 4%; z-index: 10; padding: 12px; border-radius: 16px; max-height: 45%; overflow-y: auto; }
+            .feed-gradient { position: absolute; bottom: 0; left: 0; right: 0; height: 50%; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%); pointer-events: none; z-index: 2; }
             #view-backpack.active { display: flex; flex-direction: column; padding-bottom: 0; }
         }
 
@@ -169,8 +170,9 @@
                     </div>
                     <button onclick="openAddItemModal()" class="px-4 py-2 text-sm neo-btn neo-btn-primary">+ Añadir</button>
                 </div>
-                <div class="p-4 neo-brutal flex justify-center w-full bg-white">
-                    <div id="grid-public-container" class="flex justify-center touch-none w-full"><div id="grid-public" class="re-grid" data-grid="public"></div></div>
+                <!-- Se elimina touch-none para permitir scroll si se requiere en un futuro, mantenemos drag nativo -->
+                <div class="p-4 neo-brutal flex justify-center w-full bg-white overflow-hidden">
+                    <div id="grid-public-container" class="flex justify-center w-full"><div id="grid-public" class="re-grid" data-grid="public"></div></div>
                 </div>
             </div>
 
@@ -182,8 +184,8 @@
                 <div class="flex items-center justify-between mb-4 mt-2 md:mt-0">
                     <h2 class="text-2xl font-black uppercase text-black">Mochila Privada</h2>
                 </div>
-                <div class="p-4 neo-brutal bg-white flex justify-center shadow-inner">
-                     <div id="grid-private-container" class="flex justify-center touch-none w-full"><div id="grid-private" class="re-grid" data-grid="private"></div></div>
+                <div class="p-4 neo-brutal bg-white flex justify-center shadow-inner overflow-hidden">
+                     <div id="grid-private-container" class="flex justify-center w-full"><div id="grid-private" class="re-grid" data-grid="private"></div></div>
                 </div>
             </div>
         </div>
@@ -251,19 +253,36 @@
                 <span class="font-black uppercase text-2xl">Mesa de Trato</span>
                 <button onclick="closeTradeModal()" class="w-10 h-10 border-4 border-black bg-[var(--danger)] text-white font-black hover:scale-105 transition-transform">X</button>
             </div>
-            <div class="flex-1 overflow-y-auto p-4 md:p-8 space-y-6 max-w-3xl mx-auto w-full">
+            <div class="flex-1 overflow-y-auto p-4 md:p-8 space-y-4 md:space-y-6 max-w-3xl mx-auto w-full">
+                <!-- Lo que recibes -->
                 <div class="neo-brutal p-4 relative bg-white">
                     <div class="absolute -top-4 left-6 bg-[var(--secondary)] border-4 border-black px-3 py-1 text-sm font-black uppercase text-black shadow-[4px_4px_0px_#000]" id="tradeOtherName">Recibes</div>
-                    <div id="tradeTheirSelected" class="flex flex-wrap gap-3 min-h-[60px] mt-4"></div>
+                    <div id="tradeTheirSelected" class="flex flex-wrap gap-3 min-h-[60px] mt-2 md:mt-4"></div>
                 </div>
-                <div class="text-center font-black text-4xl opacity-50">⇅</div>
+                
+                <div class="text-center font-black text-2xl md:text-4xl opacity-50">⇅</div>
+                
+                <!-- Lo que ofreces -->
                 <div class="neo-brutal p-4 relative bg-white">
                     <div class="absolute -top-4 left-6 bg-[var(--primary)] border-4 border-black px-3 py-1 text-sm font-black uppercase text-black shadow-[4px_4px_0px_#000]">Tus Objetos</div>
-                    <div id="tradeMySelected" class="flex flex-wrap gap-3 min-h-[60px] mt-4"></div>
+                    <div id="tradeMySelected" class="flex flex-wrap gap-3 min-h-[60px] mt-2 md:mt-4"></div>
                 </div>
+                
+                <!-- Inventarios para elegir -->
                 <div class="space-y-4 pt-4 border-t-4 border-black border-dashed">
-                    <div class="bg-white border-4 border-black p-3 rounded-xl"><h3 class="text-xs font-black uppercase mb-2" id="tradeTheirInvTitle">Su Mostrador</h3><div id="tradeTheirInventory" class="flex overflow-x-auto space-x-3 pb-2 hide-scrollbar"></div></div>
-                    <div class="bg-white border-4 border-black p-3 rounded-xl"><h3 class="text-xs font-black uppercase mb-2">Tu Mostrador</h3><div id="tradeMyInventory" class="flex overflow-x-auto space-x-3 pb-2 hide-scrollbar"></div></div>
+                    <div class="bg-white border-4 border-black p-3 rounded-xl">
+                        <h3 class="text-xs font-black uppercase mb-2" id="tradeTheirInvTitle">Su Mostrador</h3>
+                        <div id="tradeTheirInventory" class="flex overflow-x-auto space-x-3 pb-2 hide-scrollbar"></div>
+                    </div>
+                    <div class="bg-white border-4 border-black p-3 rounded-xl">
+                        <h3 class="text-xs font-black uppercase mb-2">Tu Mostrador</h3>
+                        <div id="tradeMyInventory" class="flex overflow-x-auto space-x-3 pb-2 hide-scrollbar"></div>
+                    </div>
+                    <!-- NUEVO: Mochila Privada -->
+                    <div class="bg-[var(--panel-bg)] border-4 border-black p-3 rounded-xl">
+                        <h3 class="text-xs font-black uppercase mb-2">Tu Mochila Privada</h3>
+                        <div id="tradeMyPrivate" class="flex overflow-x-auto space-x-3 pb-2 hide-scrollbar"></div>
+                    </div>
                 </div>
             </div>
             <div class="p-4 md:p-6 bg-white border-t-4 border-black flex space-x-4 max-w-3xl mx-auto w-full">
@@ -279,9 +298,9 @@
                     <img id="detailImg" src="" class="w-full h-full object-contain">
                 </div>
                 <div class="p-2 text-center">
-                    <h3 id="detailName" class="font-black text-4xl uppercase leading-none mb-3">Nombre</h3>
-                    <p id="detailCat" class="text-sm font-black uppercase bg-[var(--primary)] border-4 border-black px-3 py-1 rounded inline-block mb-3 shadow-[4px_4px_0px_#000]">Categoría</p>
-                    <p id="detailLoc" class="text-lg font-bold text-[var(--text-light)]">Ubicación</p>
+                    <h3 id="detailName" class="font-black text-3xl md:text-4xl uppercase leading-tight mb-3">Nombre</h3>
+                    <p id="detailCat" class="text-xs md:text-sm font-black uppercase bg-[var(--primary)] border-4 border-black px-3 py-1 rounded inline-block mb-3 shadow-[4px_4px_0px_#000]">Categoría</p>
+                    <p id="detailLoc" class="text-base md:text-lg font-bold text-[var(--text-light)]">Ubicación</p>
                 </div>
             </div>
         </div>
@@ -600,7 +619,7 @@
         function resizeGrids() {
             const pubC = document.getElementById('grid-public-container'); if(!pubC) return;
             const refWidth = pubC.clientWidth - 16; 
-            let aw = Math.min(refWidth, 350); cellWidth = Math.floor(aw / GRID_COLS); cellHeight = cellWidth; 
+            let aw = Math.min(refWidth, 380); cellWidth = Math.floor(aw / GRID_COLS); cellHeight = cellWidth; 
             document.querySelectorAll('.re-grid').forEach(g => {
                 g.style.gridTemplateColumns = `repeat(${GRID_COLS}, ${cellWidth}px)`; g.style.gridTemplateRows = `repeat(${GRID_ROWS}, ${cellHeight}px)`;
                 g.style.width = `${cellWidth * GRID_COLS}px`; g.style.height = `${cellHeight * GRID_ROWS}px`;
@@ -739,20 +758,20 @@
                         ${dotsHtml}
                         <div class="feed-gradient md:hidden"></div>
                     </div>
-                    <div class="feed-info-section neo-brutal bg-[var(--panel-bg)] p-4 flex flex-col justify-end md:justify-center">
-                        <div class="flex items-center space-x-3 mb-4">
-                            <img src="${user.photoURL}" class="w-12 h-12 rounded-lg border-4 border-black object-cover bg-white">
+                    <div class="feed-info-section neo-brutal bg-[var(--panel-bg)] p-3 md:p-6 flex flex-col justify-end md:justify-center shadow-[4px_4px_0px_#000] md:shadow-none">
+                        <div class="flex items-center space-x-3 mb-2 md:mb-4">
+                            <img src="${user.photoURL}" class="w-10 h-10 md:w-12 md:h-12 rounded-lg border-2 md:border-4 border-black object-cover bg-white">
                             <div class="flex-1 overflow-hidden">
-                                <h3 class="text-lg font-black truncate">${user.displayName} <span class="bg-[var(--primary)] px-2 py-0.5 rounded border-2 border-black ml-1 text-xs">⭐${user.successfulTrades||0}</span></h3>
-                                <p class="text-xs font-black uppercase truncate mt-1 text-[var(--text-light)]">📍 ${item.location}</p>
+                                <h3 class="text-base md:text-lg font-black truncate">${user.displayName} <span class="bg-[var(--primary)] px-2 py-0.5 rounded border-2 border-black ml-1 text-xs">⭐${user.successfulTrades||0}</span></h3>
+                                <p class="text-[10px] md:text-xs font-black uppercase truncate mt-1 text-[var(--text-light)]">📍 ${item.location}</p>
                             </div>
                         </div>
-                        <h2 class="text-3xl font-black truncate leading-none mb-2">${item.name}</h2>
-                        <div class="flex items-center gap-2 mb-6">
-                            <span class="text-xs font-black uppercase bg-white border-4 border-black px-2 py-1 inline-block shadow-[4px_4px_0px_#000]">${item.category || 'Varios'}</span>
-                            ${item.quantity > 1 ? `<span class="text-xs font-black uppercase bg-black text-white px-2 py-1 inline-block border-4 border-black shadow-[4px_4px_0px_#FFF]">Stock: ${item.quantity}</span>` : ''}
+                        <h2 class="text-xl md:text-3xl font-black truncate leading-none mb-2 md:mb-3">${item.name}</h2>
+                        <div class="flex items-center gap-2 mb-3 md:mb-6">
+                            <span class="text-[10px] md:text-xs font-black uppercase bg-white border-2 md:border-4 border-black px-2 py-1 inline-block shadow-[2px_2px_0px_#000] md:shadow-[4px_4px_0px_#000]">${item.category || 'Varios'}</span>
+                            ${item.quantity > 1 ? `<span class="text-[10px] md:text-xs font-black uppercase bg-black text-white px-2 py-1 inline-block border-2 md:border-4 border-black shadow-[2px_2px_0px_#FFF] md:shadow-[4px_4px_0px_#FFF]">Stock: ${item.quantity}</span>` : ''}
                         </div>
-                        <button onclick="${currentUser ? `initiateTrade('${item.id}', '${item.uid}', '${item.name.replace(/'/g, "\\'")}')` : `document.getElementById('loginOverlay').classList.remove('hidden')`}" class="w-full py-4 neo-btn neo-btn-success text-xl">
+                        <button onclick="${currentUser ? `initiateTrade('${item.id}', '${item.uid}', '${item.name.replace(/'/g, "\\'")}')` : `document.getElementById('loginOverlay').classList.remove('hidden')`}" class="w-full py-2 md:py-4 neo-btn neo-btn-success text-sm md:text-xl">
                             🤝 Negociar
                         </button>
                     </div>
@@ -776,8 +795,10 @@
 
         window.closeTradeModal = () => { document.getElementById('tradeModal').classList.add('hidden'); currentTradeOfferId = null; };
 
+        const getItemData = (id) => allPublicItems.find(i=>i.id===id) || inventory.private.find(i=>i.id===id);
+
         window.showItemDetails = (itemId) => {
-            const item = allPublicItems.find(i => i.id === itemId); if (!item) return;
+            const item = getItemData(itemId); if (!item) return;
             document.getElementById('detailImg').src = item.photos[0];
             document.getElementById('detailName').innerText = item.name;
             document.getElementById('detailCat').innerText = item.category || 'Varios';
@@ -811,10 +832,11 @@
                 return `<div class="w-16 h-16 bg-white rounded-lg border-4 border-black overflow-hidden cursor-pointer relative shadow-[4px_4px_0px_#000]" onclick="${myTurn && !isPendingConf ? `toggleTradeItem('${item.id}', true)` : `showItemDetails('${item.id}')`}"><img src="${item.photos[0]}" class="w-full h-full object-cover"></div>`;
             };
             
-            document.getElementById('tradeTheirSelected').innerHTML = theirItems.map(id => renderItemTheir(allPublicItems.find(i=>i.id===id))).join('') || '<span class="text-sm font-black uppercase text-[var(--text-light)] py-4">Vacío</span>';
-            document.getElementById('tradeMySelected').innerHTML = myItems.map(id => renderItemMine(allPublicItems.find(i=>i.id===id))).join('') || '<span class="text-sm font-black uppercase text-[var(--text-light)] py-4">Vacío</span>';
+            document.getElementById('tradeTheirSelected').innerHTML = theirItems.map(id => renderItemTheir(getItemData(id))).join('') || '<span class="text-sm font-black uppercase text-[var(--text-light)] py-4">Vacío</span>';
+            document.getElementById('tradeMySelected').innerHTML = myItems.map(id => renderItemMine(getItemData(id))).join('') || '<span class="text-sm font-black uppercase text-[var(--text-light)] py-4">Vacío</span>';
             
             const myFullInventory = allPublicItems.filter(i => i.uid === currentUser.uid); 
+            const myPrivateInventory = inventory.private;
             const theirFullInventory = allPublicItems.filter(i => i.uid === otherUId);
             
             const renderInventoryStrip = (inventoryList, selectedArr, isMine) => {
@@ -822,6 +844,7 @@
             };
             
             document.getElementById('tradeMyInventory').innerHTML = renderInventoryStrip(myFullInventory, myItems, true);
+            document.getElementById('tradeMyPrivate').innerHTML = renderInventoryStrip(myPrivateInventory, myItems, true);
             document.getElementById('tradeTheirInventory').innerHTML = renderInventoryStrip(theirFullInventory, theirItems, false);
             
             const actionsDiv = document.getElementById('tradeActionButtons');
