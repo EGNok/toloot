@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #E9EDC9; 
+            --bg-color: #1a1a1a; /* Fondo oscuro para resaltar fotos tipo TikTok */
             --panel-bg: #FEFAE0; 
             --primary: #D4A373;  
             --secondary: #A3B18A; 
@@ -28,7 +28,7 @@
         .neo-brutal {
             background-color: var(--panel-bg);
             border: 4px solid var(--border-color);
-            box-shadow: 6px 6px 0px var(--border-color);
+            box-shadow: 4px 4px 0px var(--border-color);
             border-radius: 12px;
         }
 
@@ -56,73 +56,69 @@
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { scrollbar-width: none; }
 
-        .view-section { display: none; width: 100%; height: 100%; overflow-y: auto; overflow-x: hidden; padding-bottom: 6rem; padding-top: 5rem; }
+        .view-section { display: none; width: 100%; height: 100%; position: absolute; top: 0; left: 0; }
         .view-section.active { display: block; }
         
-        #view-feed { padding: 0; overflow: hidden; }
-        
+        /* TIKTOK STYLE FEED */
+        #view-feed { background-color: #000; overflow: hidden; }
         .feed-container { height: 100%; width: 100%; scroll-snap-type: y mandatory; overflow-y: auto; overflow-x: hidden; scrollbar-width: none; }
-        .feed-item { height: 100%; width: 100%; scroll-snap-align: start; display: flex; flex-direction: column; position: relative; }
+        .feed-item { height: 100dvh; width: 100%; scroll-snap-align: start; position: relative; background-color: #000; display: flex; align-items: center; justify-content: center; }
         
-        @media (min-width: 768px) {
-            .feed-item { flex-direction: row; }
-            .feed-image-section { width: 55%; height: 100%; border-right: 4px solid black; }
-            .feed-info-section { width: 45%; height: 100%; position: relative !important; bottom: auto !important; border-radius: 0 !important; border: none !important; box-shadow: none !important; }
-            #view-backpack.active { display: flex; flex-direction: row; padding-bottom: 6rem; }
-            .backpack-half { width: 50%; height: 100%; overflow-y: auto; }
-            #drawer-handle { display: none !important; }
-            #private-area { height: 100% !important; border-top: none !important; border-left: 4px solid black; }
+        .feed-photo-carousel { display: flex; width: 100%; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+        .feed-photo-container { flex: 0 0 100%; height: 100%; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; }
+        .feed-photo { width: 100%; height: 100%; object-fit: contain; } /* object-contain para no recortar */
+
+        /* Gradiente para leer texto en el feed */
+        .feed-gradient { position: absolute; bottom: 0; left: 0; right: 0; height: 50%; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%); pointer-events: none; z-index: 10; }
+        
+        /* Contenedor de info del feed (Abajo izquierda) */
+        .feed-info { position: absolute; bottom: 100px; left: 20px; z-index: 20; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); max-width: 70%; pointer-events: none; }
+        
+        /* Contenedor de acciones del feed (Derecha) */
+        .feed-actions { position: absolute; bottom: 120px; right: 15px; z-index: 20; display: flex; flex-direction: column; align-items: center; gap: 20px; }
+        .feed-action-btn { width: 55px; height: 55px; border-radius: 50%; border: 3px solid black; background-color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 3px 3px 0px black; transition: transform 0.1s; }
+        .feed-action-btn:active { transform: scale(0.9); }
+        .feed-avatar-btn { width: 60px; height: 60px; border-radius: 50%; border: 3px solid white; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.5); cursor: pointer; background: #333; position: relative; }
+        .feed-avatar-btn img { width: 100%; height: 100%; object-fit: cover; }
+
+        .wow-bag-container { padding: 80px 20px 100px 20px; height: 100%; overflow-y: auto; background-color: #E9EDC9; }
+        .wow-bag { background-color: #FEFAE0; border: 4px solid black; border-radius: 12px; padding: 12px; box-shadow: 6px 6px 0px black; margin-bottom: 30px; }
+        .wow-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(70px, 1fr)); gap: 10px; }
+        .wow-slot { 
+            aspect-ratio: 1/1; background-color: #e0e0e0; border: 3px solid black; border-radius: 8px; 
+            box-shadow: inset 3px 3px 5px rgba(0,0,0,0.2); position: relative; cursor: pointer; overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
         }
+        .wow-slot.has-item { background-color: white; box-shadow: 2px 2px 0px black; }
+        .wow-slot img { width: 100%; height: 100%; object-fit: cover; }
+        .wow-slot:active { transform: scale(0.95); }
+        .qty-badge { position: absolute; bottom: 2px; right: 2px; background: black; color: white; font-size: 10px; font-weight: 900; padding: 2px 4px; border-radius: 4px; }
 
-        @media (max-width: 767px) {
-            .feed-image-section { width: 100%; height: 100%; position: absolute; top: 0; left: 0; z-index: 1; }
-            /* Se ha reducido el tamaño y márgenes del cuadro de info en celular */
-            .feed-info-section { width: 92%; position: absolute; bottom: 5rem; left: 4%; z-index: 10; padding: 12px; border-radius: 16px; max-height: 45%; overflow-y: auto; }
-            .feed-gradient { position: absolute; bottom: 0; left: 0; right: 0; height: 50%; background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 100%); pointer-events: none; z-index: 2; }
-            #view-backpack.active { display: flex; flex-direction: column; padding-bottom: 0; }
-        }
-
-        .feed-carousel { display: flex; width: 100%; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; background: #000; }
-        .feed-photo-container { flex: 0 0 100%; height: 100%; scroll-snap-align: center; display: flex; align-items: center; justify-content: center; background: #111; }
-        .feed-photo { width: 100%; height: 100%; object-fit: contain; }
-
-        .carousel-indicators { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 20; }
-        .car-dot { width: 12px; height: 12px; border-radius: 50%; background: white; border: 3px solid black; opacity: 0.5; transition: all 0.2s; }
-        .car-dot.active { opacity: 1; transform: scale(1.3); background: var(--primary); }
-
-        .re-grid {
-            display: grid; background-color: #FFF; border: 4px solid var(--border-color);
-            position: relative; margin: 0 auto; overflow: hidden; box-sizing: content-box;
-            box-shadow: inset 4px 4px 0px rgba(0,0,0,0.05);
-        }
-        .re-cell { border-right: 2px dashed rgba(0,0,0,0.1); border-bottom: 2px dashed rgba(0,0,0,0.1); box-sizing: border-box; }
-        .re-item {
-            position: absolute; background-color: var(--panel-bg); border: 3px solid var(--border-color);
-            border-radius: 8px; display: flex; align-items: center; justify-content: center;
-            cursor: grab; user-select: none; touch-action: none; overflow: hidden; box-shadow: 3px 3px 0px rgba(0,0,0,0.8);
-        }
-        .re-item img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
-        .drag-clone { position: fixed; pointer-events: none; z-index: 1000; transform: scale(1.05) rotate(2deg); }
-
+        /* General Navigation */
         .nav-btn { color: var(--text-main); transition: all 0.2s; }
         .nav-btn.active { background-color: var(--primary); border: 3px solid var(--border-color); box-shadow: 3px 3px 0px black; transform: translateY(-2px); }
         
         .chat-bubble-me { background-color: var(--primary); color: var(--text-main); border: 3px solid var(--border-color); border-radius: 12px 12px 0 12px; padding: 12px; max-width: 85%; font-weight: 700; box-shadow: 3px 3px 0px var(--border-color); margin-bottom: 8px; }
         .chat-bubble-other { background-color: #FFF; color: var(--text-main); border: 3px solid var(--border-color); border-radius: 12px 12px 12px 0; padding: 12px; max-width: 85%; font-weight: 700; box-shadow: 3px 3px 0px var(--border-color); margin-bottom: 8px; }
+
+        /* Fix desktop layout for WoW UI */
+        @media (min-width: 768px) {
+            #app-container { border-left: 8px solid black; border-right: 8px solid black; }
+            .wow-bag-container { display: flex; gap: 20px; }
+            .wow-bag { flex: 1; }
+        }
     </style>
 </head>
 <body>
 
-    <div id="app-container" class="w-full h-full max-w-7xl mx-auto relative bg-[var(--bg-color)] shadow-[0_0_50px_rgba(0,0,0,0.2)] flex flex-col border-x-4 border-black md:border-x-8">
+    <div id="app-container" class="w-full h-full max-w-5xl mx-auto relative bg-[var(--bg-color)] shadow-[0_0_50px_rgba(0,0,0,0.5)] flex flex-col">
         
+        <!-- Header Global Flotante -->
         <header class="absolute top-0 left-0 right-0 z-40 flex justify-between items-center px-4 md:px-8 py-4 pointer-events-none">
-            <h1 class="text-4xl font-black text-white pointer-events-auto tracking-widest" style="-webkit-text-stroke: 2px black; text-shadow: 4px 4px 0px #000;">
+            <h1 class="text-3xl md:text-4xl font-black text-white pointer-events-auto tracking-widest" style="-webkit-text-stroke: 2px black; text-shadow: 4px 4px 0px #000;">
                 TOLOOT<span class="text-[var(--primary)]" style="-webkit-text-stroke: 2px black;">.</span>
             </h1>
             <div class="pointer-events-auto flex items-center gap-3">
-                <div id="userRepHeader" class="hidden neo-brutal bg-white px-3 py-1.5 flex items-center">
-                    <span class="text-sm">⭐</span><span id="hdrRep" class="text-lg font-black ml-1">0</span>
-                </div>
                 <button onclick="toggleNotifications()" class="neo-brutal bg-white w-12 h-12 flex items-center justify-center relative active:translate-y-1 active:shadow-none transition-all cursor-pointer">
                     <svg class="w-6 h-6 text-black" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
                     <div id="notifBadge" class="absolute -top-2 -right-2 w-4 h-4 bg-[var(--danger)] border-2 border-black rounded-full hidden"></div>
@@ -130,30 +126,30 @@
             </div>
         </header>
 
+        <!-- VIEW: TIKTOK FEED -->
         <div id="view-feed" class="view-section active">
-            <div class="absolute top-20 right-4 md:right-8 z-40 pointer-events-auto">
-                <div class="neo-brutal bg-white/90 backdrop-blur px-2 py-1 flex items-center gap-2 cursor-pointer relative">
+            <!-- Filtro -->
+            <div class="absolute top-20 right-4 z-40 pointer-events-auto">
+                <div class="neo-brutal bg-white/90 backdrop-blur px-2 py-1 flex items-center gap-2 cursor-pointer relative shadow-[4px_4px_0px_#000]">
                     <select id="categorySelect" onchange="setCategoryFilter(this.value)" class="bg-transparent text-black font-black uppercase text-xs md:text-sm outline-none cursor-pointer py-2 pl-2 pr-6 appearance-none w-full">
                     </select>
                     <svg class="w-4 h-4 absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"></path></svg>
                 </div>
             </div>
 
-            <div class="w-full h-full relative">
-                <div id="feedContainer" class="feed-container"></div>
-                <div id="feedEmpty" class="hidden h-full flex flex-col items-center justify-center text-center p-8 bg-[var(--bg-color)]">
-                    <div class="neo-brutal bg-white p-8 flex flex-col items-center">
-                        <svg class="w-16 h-16 mb-4 text-black" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-                        <p class="text-2xl font-black uppercase">Vacío</p>
-                        <p class="font-bold text-[var(--text-light)] mt-2">Sé el primero en ofrecer algo.</p>
-                    </div>
-                </div>
+            <div id="feedContainer" class="feed-container"></div>
+            
+            <div id="feedEmpty" class="hidden h-full flex flex-col items-center justify-center text-center p-8 text-white">
+                <svg class="w-20 h-20 mb-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                <p class="text-3xl font-black uppercase tracking-wider">Vacío</p>
+                <p class="font-bold text-gray-400 mt-2">No hay objetos en esta categoría.</p>
             </div>
         </div>
 
-        <div id="view-chats" class="view-section bg-[var(--bg-color)]">
-            <div class="px-5 w-full max-w-4xl mx-auto">
-                <h2 class="text-4xl font-black mb-6 uppercase" style="-webkit-text-stroke: 1.5px black; color: white; text-shadow: 4px 4px 0px #000;">Chats</h2>
+        <!-- VIEW: CHATS -->
+        <div id="view-chats" class="view-section bg-[#E9EDC9] pt-24 px-4 overflow-y-auto pb-24">
+            <div class="w-full max-w-2xl mx-auto">
+                <h2 class="text-4xl font-black mb-6 uppercase" style="-webkit-text-stroke: 1.5px black; color: white; text-shadow: 4px 4px 0px #000;">Chats de Tratos</h2>
                 <div id="chatsListContainer" class="flex flex-col gap-4"></div>
                 <div id="chatsEmpty" class="hidden neo-brutal bg-white p-8 text-center mt-10">
                     <p class="font-black text-xl uppercase mb-2">Buzón Vacío</p>
@@ -161,61 +157,60 @@
             </div>
         </div>
 
-        <div id="view-backpack" class="view-section inventory-view bg-[var(--bg-color)]">
-            <div class="backpack-half px-4 py-2 flex flex-col relative w-full pb-8">
-                <div class="flex justify-between items-end mb-4 mt-2">
-                    <div>
-                        <h2 class="text-3xl font-black uppercase" style="-webkit-text-stroke: 1.5px black; color: white; text-shadow: 3px 3px 0px #000;">Mostrador</h2>
-                        <span class="bg-[var(--primary)] text-black border-2 border-black font-black px-2 py-1 rounded shadow-[2px_2px_0px_#000] text-xs inline-block mt-1" id="layoutScoreDisplay">PTS: 0</span>
+        <!-- VIEW: WoW BACKPACK -->
+        <div id="view-backpack" class="view-section bg-[#E9EDC9]">
+            <div class="wow-bag-container max-w-4xl mx-auto">
+                
+                <!-- MOSTRADOR PÚBLICO -->
+                <div class="wow-bag">
+                    <div class="flex justify-between items-center mb-4 border-b-4 border-black pb-2">
+                        <h2 class="text-2xl font-black uppercase text-black">Mostrador (Público)</h2>
+                        <button onclick="openAddItemModal()" class="px-3 py-1 text-sm neo-btn neo-btn-primary">+ Crear</button>
                     </div>
-                    <button onclick="openAddItemModal()" class="px-4 py-2 text-sm neo-btn neo-btn-primary">+ Añadir</button>
+                    <div id="grid-public" class="wow-grid"></div>
                 </div>
-                <!-- Se elimina touch-none para permitir scroll si se requiere en un futuro, mantenemos drag nativo -->
-                <div class="p-4 neo-brutal flex justify-center w-full bg-white overflow-hidden">
-                    <div id="grid-public-container" class="flex justify-center w-full"><div id="grid-public" class="re-grid" data-grid="public"></div></div>
-                </div>
-            </div>
 
-            <div id="drawer-handle" class="w-full h-10 bg-black cursor-ns-resize flex items-center justify-center shrink-0 border-t-4 border-black rounded-t-2xl touch-none z-20">
-                <div class="w-20 h-2 bg-white rounded-full"></div>
-            </div>
+                <!-- MOCHILA PRIVADA -->
+                <div class="wow-bag bg-[#f4a261]">
+                    <div class="flex justify-between items-center mb-4 border-b-4 border-black pb-2">
+                        <h2 class="text-2xl font-black uppercase text-black">Mochila (Privada)</h2>
+                    </div>
+                    <div id="grid-private" class="wow-grid"></div>
+                </div>
 
-            <div id="private-area" class="backpack-half h-[40vh] overflow-y-auto px-4 py-4 bg-[var(--panel-bg)] shrink-0 flex flex-col relative w-full pb-20 z-10 border-t-4 border-black">
-                <div class="flex items-center justify-between mb-4 mt-2 md:mt-0">
-                    <h2 class="text-2xl font-black uppercase text-black">Mochila Privada</h2>
-                </div>
-                <div class="p-4 neo-brutal bg-white flex justify-center shadow-inner overflow-hidden">
-                     <div id="grid-private-container" class="flex justify-center w-full"><div id="grid-private" class="re-grid" data-grid="private"></div></div>
-                </div>
             </div>
         </div>
 
-        <div id="view-profile" class="view-section bg-[var(--bg-color)]">
-            <div class="px-5 w-full max-w-2xl mx-auto">
-                <h2 class="text-4xl font-black mb-6 uppercase" style="-webkit-text-stroke: 1.5px black; color: white; text-shadow: 4px 4px 0px #000;">Perfil</h2>
-                <div class="neo-brutal bg-white p-6 md:p-10">
-                    <div class="flex justify-center mb-8">
+        <!-- VIEW: PROFILE -->
+        <div id="view-profile" class="view-section bg-[#E9EDC9] pt-24 px-4 overflow-y-auto pb-24">
+            <div class="w-full max-w-xl mx-auto">
+                <h2 class="text-4xl font-black mb-6 uppercase" style="-webkit-text-stroke: 1.5px black; color: white; text-shadow: 4px 4px 0px #000;">Mi Perfil</h2>
+                <div class="neo-brutal bg-white p-6 md:p-8">
+                    <div class="flex justify-center mb-6">
                         <div class="relative cursor-pointer group" onclick="document.getElementById('profilePicInput').click()">
-                            <img id="profilePreview" src="" class="w-32 h-32 object-cover rounded-xl border-4 border-black shadow-[6px_6px_0px_#000] bg-[var(--bg-color)]">
+                            <img id="profilePreview" src="" class="w-32 h-32 object-cover rounded-xl border-4 border-black shadow-[4px_4px_0px_#000] bg-[var(--bg-color)]">
+                            <div class="absolute bottom-[-10px] right-[-10px] bg-[var(--primary)] p-2 rounded-full border-4 border-black">✏️</div>
                             <input type="file" id="profilePicInput" class="hidden" accept="image/*" onchange="handleProfilePic(event)">
                         </div>
                     </div>
-                    <div class="flex justify-center gap-6 mb-8">
+                    <div class="flex justify-center gap-6 mb-6">
                         <div class="bg-[var(--panel-bg)] border-4 border-black rounded-xl p-4 text-center flex-1 shadow-[4px_4px_0px_#000]">
-                            <p class="text-xs font-black uppercase mb-1">Exitosos</p>
+                            <p class="text-xs font-black uppercase mb-1">Tratos Exitosos</p>
                             <p class="text-3xl font-black text-[var(--secondary)]" style="-webkit-text-stroke: 1px black;" id="profRepText">0</p>
-                        </div>
-                        <div class="bg-[var(--panel-bg)] border-4 border-black rounded-xl p-4 text-center flex-1 shadow-[4px_4px_0px_#000]">
-                            <p class="text-xs font-black uppercase mb-1">Puntos</p>
-                            <p class="text-3xl font-black text-[var(--primary)]" style="-webkit-text-stroke: 1px black;" id="profLayoutText">0</p>
                         </div>
                     </div>
                     <div class="space-y-5">
-                        <input type="text" id="profName" class="w-full neo-input text-lg" placeholder="Nombre">
-                        <textarea id="profStatus" rows="3" class="w-full neo-input resize-none text-lg" placeholder="Busco/Ofrezco..."></textarea>
+                        <div>
+                            <label class="font-black uppercase text-sm mb-1 block">Nombre</label>
+                            <input type="text" id="profName" class="w-full neo-input text-lg" placeholder="Nombre">
+                        </div>
+                        <div>
+                            <label class="font-black uppercase text-sm mb-1 block">Estado (Busco / Ofrezco)</label>
+                            <textarea id="profStatus" rows="3" class="w-full neo-input resize-none text-lg" placeholder="Ej: Busco juegos de PS4, ofrezco cartas..."></textarea>
+                        </div>
                         <div class="pt-4 flex flex-col gap-4">
                             <button onclick="saveProfile()" class="py-4 w-full neo-btn neo-btn-primary text-xl">Guardar Cambios</button>
-                            <button onclick="openTerms()" class="py-3 w-full neo-btn bg-[var(--bg-color)] text-sm">Normas y Privacidad</button>
+                            <button onclick="openTerms()" class="py-3 w-full neo-btn bg-gray-200 text-sm">Términos y Condiciones</button>
                             <button onclick="logout()" class="py-3 w-full neo-btn neo-btn-danger mt-4">Cerrar Sesión</button>
                         </div>
                     </div>
@@ -223,7 +218,7 @@
             </div>
         </div>
 
-        <nav class="absolute bottom-6 left-1/2 transform -translate-x-1/2 neo-brutal bg-white px-3 py-3 flex space-x-3 z-30 items-center justify-between w-[90%] md:w-[400px]">
+        <nav class="absolute bottom-6 left-1/2 transform -translate-x-1/2 neo-brutal bg-white px-3 py-3 flex space-x-3 z-30 items-center justify-between w-[90%] md:w-[400px] shadow-[6px_6px_0px_#000]">
             <button onclick="switchTab('feed')" class="nav-btn w-14 h-14 rounded-xl flex items-center justify-center active" data-tab="feed">
                 <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
             </button>
@@ -231,6 +226,7 @@
                 <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
             </button>
             <button onclick="requireAuth('backpack')" class="nav-btn w-14 h-14 rounded-xl flex items-center justify-center" data-tab="backpack">
+                <!-- Icono de Mochila/Inventario -->
                 <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
             </button>
             <button onclick="requireAuth('profile')" class="nav-btn w-14 h-14 rounded-xl flex items-center justify-center" data-tab="profile">
@@ -238,111 +234,15 @@
             </button>
         </nav>
 
-        <div id="notifModal" class="absolute inset-0 bg-black/80 z-[60] hidden flex flex-col items-center justify-start pt-20 px-4 md:px-0">
-            <div class="w-full max-w-lg neo-brutal bg-white p-6 flex flex-col max-h-[80vh]">
-                <div class="flex justify-between items-center mb-6 border-b-4 border-black pb-4">
-                    <span class="font-black uppercase text-2xl">Notificaciones</span>
-                    <button onclick="toggleNotifications()" class="w-10 h-10 border-4 border-black bg-[var(--danger)] text-white font-black hover:scale-105 active:scale-95 transition-transform">X</button>
-                </div>
-                <div id="notifList" class="overflow-y-auto space-y-4 pr-2"></div>
-            </div>
-        </div>
-
-        <div id="tradeModal" class="absolute inset-0 bg-[var(--bg-color)] z-[70] hidden flex flex-col">
-            <div class="p-4 border-b-4 border-black bg-white flex justify-between items-center">
-                <span class="font-black uppercase text-2xl">Mesa de Trato</span>
-                <button onclick="closeTradeModal()" class="w-10 h-10 border-4 border-black bg-[var(--danger)] text-white font-black hover:scale-105 transition-transform">X</button>
-            </div>
-            <div class="flex-1 overflow-y-auto p-4 md:p-8 space-y-4 md:space-y-6 max-w-3xl mx-auto w-full">
-                <!-- Lo que recibes -->
-                <div class="neo-brutal p-4 relative bg-white">
-                    <div class="absolute -top-4 left-6 bg-[var(--secondary)] border-4 border-black px-3 py-1 text-sm font-black uppercase text-black shadow-[4px_4px_0px_#000]" id="tradeOtherName">Recibes</div>
-                    <div id="tradeTheirSelected" class="flex flex-wrap gap-3 min-h-[60px] mt-2 md:mt-4"></div>
-                </div>
-                
-                <div class="text-center font-black text-2xl md:text-4xl opacity-50">⇅</div>
-                
-                <!-- Lo que ofreces -->
-                <div class="neo-brutal p-4 relative bg-white">
-                    <div class="absolute -top-4 left-6 bg-[var(--primary)] border-4 border-black px-3 py-1 text-sm font-black uppercase text-black shadow-[4px_4px_0px_#000]">Tus Objetos</div>
-                    <div id="tradeMySelected" class="flex flex-wrap gap-3 min-h-[60px] mt-2 md:mt-4"></div>
-                </div>
-                
-                <!-- Inventarios para elegir -->
-                <div class="space-y-4 pt-4 border-t-4 border-black border-dashed">
-                    <div class="bg-white border-4 border-black p-3 rounded-xl">
-                        <h3 class="text-xs font-black uppercase mb-2" id="tradeTheirInvTitle">Su Mostrador</h3>
-                        <div id="tradeTheirInventory" class="flex overflow-x-auto space-x-3 pb-2 hide-scrollbar"></div>
-                    </div>
-                    <div class="bg-white border-4 border-black p-3 rounded-xl">
-                        <h3 class="text-xs font-black uppercase mb-2">Tu Mostrador</h3>
-                        <div id="tradeMyInventory" class="flex overflow-x-auto space-x-3 pb-2 hide-scrollbar"></div>
-                    </div>
-                    <!-- NUEVO: Mochila Privada -->
-                    <div class="bg-[var(--panel-bg)] border-4 border-black p-3 rounded-xl">
-                        <h3 class="text-xs font-black uppercase mb-2">Tu Mochila Privada</h3>
-                        <div id="tradeMyPrivate" class="flex overflow-x-auto space-x-3 pb-2 hide-scrollbar"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="p-4 md:p-6 bg-white border-t-4 border-black flex space-x-4 max-w-3xl mx-auto w-full">
-                <div id="tradeActionButtons" class="flex-1 flex gap-4"></div>
-                <button onclick="declineTrade()" class="w-16 h-16 shrink-0 neo-btn neo-btn-danger text-2xl" title="Rechazar">X</button>
-            </div>
-        </div>
-        
-        <div id="itemDetailModal" class="absolute inset-0 bg-black/90 z-[75] hidden flex flex-col items-center justify-center p-4">
-            <div class="neo-brutal w-full max-w-md flex flex-col p-4 relative bg-white">
-                <button onclick="closeItemDetail()" class="absolute -top-4 -right-4 w-12 h-12 border-4 border-black rounded-full bg-[var(--danger)] text-white font-black z-10 hover:scale-105 active:scale-95 transition-transform text-xl shadow-[4px_4px_0px_#000]">X</button>
-                <div class="h-72 w-full border-4 border-black rounded-lg overflow-hidden bg-black mb-4">
-                    <img id="detailImg" src="" class="w-full h-full object-contain">
-                </div>
-                <div class="p-2 text-center">
-                    <h3 id="detailName" class="font-black text-3xl md:text-4xl uppercase leading-tight mb-3">Nombre</h3>
-                    <p id="detailCat" class="text-xs md:text-sm font-black uppercase bg-[var(--primary)] border-4 border-black px-3 py-1 rounded inline-block mb-3 shadow-[4px_4px_0px_#000]">Categoría</p>
-                    <p id="detailLoc" class="text-base md:text-lg font-bold text-[var(--text-light)]">Ubicación</p>
-                </div>
-            </div>
-        </div>
-
-        <div id="chatModal" class="absolute inset-0 bg-[var(--bg-color)] z-[80] hidden flex flex-col">
-            <div class="p-4 bg-white border-b-4 border-black flex justify-between items-center">
-                <div class="flex items-center gap-3">
-                    <img id="chatTitleImg" src="" class="w-12 h-12 rounded-xl border-4 border-black object-cover">
-                    <span id="chatTitle" class="font-black uppercase text-xl">Chat</span>
-                </div>
-                <div class="flex gap-3">
-                    <button id="btnConcluirTrato" onclick="openConclusionModal()" class="px-4 py-2 neo-btn neo-btn-primary text-xs">Concluir</button>
-                    <button onclick="closeChat()" class="w-12 h-12 border-4 border-black bg-[var(--danger)] text-white font-black hover:scale-105 transition-transform">X</button>
-                </div>
-            </div>
-            
-            <div id="chatActionBanner" class="bg-black text-white p-3 hidden text-center text-sm font-black uppercase tracking-wider"></div>
-            <div id="chatMessages" class="flex-1 overflow-y-auto p-4 md:p-8 space-y-4 flex flex-col bg-white/50 max-w-4xl mx-auto w-full"></div>
-            
-            <div id="chatInputContainer" class="p-4 bg-white border-t-4 border-black flex space-x-3 max-w-4xl mx-auto w-full">
-                <input type="text" id="chatInput" placeholder="Acuerda un lugar..." class="flex-1 neo-input text-lg">
-                <button onclick="sendChatMessage()" class="w-14 h-14 neo-btn neo-btn-primary text-2xl">➤</button>
-            </div>
-        </div>
-
-        <div id="conclusionModal" class="absolute inset-0 bg-black/80 z-[85] hidden flex flex-col items-center justify-center p-4">
-            <div class="neo-brutal bg-white w-full max-w-md flex flex-col p-6 gap-4">
-                <h3 class="font-black uppercase text-2xl text-center mb-4">¿Cómo resultó?</h3>
-                <button onclick="finalizeTransaction('success')" class="w-full py-4 neo-btn neo-btn-success text-lg">Éxito (Finalizar Trato)</button>
-                <button onclick="finalizeTransaction('cancelled')" class="w-full py-4 neo-btn bg-[var(--panel-bg)] text-lg">Cancelar Trato</button>
-                <button onclick="closeConclusionModal()" class="w-full py-4 neo-btn neo-btn-danger mt-2 text-lg">Volver</button>
-            </div>
-        </div>
-
-        <div id="addItemModal" class="absolute inset-0 bg-[var(--bg-color)] z-[90] hidden flex flex-col">
-            <div class="p-4 bg-white border-b-4 border-black flex justify-between items-center">
-                <span class="font-black uppercase text-2xl">Nuevo Item</span>
+        <!-- MODAL: ADD ITEM (Simplified, no size needed) -->
+        <div id="addItemModal" class="absolute inset-0 bg-[#E9EDC9] z-[90] hidden flex flex-col pt-16">
+            <div class="p-4 bg-white border-y-4 border-black flex justify-between items-center shadow-[0_4px_0px_#000]">
+                <span class="font-black uppercase text-2xl">Nuevo Objeto</span>
                 <button onclick="closeAddItemModal()" class="w-10 h-10 border-4 border-black bg-[var(--danger)] text-white font-black hover:scale-105 transition-transform">X</button>
             </div>
-            <div class="p-4 md:p-8 space-y-5 overflow-y-auto flex-1 max-w-2xl mx-auto w-full">
+            <div class="p-4 md:p-8 space-y-5 overflow-y-auto flex-1 max-w-2xl mx-auto w-full pb-24">
                 <input type="text" id="newItemName" placeholder="Nombre del Objeto" class="w-full neo-input text-xl">
-                <div class="flex flex-col md:flex-row gap-4">
+                <div class="flex flex-col gap-4">
                     <select id="newItemCategory" class="w-full neo-input flex-1 text-lg">
                         <option value="Antigüedades">Antigüedades</option>
                         <option value="Cartas/TCG">Cartas/TCG</option>
@@ -352,22 +252,130 @@
                         <option value="Otros">Otros</option>
                     </select>
                     <input type="text" id="newItemLocation" placeholder="Tu zona (Ej: Centro)" class="w-full neo-input flex-1 text-lg">
+                    <div class="flex items-center gap-4">
+                        <label class="font-black uppercase shrink-0">Cantidad:</label>
+                        <input type="number" id="newItemQuantity" min="1" value="1" class="w-full neo-input text-lg">
+                    </div>
                 </div>
-                <div class="flex gap-4">
-                    <select id="newItemSize" class="w-full neo-input flex-1 text-lg">
-                        <option value="1,1">Pequeño 1x1</option><option value="1,2">Alargado 1x2</option><option value="2,2">Cuadrado 2x2</option>
-                    </select>
-                    <input type="number" id="newItemQuantity" min="1" value="1" class="w-24 neo-input text-center text-lg">
-                </div>
+                
                 <div class="border-4 border-black border-dashed p-6 bg-white rounded-xl flex flex-col items-center">
                     <input type="file" id="cameraInput" accept="image/*" multiple class="hidden" onchange="handleMultiplePhotos(event)">
-                    <button onclick="document.getElementById('cameraInput').click()" class="w-full py-4 neo-btn text-lg">Subir Fotos (Máx 4)</button>
+                    <button onclick="document.getElementById('cameraInput').click()" class="w-full py-4 neo-btn text-lg bg-gray-100">📸 Subir Fotos (Máx 4)</button>
                     <div id="photoPreviewsContainer" class="flex gap-4 overflow-x-auto w-full py-4 hidden mt-2"></div>
                 </div>
-                <button onclick="submitNewItem()" class="w-full py-4 neo-btn neo-btn-success text-2xl mt-4">Guardar en Mochila</button>
+
+                <div class="flex gap-4 mt-4">
+                    <button onclick="submitNewItem('public')" class="flex-1 py-4 neo-btn neo-btn-success text-lg leading-tight">Guardar en<br>Mostrador</button>
+                    <button onclick="submitNewItem('private')" class="flex-1 py-4 neo-btn bg-[#f4a261] text-lg leading-tight">Guardar en<br>Mochila Privada</button>
+                </div>
             </div>
         </div>
 
+        <!-- MODAL: ITEM DETAILS & DELETE -->
+        <div id="itemDetailModal" class="absolute inset-0 bg-black/95 z-[95] hidden flex flex-col items-center justify-center p-4">
+            <div class="neo-brutal w-full max-w-md flex flex-col p-4 relative bg-white">
+                <button onclick="closeItemDetail()" class="absolute -top-4 -right-4 w-12 h-12 border-4 border-black rounded-full bg-[var(--danger)] text-white font-black z-10 hover:scale-105 active:scale-95 transition-transform text-xl shadow-[4px_4px_0px_#000]">X</button>
+                <div class="h-80 w-full border-4 border-black rounded-lg overflow-hidden bg-black mb-4">
+                    <img id="detailImg" src="" class="w-full h-full object-contain">
+                </div>
+                <div class="p-2 text-center">
+                    <h3 id="detailName" class="font-black text-3xl uppercase leading-tight mb-2">Nombre</h3>
+                    <div class="flex justify-center gap-2 mb-3">
+                        <span id="detailCat" class="text-xs font-black uppercase bg-[var(--primary)] border-4 border-black px-3 py-1 rounded inline-block shadow-[4px_4px_0px_#000]">Categoría</span>
+                        <span id="detailQty" class="text-xs font-black uppercase bg-black text-white border-4 border-black px-3 py-1 rounded inline-block shadow-[4px_4px_0px_#FFF]">Stock: 1</span>
+                    </div>
+                    <p id="detailLoc" class="text-base font-bold text-[var(--text-light)] mb-4">📍 Ubicación</p>
+                    
+                    <!-- Botón Eliminar solo visible si soy el dueño -->
+                    <button id="btnDeleteItem" onclick="deleteMyItem()" class="w-full py-3 neo-btn neo-btn-danger hidden">🗑️ Eliminar Objeto</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL: WOW STYLE TRADE WINDOW -->
+        <div id="tradeModal" class="absolute inset-0 bg-gray-900/90 z-[80] hidden flex flex-col items-center justify-center p-2 backdrop-blur-sm">
+            <div class="neo-brutal bg-white w-full max-w-4xl h-[90vh] flex flex-col border-8 overflow-hidden relative">
+                <!-- Cabecera Mesa -->
+                <div class="p-3 border-b-4 border-black flex justify-between items-center bg-[var(--bg-color)]">
+                    <span class="font-black uppercase text-xl md:text-2xl tracking-wider">Mesa de Trato</span>
+                    <button onclick="closeTradeModal()" class="w-10 h-10 border-4 border-black bg-[var(--danger)] text-white font-black hover:scale-105">X</button>
+                </div>
+
+                <div class="flex-1 overflow-y-auto bg-gray-200 flex flex-col md:flex-row p-2 gap-2">
+                    
+                    <!-- LADO DE LA MESA (LO QUE SE OFRECE) -->
+                    <div class="flex-1 flex flex-col gap-2">
+                        <!-- Oferta de ELLOS -->
+                        <div class="neo-brutal bg-[#e9ecef] p-3 flex-1 flex flex-col shadow-inner">
+                            <h3 class="font-black uppercase text-sm mb-2 border-b-2 border-black pb-1" id="tradeOtherTitle">Oferta de ...</h3>
+                            <div id="tradeTheirOfferGrid" class="wow-grid auto-rows-max"></div>
+                            <div id="tradeTheirStatus" class="mt-auto pt-2 text-center font-black uppercase text-[var(--danger)] text-sm">Modificando...</div>
+                        </div>
+                        
+                        <!-- Oferta MÍA -->
+                        <div class="neo-brutal bg-[#d8f3dc] p-3 flex-1 flex flex-col shadow-inner">
+                            <h3 class="font-black uppercase text-sm mb-2 border-b-2 border-black pb-1 text-[var(--secondary)]">Tu Oferta</h3>
+                            <div id="tradeMyOfferGrid" class="wow-grid auto-rows-max"></div>
+                            <div class="mt-auto pt-2 flex gap-2">
+                                <button id="btnLockTrade" onclick="toggleTradeLock()" class="w-full py-2 neo-btn neo-btn-success text-xs md:text-sm">Fijar Oferta</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MI INVENTARIO PARA ELEGIR -->
+                    <div class="w-full md:w-1/3 neo-brutal bg-[#FEFAE0] p-3 flex flex-col shadow-inner h-64 md:h-auto">
+                        <h3 class="font-black uppercase text-sm mb-2 border-b-2 border-black pb-1">Tus Bolsas</h3>
+                        <p class="text-[10px] uppercase font-bold mb-2">Toca para subir/bajar de la mesa</p>
+                        <div id="tradeMyBagsGrid" class="wow-grid auto-rows-max overflow-y-auto pr-1"></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div id="chatModal" class="absolute inset-0 bg-[#E9EDC9] z-[85] hidden flex flex-col pt-16">
+            <div class="p-3 bg-white border-y-4 border-black flex justify-between items-center shadow-[0_4px_0px_#000]">
+                <div class="flex items-center gap-3">
+                    <img id="chatTitleImg" src="" class="w-10 h-10 rounded-full border-2 border-black object-cover">
+                    <span id="chatTitle" class="font-black uppercase text-lg">Chat</span>
+                </div>
+                <div class="flex gap-2">
+                    <button id="btnConcluirTrato" onclick="openConclusionModal()" class="px-3 py-1 neo-btn neo-btn-primary text-xs">Finalizar</button>
+                    <button onclick="closeChat()" class="w-10 h-10 border-4 border-black bg-gray-200 text-black font-black hover:bg-[var(--danger)] hover:text-white transition-colors">X</button>
+                </div>
+            </div>
+            
+            <div id="chatActionBanner" class="bg-black text-white p-2 hidden text-center text-xs font-black uppercase tracking-wider"></div>
+            <div id="chatMessages" class="flex-1 overflow-y-auto p-4 space-y-3 flex flex-col bg-white/50 max-w-4xl mx-auto w-full"></div>
+            
+            <div id="chatInputContainer" class="p-3 bg-white border-t-4 border-black flex space-x-2 max-w-4xl mx-auto w-full pb-6">
+                <input type="text" id="chatInput" placeholder="Acuerda el punto de encuentro..." class="flex-1 neo-input text-base py-2">
+                <button onclick="sendChatMessage()" class="w-12 h-12 neo-btn neo-btn-primary text-xl flex shrink-0">➤</button>
+            </div>
+        </div>
+
+        <div id="conclusionModal" class="absolute inset-0 bg-black/80 z-[90] hidden flex flex-col items-center justify-center p-4">
+            <div class="neo-brutal bg-white w-full max-w-sm flex flex-col p-6 gap-4">
+                <h3 class="font-black uppercase text-2xl text-center mb-2">¿Trato Finalizado?</h3>
+                <p class="text-sm text-center font-bold text-gray-600 mb-2">Si todo salió bien, confirma. Esto consumirá los objetos.</p>
+                <button onclick="finalizeTransaction('success')" class="w-full py-4 neo-btn neo-btn-success text-lg">🤝 Trato Exitoso</button>
+                <button onclick="finalizeTransaction('cancelled')" class="w-full py-3 neo-btn bg-gray-200 text-lg">Cancelar Trato</button>
+                <button onclick="closeConclusionModal()" class="w-full py-2 neo-btn neo-btn-danger mt-2 text-sm">Volver al chat</button>
+            </div>
+        </div>
+
+        <!-- Notificaciones -->
+        <div id="notifModal" class="absolute inset-0 bg-black/80 z-[60] hidden flex flex-col items-center justify-start pt-20 px-4">
+            <div class="w-full max-w-lg neo-brutal bg-white p-6 flex flex-col max-h-[80vh]">
+                <div class="flex justify-between items-center mb-6 border-b-4 border-black pb-4">
+                    <span class="font-black uppercase text-2xl">Notificaciones</span>
+                    <button onclick="toggleNotifications()" class="w-10 h-10 border-4 border-black bg-[var(--danger)] text-white font-black">X</button>
+                </div>
+                <div id="notifList" class="overflow-y-auto space-y-4 pr-2"></div>
+            </div>
+        </div>
+
+        <!-- Login / Términos / Loading / Toast -->
         <div id="loginOverlay" class="absolute inset-0 bg-black/90 z-[100] flex flex-col items-center justify-center px-6 hidden backdrop-blur-sm">
             <div class="neo-brutal p-8 md:p-12 w-full max-w-md text-center bg-white">
                 <h1 class="text-6xl font-black mb-6" style="-webkit-text-stroke: 2px black; color: white; text-shadow: 4px 4px 0px #000;">TOLOOT.</h1>
@@ -386,13 +394,11 @@
                 </div>
                 <div class="overflow-y-auto pr-2 space-y-4 text-sm font-bold leading-relaxed">
                     <h3 class="text-lg font-black text-[var(--primary)] uppercase">1. El Trato es Sagrado</h3>
-                    <p>Las ofertas que haces son compromisos. No ofertes si no tienes intención de cumplir.</p>
+                    <p>Las ofertas que haces son compromisos. Usa el sistema WoW-Trade para asegurar tus ítems antes de aceptar.</p>
                     <h3 class="text-lg font-black text-[var(--primary)] uppercase mt-4">2. Seguridad Física</h3>
-                    <p>ToLoot solo conecta usuarios. Los intercambios en persona deben realizarse en <b>lugares públicos, concurridos y de día</b>. Ve acompañado si es posible.</p>
-                    <h3 class="text-lg font-black text-[var(--primary)] uppercase mt-4">3. Prohibiciones</h3>
-                    <p>Prohibido estrictamente: armas, material ilegal, ofensivo o servicios. ToLoot es para objetos, coleccionables y tecnología.</p>
-                    <h3 class="text-lg font-black text-[var(--primary)] uppercase mt-4">4. Privacidad</h3>
-                    <p>Tu inventario privado es 100% oculto. Tu ubicación es aproximada (barrio/zona). Los chats son cifrados entre las dos partes involucradas.</p>
+                    <p>ToLoot solo conecta usuarios. Los intercambios en persona deben realizarse en <b>lugares públicos, concurridos y de día</b>.</p>
+                    <h3 class="text-lg font-black text-[var(--primary)] uppercase mt-4">3. Mochila vs Mostrador</h3>
+                    <p>El Mostrador es público (aparece en el Feed). La Mochila Privada solo la ves tú y los objetos que elijas subir a la mesa de trato.</p>
                 </div>
             </div>
         </div>
@@ -401,8 +407,8 @@
             <div class="w-16 h-16 border-8 border-black border-t-[var(--primary)] rounded-full animate-spin"></div>
         </div>
 
-        <div id="msgBox" class="fixed top-24 left-1/2 transform -translate-x-1/2 neo-brutal bg-white px-6 py-3 z-[130] hidden border-b-8 transition-opacity duration-300">
-            <p id="msgText" class="font-black uppercase text-lg"></p>
+        <div id="msgBox" class="fixed top-24 left-1/2 transform -translate-x-1/2 neo-brutal bg-white px-6 py-3 z-[130] hidden border-b-8 transition-opacity duration-300 pointer-events-none">
+            <p id="msgText" class="font-black uppercase text-lg text-center"></p>
         </div>
 
     </div>
@@ -410,7 +416,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, setDoc, getDoc, onSnapshot, addDoc, updateDoc, arrayUnion, increment, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, getDoc, onSnapshot, addDoc, updateDoc, arrayUnion, increment, deleteDoc, arrayRemove } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = { apiKey: "AIzaSyBjlyxlJroTZzYb6Oc3rHe5SUULxcpe5fI", authDomain: "toloot.firebaseapp.com", projectId: "toloot", storageBucket: "toloot.firebasestorage.app", messagingSenderId: "702218699864", appId: "1:702218699864:web:ec868e0ff84b444f7e362d" };
         const appId = 'toloot-app'; 
@@ -419,26 +425,23 @@
         const db = getFirestore(app);
 
         let currentUser = null;
-        let myProfile = { displayName: 'Nuevo', photoURL: '', status: '', successfulTrades: 0, reports: [], layoutScore: 0 };
+        let myProfile = { displayName: 'Nuevo', photoURL: '', status: '', successfulTrades: 0 };
+        
         let currentItemPhotos = []; 
         let inventory = { private: [], public: [] };
         let allPublicItems = []; let allUsers = {}; let allOffers = []; let allChats = [];
-        let currentTradeOfferId = null; let currentChatId = null;
+        
+        let currentTradeOfferId = null; 
+        let currentChatId = null;
+        let itemToDeleteId = null;
+        let itemToDeleteType = null; // 'public' | 'private'
         
         const CATEGORIES = ['Todo', 'Antigüedades', 'Cartas/TCG', 'Juguetes/Figuras', 'Cómics/Libros', 'Electrónica', 'Otros'];
         let activeCategoryFilter = 'Todo';
 
         let unsubPrivate = null, unsubUsers = null, unsubPublic = null, unsubOffers = null, unsubChats = null;
-        const GRID_COLS = 5; const GRID_ROWS = 6; 
-        let cellWidth = 0; let cellHeight = 0;
-
-        function initCategoryFilter() {
-            const select = document.getElementById('categorySelect');
-            if (select) select.innerHTML = CATEGORIES.map(cat => `<option value="${cat}">${cat}</option>`).join('');
-        }
-        window.setCategoryFilter = (cat) => { activeCategoryFilter = cat; renderFeed(); };
-        initCategoryFilter();
-
+        
+        // Utils
         window.showMessage = (text, isError = false) => {
             const box = document.getElementById('msgBox');
             box.style.borderBottomColor = isError ? 'var(--danger)' : 'var(--secondary)';
@@ -453,11 +456,11 @@
             document.getElementById(`view-${tabId}`).classList.add('active');
             document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
             
-            const catFilter = document.getElementById('categoryFilterWrapper');
+            const catFilter = document.getElementById('categorySelect')?.parentElement;
             if(tabId === 'feed') { if(catFilter) catFilter.classList.remove('hidden'); renderFeed(); } 
             else { if(catFilter) catFilter.classList.add('hidden'); }
 
-            if (tabId === 'backpack') setTimeout(resizeGrids, 50); 
+            if (tabId === 'backpack') renderWoWBags(); 
             else if (tabId === 'chats') renderChatsView();
         };
 
@@ -466,27 +469,21 @@
             switchTab(tabId);
         };
 
+        // UI toggles
         window.openTerms = () => document.getElementById('termsModal').classList.remove('hidden');
         window.closeTerms = () => document.getElementById('termsModal').classList.add('hidden');
         window.closeLogin = () => document.getElementById('loginOverlay').classList.add('hidden');
+        window.toggleNotifications = () => { const el = document.getElementById('notifModal'); el.classList.toggle('hidden'); };
 
-        const handle = document.getElementById('drawer-handle');
-        const privateArea = document.getElementById('private-area');
-        let isResizingDrawer = false; let startY, startHeight;
-        const startResize = (e) => { if(window.innerWidth >= 768) return; isResizingDrawer = true; startY = e.clientY || (e.touches && e.touches[0].clientY); startHeight = privateArea.getBoundingClientRect().height; };
-        const doResize = (e) => {
-            if (!isResizingDrawer || window.innerWidth >= 768) return;
-            const cy = e.clientY || (e.touches && e.touches[0].clientY);
-            let newHeight = startHeight - (cy - startY);
-            if (newHeight > window.innerHeight * 0.70) newHeight = window.innerHeight * 0.70;
-            if (newHeight < 60) newHeight = 60;
-            privateArea.style.height = `${newHeight}px`; e.preventDefault(); 
+        // Init Categories
+        const initCategoryFilter = () => {
+            const select = document.getElementById('categorySelect');
+            if (select) select.innerHTML = CATEGORIES.map(cat => `<option value="${cat}">${cat}</option>`).join('');
         };
-        const stopResize = () => { isResizingDrawer = false; };
-        handle.addEventListener('pointerdown', startResize); document.addEventListener('pointermove', doResize, {passive: false}); document.addEventListener('pointerup', stopResize);
-        handle.addEventListener('touchstart', startResize); document.addEventListener('touchmove', doResize, {passive: false}); document.addEventListener('touchend', stopResize);
-        window.addEventListener('resize', () => { if(window.innerWidth >= 768 && privateArea) privateArea.style.height = '100%'; resizeGrids(); });
+        window.setCategoryFilter = (cat) => { activeCategoryFilter = cat; renderFeed(); };
+        initCategoryFilter();
 
+        // Auth
         window.handleLoginClick = async () => { try { await signInWithPopup(auth, new GoogleAuthProvider()); } catch (e) { showMessage("Error en login", true); } };
         window.logout = async () => { try { await signOut(auth); inventory = { private: [], public: [] }; switchTab('feed'); } catch (e) {} };
 
@@ -496,7 +493,8 @@
             if (user) {
                 currentUser = user; document.getElementById('loginOverlay').classList.add('hidden');
                 document.getElementById('userRepHeader').classList.remove('hidden');
-                await ensureUserProfile(user.uid); startRealtimeListeners();
+                await ensureUserProfile(user.uid); 
+                startRealtimeListeners();
             } else {
                 currentUser = null; document.getElementById('userRepHeader').classList.add('hidden');
                 loadPublicDataGuest();
@@ -507,33 +505,36 @@
             const userRef = doc(db, 'artifacts', appId, 'public', 'data', 'users', uid);
             try {
                 const snap = await getDoc(userRef);
-                if (snap.exists()) myProfile = { ...snap.data(), layoutScore: snap.data().layoutScore || 0 };
+                if (snap.exists()) myProfile = { ...snap.data() };
                 else {
                     myProfile.displayName = currentUser.displayName || 'Usuario';
                     myProfile.photoURL = currentUser.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${uid}`;
-                    myProfile.successfulTrades = 0; myProfile.reports = []; myProfile.layoutScore = 0;
+                    myProfile.successfulTrades = 0;
                     await setDoc(userRef, myProfile);
                 }
                 updateProfileUI();
             } catch (e) {}
         }
 
-        window.saveProfile = async (showMsg = true) => {
+        window.saveProfile = async () => {
             if(!currentUser) return;
-            myProfile.displayName = document.getElementById('profName').value; myProfile.status = document.getElementById('profStatus').value;
+            myProfile.displayName = document.getElementById('profName').value; 
+            myProfile.status = document.getElementById('profStatus').value;
             try {
                 await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', currentUser.uid), myProfile, {merge:true});
-                updateProfileUI(); if(showMsg) showMessage("Perfil guardado");
-            } catch (e) { if(showMsg) showMessage("Error", true); }
+                updateProfileUI(); showMessage("Perfil guardado");
+            } catch (e) { showMessage("Error guardando", true); }
         };
 
         function updateProfileUI() {
-            document.getElementById('profName').value = myProfile.displayName || ''; document.getElementById('profStatus').value = myProfile.status || '';
-            document.getElementById('profilePreview').src = myProfile.photoURL || ''; document.getElementById('profRepText').innerText = myProfile.successfulTrades || 0;
-            document.getElementById('hdrRep').innerText = myProfile.successfulTrades || 0; document.getElementById('profLayoutText').innerText = myProfile.layoutScore || 0;
-            document.getElementById('layoutScoreDisplay').innerText = `PTS: ${myProfile.layoutScore || 0}`;
+            document.getElementById('profName').value = myProfile.displayName || ''; 
+            document.getElementById('profStatus').value = myProfile.status || '';
+            document.getElementById('profilePreview').src = myProfile.photoURL || ''; 
+            document.getElementById('profRepText').innerText = myProfile.successfulTrades || 0;
+            document.getElementById('hdrRep').innerText = myProfile.successfulTrades || 0;
         }
 
+        // Photo Handlers
         window.handleMultiplePhotos = (event) => {
             const files = Array.from(event.target.files); if (!files.length) return;
             const remaining = 4 - currentItemPhotos.length; const filesToProcess = files.slice(0, remaining);
@@ -570,7 +571,7 @@
                     if (w > h && w > MAX) { h *= MAX / w; w = MAX; } else if (h > MAX) { w *= MAX / h; h = MAX; }
                     canvas.width = w; canvas.height = h; canvas.getContext('2d').drawImage(img, 0, 0, w, h);
                     myProfile.photoURL = canvas.toDataURL('image/jpeg', 0.8);
-                    document.getElementById('profilePreview').src = myProfile.photoURL; saveProfile(false);
+                    document.getElementById('profilePreview').src = myProfile.photoURL; saveProfile();
                 }; img.src = e.target.result;
             }; reader.readAsDataURL(file);
         };
@@ -580,214 +581,189 @@
             unsubPublic = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'publicItems'), (snap) => { allPublicItems = []; snap.forEach(doc => allPublicItems.push({ ...doc.data(), id: doc.id })); renderFeed(); }, (e) => {});
         }
 
-        async function calculateTetrisScore() {
-            if(!currentUser) return;
-            let grid = Array(GRID_ROWS).fill(0).map(() => Array(GRID_COLS).fill(false));
-            inventory.public.forEach(i => {
-                for(let y=0; y<i.h; y++){ for(let x=0; x<i.w; x++){ if(i.y+y < GRID_ROWS && i.x+x < GRID_COLS) grid[i.y+y][i.x+x] = true; } }
-            });
-            let fullRows = 0; for(let y=0; y<GRID_ROWS; y++) { if(grid[y].every(c => c)) fullRows++; }
-            let fullCols = 0; for(let x=0; x<GRID_COLS; x++) { if(grid.every(r => r[x])) fullCols++; }
-            let score = (fullRows * 50) + (fullCols * 50) + (inventory.public.length * 5);
-            if(myProfile.layoutScore !== score) { myProfile.layoutScore = score; updateProfileUI(); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', currentUser.uid), { layoutScore: score }); }
-        }
-
         function startRealtimeListeners() {
-            unsubPrivate = onSnapshot(collection(db, 'artifacts', appId, 'users', currentUser.uid, 'privateItems'), (snap) => { inventory.private = []; snap.forEach(doc => inventory.private.push({ ...doc.data(), id: doc.id })); renderGrids(); }, (e) => {});
+            // My Private Bag
+            unsubPrivate = onSnapshot(collection(db, 'artifacts', appId, 'users', currentUser.uid, 'privateItems'), (snap) => { 
+                inventory.private = []; snap.forEach(doc => inventory.private.push({ ...doc.data(), id: doc.id })); 
+                renderWoWBags(); if(currentTradeOfferId) renderTradeModal(currentTradeOfferId);
+            }, (e) => {});
+            
+            // All Users
             unsubUsers = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'users'), (snap) => {
                 allUsers = {}; snap.forEach(doc => { allUsers[doc.id] = doc.data(); }); renderFeed();
                 if(document.getElementById('view-chats').classList.contains('active')) renderChatsView();
-                if(myProfile.successfulTrades !== allUsers[currentUser.uid]?.successfulTrades || myProfile.layoutScore !== allUsers[currentUser.uid]?.layoutScore) { myProfile.successfulTrades = allUsers[currentUser.uid]?.successfulTrades || 0; myProfile.layoutScore = allUsers[currentUser.uid]?.layoutScore || 0; updateProfileUI(); }
             }, (e) => {});
+            
+            // Public Items (Global Mostrador)
             unsubPublic = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'publicItems'), (snap) => {
                 allPublicItems = []; inventory.public = [];
                 snap.forEach(doc => { const item = { ...doc.data(), id: doc.id }; allPublicItems.push(item); if (item.uid === currentUser.uid) inventory.public.push(item); });
-                renderGrids(); renderFeed(); calculateTetrisScore(); 
+                renderWoWBags(); renderFeed(); 
                 if(currentTradeOfferId) renderTradeModal(currentTradeOfferId);
-                if(document.getElementById('view-chats').classList.contains('active')) renderChatsView();
             }, (e) => {});
+            
+            // Offers (WoW Trade Windows)
             unsubOffers = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'offers'), (snap) => {
                 allOffers = []; snap.forEach(doc => { const d = doc.data(); if(d.initiatorId === currentUser.uid || d.receiverId === currentUser.uid) allOffers.push({ ...d, id: doc.id }); });
-                updateNotifBadge(); renderNotifList(); if(currentTradeOfferId) renderTradeModal(currentTradeOfferId);
+                updateNotifBadge(); renderNotifList(); 
+                if(currentTradeOfferId) renderTradeModal(currentTradeOfferId);
             }, (e) => {});
+            
+            // Chats
             unsubChats = onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'chats'), (snap) => {
                 allChats = []; snap.forEach(doc => { const d = doc.data(); if(d.participants && d.participants.includes(currentUser.uid)) allChats.push({ ...d, id: doc.id }); });
-                if(document.getElementById('view-chats').classList.contains('active')) renderChatsView(); if(currentChatId) renderChatModal(currentChatId);
+                if(document.getElementById('view-chats').classList.contains('active')) renderChatsView(); 
+                if(currentChatId) renderChatModal(currentChatId);
             }, (e) => {});
         }
 
-        function resizeGrids() {
-            const pubC = document.getElementById('grid-public-container'); if(!pubC) return;
-            const refWidth = pubC.clientWidth - 16; 
-            let aw = Math.min(refWidth, 380); cellWidth = Math.floor(aw / GRID_COLS); cellHeight = cellWidth; 
-            document.querySelectorAll('.re-grid').forEach(g => {
-                g.style.gridTemplateColumns = `repeat(${GRID_COLS}, ${cellWidth}px)`; g.style.gridTemplateRows = `repeat(${GRID_ROWS}, ${cellHeight}px)`;
-                g.style.width = `${cellWidth * GRID_COLS}px`; g.style.height = `${cellHeight * GRID_ROWS}px`;
-                g.innerHTML = ''; for(let i=0; i<GRID_COLS*GRID_ROWS; i++) { const c = document.createElement('div'); c.className = 're-cell'; g.appendChild(c); }
-            }); renderGrids();
-        }
-
-        function renderGrids() {
-            if (cellWidth === 0) return;
-            const draw = (items, gridId) => {
-                const c = document.getElementById(gridId); if(!c) return;
-                c.querySelectorAll('.re-item').forEach(el => el.remove());
-                items.forEach(item => {
-                    const div = document.createElement('div'); div.className = 're-item';
-                    div.style.width = `${(item.w * cellWidth) - 4}px`; div.style.height = `${(item.h * cellHeight) - 4}px`;
-                    div.style.left = `${item.x * cellWidth + 2}px`; div.style.top = `${item.y * cellHeight + 2}px`;
-                    div.dataset.id = item.id; div.dataset.grid = gridId === 'grid-private' ? 'private' : 'public';
-                    if(item.photos && item.photos[0]) { const img = document.createElement('img'); img.src = item.photos[0]; div.appendChild(img); }
-                    if(item.quantity > 1) { div.innerHTML += `<span class="absolute top-1 right-1 bg-black text-white font-black text-[10px] px-1.5 py-0.5 rounded shadow-[2px_2px_0px_#FFF]">x${item.quantity}</span>`; }
-                    div.addEventListener('pointerdown', handleDragStart); c.appendChild(div);
-                });
+        // --- WOW STYLE BAGS RENDER ---
+        function renderWoWBags() {
+            const MAX_SLOTS = 20; // 20 slots per bag
+            const renderBag = (items, containerId) => {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+                let html = '';
+                for(let i=0; i<MAX_SLOTS; i++) {
+                    const item = items[i];
+                    if(item) {
+                        html += `
+                            <div class="wow-slot has-item" onclick="showItemDetails('${item.id}')">
+                                <img src="${item.photos[0]}" alt="${item.name}">
+                                ${item.quantity > 1 ? `<span class="qty-badge">x${item.quantity}</span>` : ''}
+                            </div>
+                        `;
+                    } else {
+                        html += `<div class="wow-slot"></div>`; // Empty slot
+                    }
+                }
+                container.innerHTML = html;
             };
-            draw(inventory.private, 'grid-private'); draw(inventory.public, 'grid-public');
+
+            renderBag(inventory.public, 'grid-public');
+            renderBag(inventory.private, 'grid-private');
         }
 
-        let isDraggingItem = false, dragItemData = null, dragClone = null, dragOffset = {x:0, y:0};
-        let dragStartX = 0, dragStartY = 0, dragStartTime = 0;
-
-        function handleDragStart(e) {
-            if (e.button !== 0 && e.type !== 'touchstart' && !e.pointerType) return;
-            isDraggingItem = true; dragItemData = (e.currentTarget.dataset.grid === 'private' ? inventory.private : inventory.public).find(i => i.id === e.currentTarget.dataset.id);
-            if(!dragItemData) return;
-            const cx = e.clientX ?? (e.touches && e.touches[0].clientX); const cy = e.clientY ?? (e.touches && e.touches[0].clientY);
-            dragStartX = cx; dragStartY = cy; dragStartTime = Date.now();
-            document.body.style.overflow = 'hidden';
-            e.currentTarget.style.opacity = '0.3'; const rect = e.currentTarget.getBoundingClientRect();
-            dragOffset.x = cx - rect.left; dragOffset.y = cy - rect.top;
-            dragClone = e.currentTarget.cloneNode(true); dragClone.className = 're-item drag-clone';
-            dragClone.style.width = `${rect.width}px`; dragClone.style.height = `${rect.height}px`;
-            dragClone.style.left = `${cx - dragOffset.x}px`; dragClone.style.top = `${cy - dragOffset.y}px`;
-            document.body.appendChild(dragClone);
-            document.addEventListener('pointermove', handleItemDragMove, {passive: false}); document.addEventListener('pointerup', handleItemDragEnd);
-            document.addEventListener('touchmove', handleItemDragMove, {passive: false}); document.addEventListener('touchend', handleItemDragEnd);
-        }
-        function handleItemDragMove(e) {
-            if (!isDraggingItem || !dragClone) return;
-            const cx = e.clientX ?? (e.touches && e.touches[0].clientX); const cy = e.clientY ?? (e.touches && e.touches[0].clientY);
-            dragClone.style.left = `${cx - dragOffset.x}px`; dragClone.style.top = `${cy - dragOffset.y}px`; e.preventDefault(); 
-        }
-        async function handleItemDragEnd(e) {
-            if (!isDraggingItem) return; isDraggingItem = false;
-            document.removeEventListener('pointermove', handleItemDragMove); document.removeEventListener('pointerup', handleItemDragEnd);
-            document.removeEventListener('touchmove', handleItemDragMove); document.removeEventListener('touchend', handleItemDragEnd);
-            document.body.style.overflow = '';
-            const cx = e.clientX ?? (e.changedTouches && e.changedTouches[0].clientX); const cy = e.clientY ?? (e.changedTouches && e.changedTouches[0].clientY);
-            dragClone?.remove(); dragClone = null; renderGrids(); 
-
-            const oldGridType = inventory.private.find(i => i.id === dragItemData.id) ? 'private' : 'public';
-            const oldItems = oldGridType === 'private' ? inventory.private : inventory.public;
-
-            if (Date.now() - dragStartTime < 250 && Math.hypot(cx - dragStartX, cy - dragStartY) < 10) {
-                const newW = dragItemData.h; const newH = dragItemData.w;
-                const canRotate = !oldItems.some(i => i.id !== dragItemData.id && dragItemData.x < i.x + i.w && dragItemData.x + newW > i.x && dragItemData.y < i.y + i.h && dragItemData.y + newH > i.y) && (dragItemData.x + newW <= GRID_COLS) && (dragItemData.y + newH <= GRID_ROWS);
-                if(canRotate) { const path = oldGridType === 'public' ? ['public','data','publicItems'] : ['users',currentUser.uid,'privateItems']; updateDoc(doc(db, 'artifacts', appId, ...path, dragItemData.id), { w: newW, h: newH }); } else { showMessage("No hay espacio", true); } return;
-            }
-
-            const pubRect = document.getElementById('grid-public').getBoundingClientRect(); const privRect = document.getElementById('grid-private').getBoundingClientRect();
-            let targetGridType = null; let targetRect = null;
-            if (cx >= pubRect.left && cx <= pubRect.right && cy >= pubRect.top && cy <= pubRect.bottom) { targetGridType = 'public'; targetRect = pubRect; } 
-            else if (cx >= privRect.left && cx <= privRect.right && cy >= privRect.top && cy <= privRect.bottom) { targetGridType = 'private'; targetRect = privRect; }
-
-            if (targetGridType) {
-                let cellX = Math.round(((cx - dragOffset.x) - targetRect.left) / cellWidth); let cellY = Math.round(((cy - dragOffset.y) - targetRect.top) / cellHeight);
-                const items = targetGridType === 'private' ? inventory.private : inventory.public;
-                const isValid = (tx, ty) => {
-                    if (tx < 0 || ty < 0 || tx + dragItemData.w > GRID_COLS || ty + dragItemData.h > GRID_ROWS) return false;
-                    return !items.some(i => i.id !== dragItemData.id && tx < i.x + i.w && tx + dragItemData.w > i.x && ty < i.y + i.h && ty + dragItemData.h > i.y);
-                };
-                if (isValid(cellX, cellY)) {
-                    const newItemData = { ...dragItemData, x: cellX, y: cellY }; delete newItemData.id;
-                    try {
-                        if (oldGridType !== targetGridType) {
-                            const deletePath = oldGridType === 'public' ? ['public','data','publicItems'] : ['users',currentUser.uid,'privateItems'];
-                            const addPath = targetGridType === 'public' ? ['public','data','publicItems'] : ['users',currentUser.uid,'privateItems'];
-                            await deleteDoc(doc(db, 'artifacts', appId, ...deletePath, dragItemData.id)); await setDoc(doc(db, 'artifacts', appId, ...addPath, dragItemData.id), newItemData);
-                        } else {
-                            const path = oldGridType === 'public' ? ['public','data','publicItems'] : ['users',currentUser.uid,'privateItems'];
-                            await setDoc(doc(db, 'artifacts', appId, ...path, dragItemData.id), newItemData, { merge: true });
-                        }
-                    } catch (e) {}
-                } else showMessage("Espacio ocupado", true);
-            }
-        }
-
+        // Add Items (Simplified)
         window.openAddItemModal = () => { currentItemPhotos = []; renderPhotoPreviews(); document.getElementById('cameraInput').value = ''; document.getElementById('addItemModal').classList.remove('hidden'); };
         window.closeAddItemModal = () => document.getElementById('addItemModal').classList.add('hidden');
-        window.submitNewItem = async () => {
+        window.submitNewItem = async (targetBag) => {
             if(!currentUser) return;
-            const name = document.getElementById('newItemName').value.trim(); const loc = document.getElementById('newItemLocation').value.trim();
-            const cat = document.getElementById('newItemCategory').value; const sizeStr = document.getElementById('newItemSize').value;
+            const name = document.getElementById('newItemName').value.trim(); 
+            const loc = document.getElementById('newItemLocation').value.trim();
+            const cat = document.getElementById('newItemCategory').value;
             const quantity = parseInt(document.getElementById('newItemQuantity').value) || 1;
+            
             if(!name || !loc || currentItemPhotos.length === 0) return showMessage("Faltan datos", true);
-            const [w, h] = sizeStr.split(',').map(Number); let tx = 0, ty = 0, found = false;
-            for(let y=0; y<=GRID_ROWS-h; y++) {
-                for(let x=0; x<=GRID_COLS-w; x++) { if(!inventory.private.some(i => x < i.x + i.w && x + w > i.x && y < i.y + i.h && y + h > i.y)) { tx = x; ty = y; found = true; break; } } if(found) break;
-            }
-            if(!found) return showMessage("Mochila privada llena", true);
-            try {
-                await addDoc(collection(db, 'artifacts', appId, 'users', currentUser.uid, 'privateItems'), { uid: currentUser.uid, name, location: loc, category: cat, photos: currentItemPhotos, w, h, x: tx, y: ty, quantity });
-                closeAddItemModal(); document.getElementById('newItemName').value = ''; document.getElementById('newItemLocation').value = ''; document.getElementById('newItemQuantity').value = '1'; showMessage("Guardado");
-            } catch (e) {}
-        };
+            
+            const currentItemsCount = targetBag === 'public' ? inventory.public.length : inventory.private.length;
+            if(currentItemsCount >= 20) return showMessage(`Tu bolsa ${targetBag === 'public'?'Mostrador':'Privada'} está llena.`, true);
 
-        window.handleCarouselScroll = (el) => {
-            const index = Math.round(el.scrollLeft / el.clientWidth);
-            const dots = el.parentElement.querySelectorAll('.car-dot'); dots.forEach((dot, i) => { if(i === index) dot.classList.add('active'); else dot.classList.remove('active'); });
+            const itemData = { uid: currentUser.uid, name, location: loc, category: cat, photos: currentItemPhotos, quantity };
+
+            try {
+                if(targetBag === 'public') {
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'publicItems'), itemData);
+                } else {
+                    await addDoc(collection(db, 'artifacts', appId, 'users', currentUser.uid, 'privateItems'), itemData);
+                }
+                closeAddItemModal(); 
+                document.getElementById('newItemName').value = ''; document.getElementById('newItemQuantity').value = '1'; 
+                showMessage(`Guardado en ${targetBag === 'public' ? 'Mostrador' : 'Mochila'}`);
+            } catch (e) { showMessage("Error", true); }
         };
 
         function renderFeed() {
             const container = document.getElementById('feedContainer'); const emptyState = document.getElementById('feedEmpty');
             let feedItems = currentUser ? allPublicItems.filter(item => item.uid !== currentUser.uid) : allPublicItems;
+            
             if (activeCategoryFilter !== 'Todo') { feedItems = feedItems.filter(item => item.category === activeCategoryFilter); }
             if (feedItems.length === 0) { container.innerHTML = ''; emptyState.classList.remove('hidden'); return; }
+            
             emptyState.classList.add('hidden'); container.innerHTML = '';
-            feedItems.sort((a, b) => { const scoreA = allUsers[a.uid]?.layoutScore || 0; const scoreB = allUsers[b.uid]?.layoutScore || 0; return scoreB - scoreA; });
 
             feedItems.forEach(item => {
-                const user = allUsers[item.uid] || { displayName: 'Anónimo', photoURL: '', successfulTrades: 0, layoutScore: 0 };
-                const post = document.createElement('div'); post.className = 'feed-item border-b-4 border-black md:border-none';
+                const user = allUsers[item.uid] || { displayName: 'Anónimo', photoURL: '', successfulTrades: 0 };
+                const post = document.createElement('div'); post.className = 'feed-item';
+                
                 const photosHtml = item.photos.map(p => `<div class="feed-photo-container"><img src="${p}" class="feed-photo"></div>`).join('');
-                const dotsHtml = item.photos.length > 1 ? `<div class="carousel-indicators">${item.photos.map((_, i) => `<div class="car-dot ${i===0?'active':''}"></div>`).join('')}</div>` : '';
-
+                
                 post.innerHTML = `
-                    <div class="feed-image-section relative">
-                        <div class="feed-carousel hide-scrollbar" onscroll="handleCarouselScroll(this)">${photosHtml}</div>
-                        ${dotsHtml}
-                        <div class="feed-gradient md:hidden"></div>
+                    <div class="absolute inset-0">
+                        <div class="feed-photo-carousel hide-scrollbar">${photosHtml}</div>
                     </div>
-                    <div class="feed-info-section neo-brutal bg-[var(--panel-bg)] p-3 md:p-6 flex flex-col justify-end md:justify-center shadow-[4px_4px_0px_#000] md:shadow-none">
-                        <div class="flex items-center space-x-3 mb-2 md:mb-4">
-                            <img src="${user.photoURL}" class="w-10 h-10 md:w-12 md:h-12 rounded-lg border-2 md:border-4 border-black object-cover bg-white">
-                            <div class="flex-1 overflow-hidden">
-                                <h3 class="text-base md:text-lg font-black truncate">${user.displayName} <span class="bg-[var(--primary)] px-2 py-0.5 rounded border-2 border-black ml-1 text-xs">⭐${user.successfulTrades||0}</span></h3>
-                                <p class="text-[10px] md:text-xs font-black uppercase truncate mt-1 text-[var(--text-light)]">📍 ${item.location}</p>
-                            </div>
+                    <div class="feed-gradient"></div>
+                    
+                    <div class="feed-info">
+                        <h2 class="text-3xl font-black mb-1">${item.name}</h2>
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-[10px] font-black uppercase bg-[var(--primary)] text-black border-2 border-black px-2 py-0.5 rounded shadow-[2px_2px_0px_#000]">${item.category || 'Varios'}</span>
+                            ${item.quantity > 1 ? `<span class="text-[10px] font-black uppercase bg-black text-white px-2 py-0.5 rounded border-2 border-white shadow-[2px_2px_0px_#FFF]">Stock: ${item.quantity}</span>` : ''}
                         </div>
-                        <h2 class="text-xl md:text-3xl font-black truncate leading-none mb-2 md:mb-3">${item.name}</h2>
-                        <div class="flex items-center gap-2 mb-3 md:mb-6">
-                            <span class="text-[10px] md:text-xs font-black uppercase bg-white border-2 md:border-4 border-black px-2 py-1 inline-block shadow-[2px_2px_0px_#000] md:shadow-[4px_4px_0px_#000]">${item.category || 'Varios'}</span>
-                            ${item.quantity > 1 ? `<span class="text-[10px] md:text-xs font-black uppercase bg-black text-white px-2 py-1 inline-block border-2 md:border-4 border-black shadow-[2px_2px_0px_#FFF] md:shadow-[4px_4px_0px_#FFF]">Stock: ${item.quantity}</span>` : ''}
+                        <p class="text-sm font-bold text-gray-300">📍 ${item.location}</p>
+                    </div>
+
+                    <div class="feed-actions">
+                        <div class="feed-avatar-btn flex flex-col items-center group">
+                            <img src="${user.photoURL}">
+                            <div class="absolute bottom-[-10px] bg-white text-black text-[10px] font-black px-1.5 py-0.5 rounded-full border-2 border-black shadow-[2px_2px_0px_#000]">⭐${user.successfulTrades}</div>
                         </div>
-                        <button onclick="${currentUser ? `initiateTrade('${item.id}', '${item.uid}', '${item.name.replace(/'/g, "\\'")}')` : `document.getElementById('loginOverlay').classList.remove('hidden')`}" class="w-full py-2 md:py-4 neo-btn neo-btn-success text-sm md:text-xl">
-                            🤝 Negociar
+                        
+                        <button onclick="${currentUser ? `initiateTrade('${item.id}', '${item.uid}', '${item.name.replace(/'/g, "\\'")}')` : `document.getElementById('loginOverlay').classList.remove('hidden')`}" class="feed-action-btn mt-4">
+                            <svg class="w-8 h-8 text-[var(--secondary)]" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
                         </button>
+                        <span class="text-white text-[10px] font-black uppercase drop-shadow-md">Ofrecer</span>
                     </div>
                 `;
                 container.appendChild(post);
             });
         }
 
+        // Get Global Item Data (Public or Private)
+        const getItemData = (id) => allPublicItems.find(i=>i.id===id) || inventory.private.find(i=>i.id===id);
+
+        // Delete Item Logic
+        window.showItemDetails = (itemId) => {
+            const item = getItemData(itemId); if (!item) return;
+            document.getElementById('detailImg').src = item.photos[0];
+            document.getElementById('detailName').innerText = item.name;
+            document.getElementById('detailCat').innerText = item.category || 'Varios';
+            document.getElementById('detailQty').innerText = `Stock: ${item.quantity || 1}`;
+            document.getElementById('detailLoc').innerText = item.location;
+            
+            const btnDel = document.getElementById('btnDeleteItem');
+            if (currentUser && item.uid === currentUser.uid) {
+                btnDel.classList.remove('hidden');
+                itemToDeleteId = item.id;
+                itemToDeleteType = inventory.public.find(i=>i.id===item.id) ? 'public' : 'private';
+            } else {
+                btnDel.classList.add('hidden');
+            }
+
+            document.getElementById('itemDetailModal').classList.remove('hidden');
+        };
+        window.closeItemDetail = () => document.getElementById('itemDetailModal').classList.add('hidden');
+
+        window.deleteMyItem = async () => {
+            if(!itemToDeleteId || !currentUser) return;
+            try {
+                if(itemToDeleteType === 'public') {
+                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'publicItems', itemToDeleteId));
+                } else {
+                    await deleteDoc(doc(db, 'artifacts', appId, 'users', currentUser.uid, 'privateItems', itemToDeleteId));
+                }
+                closeItemDetail(); showMessage("Objeto eliminado");
+            } catch(e) { showMessage("Error eliminando", true); }
+        };
+
         window.initiateTrade = async (targetItemId, targetUserId, targetItemName) => {
-            let existingOffer = allOffers.find(o => o.receiverItems.includes(targetItemId) && o.initiatorId === currentUser.uid && (o.status === 'negotiating' || o.status === 'pending_confirmation'));
+            let existingOffer = allOffers.find(o => o.receiverItems.includes(targetItemId) && o.initiatorId === currentUser.uid && (o.status === 'negotiating'));
             if(existingOffer) { currentTradeOfferId = existingOffer.id; document.getElementById('tradeModal').classList.remove('hidden'); renderTradeModal(existingOffer.id); return; }
             try {
                 const ref = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'offers'), { 
                     status: 'negotiating', initiatorId: currentUser.uid, receiverId: targetUserId, 
-                    initiatorItems: [], receiverItems: [targetItemId], receiverItemName: targetItemName || 'Objeto', 
-                    currentTurn: currentUser.uid, dismissedBy: [] 
+                    initiatorItems: [], receiverItems: [targetItemId],
+                    lockedBy: [] // Array of UIDs who pressed "Lock"
                 });
                 currentTradeOfferId = ref.id; document.getElementById('tradeModal').classList.remove('hidden'); renderTradeModal(ref.id);
             } catch(e) { showMessage("Error conectando", true); }
@@ -795,184 +771,148 @@
 
         window.closeTradeModal = () => { document.getElementById('tradeModal').classList.add('hidden'); currentTradeOfferId = null; };
 
-        const getItemData = (id) => allPublicItems.find(i=>i.id===id) || inventory.private.find(i=>i.id===id);
-
-        window.showItemDetails = (itemId) => {
-            const item = getItemData(itemId); if (!item) return;
-            document.getElementById('detailImg').src = item.photos[0];
-            document.getElementById('detailName').innerText = item.name;
-            document.getElementById('detailCat').innerText = item.category || 'Varios';
-            document.getElementById('detailLoc').innerText = item.location;
-            document.getElementById('itemDetailModal').classList.remove('hidden');
-        };
-        window.closeItemDetail = () => { document.getElementById('itemDetailModal').classList.add('hidden'); };
-
         function renderTradeModal(offerId) {
-            const offer = allOffers.find(o => o.id === offerId); if(!offer || offer.status === 'cancelled' || offer.status === 'accepted') { closeTradeModal(); return; }
+            const offer = allOffers.find(o => o.id === offerId); 
+            if(!offer || offer.status === 'accepted' || offer.status === 'cancelled') { closeTradeModal(); return; }
             
             const isInit = offer.initiatorId === currentUser.uid; 
             const otherUId = isInit ? offer.receiverId : offer.initiatorId; 
-            const otherUser = allUsers[otherUId];
+            const otherUser = allUsers[otherUId] || {displayName: 'Alguien'};
             
-            const myTurn = offer.currentTurn === currentUser.uid;
-            const isPendingConf = offer.status === 'pending_confirmation';
-
             const myItems = isInit ? (offer.initiatorItems||[]) : (offer.receiverItems||[]); 
             const theirItems = isInit ? (offer.receiverItems||[]) : (offer.initiatorItems||[]);
             
-            document.getElementById('tradeOtherName').innerText = `De ${otherUser?.displayName || 'Usuario'}`;
-            document.getElementById('tradeTheirInvTitle').innerText = `Mostrador de ${otherUser?.displayName || 'Usuario'}`;
+            const amILocked = (offer.lockedBy || []).includes(currentUser.uid);
+            const areTheyLocked = (offer.lockedBy || []).includes(otherUId);
+
+            document.getElementById('tradeOtherTitle').innerText = `Oferta de ${otherUser.displayName}`;
             
-            const renderItemTheir = (item) => {
-                if(!item) return '';
-                return `<div class="w-16 h-16 bg-white rounded-lg border-4 border-black overflow-hidden cursor-pointer relative shadow-[4px_4px_0px_#000]" onclick="showItemDetails('${item.id}')"><img src="${item.photos[0]}" class="w-full h-full object-cover"></div>`;
+            // Render Grids (6 slots for trade window)
+            const renderTradeSlots = (itemIds, containerId) => {
+                const container = document.getElementById(containerId);
+                let html = '';
+                for(let i=0; i<6; i++) {
+                    const id = itemIds[i]; const item = id ? getItemData(id) : null;
+                    if(item) html += `<div class="wow-slot has-item border-[var(--primary)]" onclick="showItemDetails('${item.id}')"><img src="${item.photos[0]}"></div>`;
+                    else html += `<div class="wow-slot bg-black/10"></div>`;
+                }
+                container.innerHTML = html;
             };
-            const renderItemMine = (item) => {
-                if(!item) return '';
-                return `<div class="w-16 h-16 bg-white rounded-lg border-4 border-black overflow-hidden cursor-pointer relative shadow-[4px_4px_0px_#000]" onclick="${myTurn && !isPendingConf ? `toggleTradeItem('${item.id}', true)` : `showItemDetails('${item.id}')`}"><img src="${item.photos[0]}" class="w-full h-full object-cover"></div>`;
-            };
-            
-            document.getElementById('tradeTheirSelected').innerHTML = theirItems.map(id => renderItemTheir(getItemData(id))).join('') || '<span class="text-sm font-black uppercase text-[var(--text-light)] py-4">Vacío</span>';
-            document.getElementById('tradeMySelected').innerHTML = myItems.map(id => renderItemMine(getItemData(id))).join('') || '<span class="text-sm font-black uppercase text-[var(--text-light)] py-4">Vacío</span>';
-            
-            const myFullInventory = allPublicItems.filter(i => i.uid === currentUser.uid); 
-            const myPrivateInventory = inventory.private;
-            const theirFullInventory = allPublicItems.filter(i => i.uid === otherUId);
-            
-            const renderInventoryStrip = (inventoryList, selectedArr, isMine) => {
-                return inventoryList.map(item => `<div onclick="${myTurn && !isPendingConf ? `toggleTradeItem('${item.id}', ${isMine})` : `showItemDetails('${item.id}')`}" class="w-16 h-16 shrink-0 rounded-lg overflow-hidden cursor-pointer border-4 transition-all relative ${selectedArr.includes(item.id)?'border-[var(--primary)] opacity-50':'border-black'}"><img src="${item.photos[0]}" class="w-full h-full object-cover"></div>`).join('') || '<span class="text-xs font-black uppercase">Vacío</span>';
-            };
-            
-            document.getElementById('tradeMyInventory').innerHTML = renderInventoryStrip(myFullInventory, myItems, true);
-            document.getElementById('tradeMyPrivate').innerHTML = renderInventoryStrip(myPrivateInventory, myItems, true);
-            document.getElementById('tradeTheirInventory').innerHTML = renderInventoryStrip(theirFullInventory, theirItems, false);
-            
-            const actionsDiv = document.getElementById('tradeActionButtons');
-            if (!myTurn) {
-                let msg = isPendingConf ? "Esperando Confirmación..." : "Esperando Respuesta...";
-                actionsDiv.innerHTML = `<button disabled class="flex-1 py-4 neo-btn bg-gray-300 text-sm md:text-lg">${msg}</button>`;
-            } else if (isPendingConf) {
-                actionsDiv.innerHTML = `
-                    <button onclick="modifyTrade()" class="flex-1 py-4 neo-btn bg-white text-sm md:text-lg">Modificar</button>
-                    <button onclick="confirmTradeFinal()" class="flex-1 py-4 neo-btn neo-btn-success text-sm md:text-lg">¡Confirmar Trato!</button>
-                `;
+
+            renderTradeSlots(theirItems, 'tradeTheirOfferGrid');
+            renderTradeSlots(myItems, 'tradeMyOfferGrid');
+
+            // Render My Inventory Picker
+            const myBagsContainer = document.getElementById('tradeMyBagsGrid');
+            const allMyItems = [...inventory.public, ...inventory.private];
+            myBagsContainer.innerHTML = allMyItems.map(item => {
+                const inTrade = myItems.includes(item.id);
+                return `<div class="wow-slot has-item ${inTrade ? 'opacity-30 border-[var(--danger)]' : ''}" onclick="toggleTradeItem('${item.id}', ${inTrade})"><img src="${item.photos[0]}"></div>`;
+            }).join('');
+
+            // Status Updates
+            const statusDiv = document.getElementById('tradeTheirStatus');
+            if(areTheyLocked) { statusDiv.innerText = "¡LISTO!"; statusDiv.className = "mt-auto pt-2 text-center font-black uppercase text-[var(--secondary)] text-lg"; }
+            else { statusDiv.innerText = "Modificando..."; statusDiv.className = "mt-auto pt-2 text-center font-black uppercase text-gray-500 text-sm"; }
+
+            const btnLock = document.getElementById('btnLockTrade');
+            if(amILocked && areTheyLocked) {
+                // Both locked -> Change button to Complete Trade
+                btnLock.innerText = "¡ACEPTAR TRATO!";
+                btnLock.className = "w-full py-3 neo-btn neo-btn-success text-lg animate-pulse";
+                btnLock.onclick = finalizeTradeCreation;
+            } else if(amILocked) {
+                btnLock.innerText = "Desbloquear";
+                btnLock.className = "w-full py-2 neo-btn bg-gray-300 text-sm";
+                btnLock.onclick = toggleTradeLock;
             } else {
-                actionsDiv.innerHTML = `
-                    <button onclick="passTurn()" class="flex-1 py-4 neo-btn neo-btn-primary text-sm md:text-lg">Enviar Oferta</button>
-                    <button onclick="acceptTradeStep1()" class="flex-1 py-4 neo-btn neo-btn-success text-sm md:text-lg">Aceptar</button>
-                `;
+                btnLock.innerText = "Fijar Oferta";
+                btnLock.className = "w-full py-2 neo-btn neo-btn-primary text-sm";
+                btnLock.onclick = toggleTradeLock;
             }
         }
 
-        window.toggleTradeItem = async (itemId, isMine) => {
+        window.toggleTradeItem = async (itemId, isCurrentlyInTrade) => {
             const offer = allOffers.find(o => o.id === currentTradeOfferId); if(!offer) return;
-            if (offer.currentTurn !== currentUser.uid) return; 
+            if((offer.lockedBy || []).includes(currentUser.uid)) { showMessage("Desbloquea para modificar"); return; }
+
             const isInit = offer.initiatorId === currentUser.uid;
-            let currentItems = isMine ? (isInit ? [...(offer.initiatorItems||[])] : [...(offer.receiverItems||[])]) : (isInit ? [...(offer.receiverItems||[])] : [...(offer.initiatorItems||[])]);
-            if(currentItems.includes(itemId)) currentItems = currentItems.filter(id => id !== itemId); else currentItems.push(itemId);
+            let currentItems = isInit ? [...(offer.initiatorItems||[])] : [...(offer.receiverItems||[])];
             
-            const updates = {};
-            if(isMine) { if(isInit) updates.initiatorItems = currentItems; else updates.receiverItems = currentItems; } 
-            else { if(isInit) updates.receiverItems = currentItems; else updates.initiatorItems = currentItems; }
+            if(isCurrentlyInTrade) {
+                currentItems = currentItems.filter(id => id !== itemId);
+            } else {
+                if(currentItems.length >= 6) return showMessage("Mesa llena (Máx 6)");
+                currentItems.push(itemId);
+            }
+            
+            const updates = { lockedBy: [] }; // Modify breaks locks
+            if(isInit) updates.initiatorItems = currentItems; else updates.receiverItems = currentItems;
+            
             try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'offers', offer.id), updates); } catch(e) {}
         };
-        
-        window.passTurn = async () => {
-            const offer = allOffers.find(o => o.id === currentTradeOfferId);
-            const nextTurn = offer.initiatorId === currentUser.uid ? offer.receiverId : offer.initiatorId;
-            try {
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'offers', currentTradeOfferId), {
-                    currentTurn: nextTurn, status: 'negotiating', dismissedBy: []
-                });
-                closeTradeModal(); showMessage("Oferta enviada");
-            } catch(e){}
+
+        window.toggleTradeLock = async () => {
+            const offer = allOffers.find(o => o.id === currentTradeOfferId); if(!offer) return;
+            const lockedBy = offer.lockedBy || [];
+            
+            if(lockedBy.includes(currentUser.uid)) {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'offers', offer.id), { lockedBy: arrayRemove(currentUser.uid) });
+            } else {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'offers', offer.id), { lockedBy: arrayUnion(currentUser.uid) });
+            }
         };
 
-        window.acceptTradeStep1 = async () => {
-             const offer = allOffers.find(o => o.id === currentTradeOfferId);
-             const nextTurn = offer.initiatorId === currentUser.uid ? offer.receiverId : offer.initiatorId;
-             try {
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'offers', currentTradeOfferId), {
-                    currentTurn: nextTurn, status: 'pending_confirmation', dismissedBy: []
-                });
-                closeTradeModal(); showMessage("Esperando que el otro confirme...");
-             } catch(e) {}
-        };
-
-        window.modifyTrade = async () => {
-            try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'offers', currentTradeOfferId), { status: 'negotiating' }); } catch(e){}
-        };
-
-        window.confirmTradeFinal = async () => {
+        window.finalizeTradeCreation = async () => {
             const offer = allOffers.find(o => o.id === currentTradeOfferId);
             try {
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'offers', currentTradeOfferId), { status: 'accepted' });
-                const chatRef = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'chats'), { participants: [offer.initiatorId, offer.receiverId], messages: [], finishedBy: [], status: 'active', offerId: currentTradeOfferId });
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'offers', offer.id), { status: 'accepted' });
+                const chatRef = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'chats'), { 
+                    participants: [offer.initiatorId, offer.receiverId], messages: [], 
+                    finishedBy: [], status: 'active', offerId: currentTradeOfferId 
+                });
                 closeTradeModal(); switchTab('chats'); openChat(chatRef.id);
             } catch(e) {}
         };
 
         window.declineTrade = async () => { 
             if(!currentTradeOfferId) { closeTradeModal(); return; }
-            try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'offers', currentTradeOfferId), { status: 'cancelled', dismissedBy: [currentUser.uid] }); closeTradeModal(); showMessage("Trato Cancelado"); } catch(e) {} 
+            try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'offers', currentTradeOfferId), { status: 'cancelled' }); closeTradeModal(); showMessage("Trato Cancelado"); } catch(e) {} 
         };
-
-        window.toggleNotifications = () => { const el = document.getElementById('notifModal'); el.classList.contains('hidden') ? el.classList.remove('hidden') : el.classList.add('hidden'); };
-        function updateNotifBadge() {
-            if(!currentUser) return; 
-            const pending = allOffers.some(o => (o.status === 'negotiating' || o.status === 'pending_confirmation') && o.currentTurn === currentUser.uid && !(o.dismissedBy || []).includes(currentUser.uid));
-            document.getElementById('notifBadge').style.display = pending ? 'block' : 'none';
-        }
-        function renderNotifList() {
-            const list = document.getElementById('notifList'); list.innerHTML = '';
-            const visibleOffers = allOffers.filter(o => (o.status === 'negotiating' || o.status === 'pending_confirmation') && !(o.dismissedBy || []).includes(currentUser.uid));
-            visibleOffers.forEach(o => {
-                const isMyTurn = o.currentTurn === currentUser.uid; 
-                const otherUid = o.initiatorId === currentUser.uid ? o.receiverId : o.initiatorId; 
-                const name = allUsers[otherUid]?.displayName || 'Alguien';
-                
-                let actionText = isMyTurn ? (o.status === 'pending_confirmation' ? '¡El otro aceptó! Confirma.' : 'Es tu turno de ofertar') : 'Esperando respuesta de '+name;
-
-                const div = document.createElement('div');
-                div.className = `p-4 neo-brutal cursor-pointer relative ${isMyTurn ? 'bg-[var(--primary)]' : 'bg-white opacity-80'}`;
-                div.innerHTML = `
-                    <p class="font-black text-lg uppercase">Mesa con ${name}</p>
-                    <p class="text-sm font-bold">${actionText}</p>
-                    <button onclick="event.stopPropagation(); deleteNotif('${o.id}')" class="absolute top-4 right-4 w-8 h-8 border-4 border-black bg-[var(--danger)] text-white font-black flex items-center justify-center hover:scale-105">X</button>
-                `;
-                div.onclick = () => { toggleNotifications(); currentTradeOfferId = o.id; document.getElementById('tradeModal').classList.remove('hidden'); renderTradeModal(o.id); };
-                list.appendChild(div);
-            });
-            if(list.innerHTML === '') list.innerHTML = '<p class="font-bold text-center mt-4">Todo al día.</p>';
-        }
-        window.deleteNotif = async (id) => { try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'offers', id), { dismissedBy: arrayUnion(currentUser.uid) }); } catch(e){} };
 
         function renderChatsView() {
             const container = document.getElementById('chatsListContainer'); const emptyState = document.getElementById('chatsEmpty');
             const visibleChats = allChats.filter(c => !(c.hiddenFor || []).includes(currentUser.uid));
             if(visibleChats.length === 0) { container.innerHTML = ''; emptyState.classList.remove('hidden'); return; }
             emptyState.classList.add('hidden'); container.innerHTML = '';
+            
             [...visibleChats].reverse().forEach(chat => {
                 const otherUid = chat.participants.find(id => id !== currentUser.uid); const user = allUsers[otherUid] || { displayName: 'Usuario', photoURL: '' };
                 const isFinished = chat.status && chat.status !== 'active'; const lastMsg = chat.messages.length > 0 ? chat.messages[chat.messages.length-1].text : 'Pulsa para chatear';
                 const div = document.createElement('div');
-                div.className = `neo-brutal p-4 cursor-pointer relative ${isFinished ? 'opacity-60 bg-[var(--panel-bg)]' : 'bg-white'}`;
+                div.className = `neo-brutal p-4 cursor-pointer relative ${isFinished ? 'opacity-70 bg-gray-200' : 'bg-white'}`;
                 div.onclick = () => openChat(chat.id);
                 div.innerHTML = `
                     <div class="flex items-center gap-4">
-                        <img src="${user.photoURL}" class="w-16 h-16 rounded-xl object-cover border-4 border-black shadow-[4px_4px_0px_#000]">
-                        <div class="flex-1 overflow-hidden pr-8">
+                        <img src="${user.photoURL}" class="w-14 h-14 rounded-full border-2 border-black object-cover shadow-[2px_2px_0px_#000]">
+                        <div class="flex-1 overflow-hidden pr-10">
                             <h4 class="font-black text-xl truncate uppercase">${user.displayName}</h4>
                             <p class="text-sm truncate font-bold text-[var(--text-light)]">${lastMsg}</p>
                         </div>
                     </div>
-                    ${isFinished ? `<button onclick="event.stopPropagation(); deleteChat('${chat.id}')" class="absolute top-4 right-4 w-8 h-8 border-4 border-black bg-[var(--danger)] text-white font-black flex items-center justify-center hover:scale-105">X</button>` : ''}
+                    <!-- Delete Chat Button -->
+                    <button onclick="event.stopPropagation(); deleteChat('${chat.id}')" class="absolute top-4 right-4 w-10 h-10 border-4 border-black rounded-full bg-[var(--danger)] text-white font-black flex items-center justify-center hover:scale-105 shadow-[2px_2px_0px_#000]">X</button>
                 `;
                 container.appendChild(div);
             });
         }
         
-        window.deleteChat = async (id) => { try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'chats', id), { hiddenFor: arrayUnion(currentUser.uid) }); } catch(e){} };
+        window.deleteChat = async (id) => { 
+            try { 
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'chats', id), { hiddenFor: arrayUnion(currentUser.uid) }); 
+                if(currentChatId === id) closeChat();
+            } catch(e){} 
+        };
 
         window.openChat = (chatId) => { currentChatId = chatId; document.getElementById('chatModal').classList.remove('hidden'); renderChatModal(chatId); };
         window.closeChat = () => { document.getElementById('chatModal').classList.add('hidden'); currentChatId = null; };
@@ -1013,14 +953,15 @@
                 const offerDoc = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'offers', offerId)); if(!offerDoc.exists()) return;
                 const offer = offerDoc.data(); const itemsToProcess = [...(offer.initiatorItems||[]), ...(offer.receiverItems||[])];
                 for (let itemId of itemsToProcess) {
+                    // Try delete from public
                     const pubRef = doc(db, 'artifacts', appId, 'public', 'data', 'publicItems', itemId); const itemDocPub = await getDoc(pubRef);
-                    if (itemDocPub.exists()) { if (itemDocPub.data().quantity > 1) await updateDoc(pubRef, { quantity: increment(-1) }); else await deleteDoc(pubRef); } 
-                    else {
-                        const priv1 = doc(db, 'artifacts', appId, 'users', offer.initiatorId, 'privateItems', itemId); const priv1Snap = await getDoc(priv1);
-                        if(priv1Snap.exists()) { if(priv1Snap.data().quantity > 1) await updateDoc(priv1, {quantity: increment(-1)}); else await deleteDoc(priv1); continue; }
-                        const priv2 = doc(db, 'artifacts', appId, 'users', offer.receiverId, 'privateItems', itemId); const priv2Snap = await getDoc(priv2);
-                        if(priv2Snap.exists()) { if(priv2Snap.data().quantity > 1) await updateDoc(priv2, {quantity: increment(-1)}); else await deleteDoc(priv2); }
-                    }
+                    if (itemDocPub.exists()) { if (itemDocPub.data().quantity > 1) await updateDoc(pubRef, { quantity: increment(-1) }); else await deleteDoc(pubRef); continue;} 
+                    // Try delete from private initiator
+                    const priv1 = doc(db, 'artifacts', appId, 'users', offer.initiatorId, 'privateItems', itemId); const priv1Snap = await getDoc(priv1);
+                    if(priv1Snap.exists()) { if(priv1Snap.data().quantity > 1) await updateDoc(priv1, {quantity: increment(-1)}); else await deleteDoc(priv1); continue; }
+                    // Try delete from private receiver
+                    const priv2 = doc(db, 'artifacts', appId, 'users', offer.receiverId, 'privateItems', itemId); const priv2Snap = await getDoc(priv2);
+                    if(priv2Snap.exists()) { if(priv2Snap.data().quantity > 1) await updateDoc(priv2, {quantity: increment(-1)}); else await deleteDoc(priv2); }
                 }
             } catch(e) {}
         }
@@ -1031,13 +972,42 @@
                 if(type === 'success') {
                     await updateDoc(chatRef, { finishedBy: arrayUnion(currentUser.uid) }); const latestSnap = await getDoc(chatRef); const currentFinishedBy = latestSnap.data().finishedBy || [];
                     if(currentFinishedBy.length >= 2) { 
-                        await updateDoc(chatRef, { status: 'completed' }); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', currentUser.uid), { successfulTrades: increment(1) });
+                        await updateDoc(chatRef, { status: 'completed' }); 
+                        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', currentUser.uid), { successfulTrades: increment(1) });
                         const otherUid = chatData.participants.find(id => id !== currentUser.uid); await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'users', otherUid), { successfulTrades: increment(1) });
                         await processItemConsumption(chatData.offerId); showMessage("¡Éxito total!");
-                    } else { showMessage("Esperando a la otra parte."); }
-                } else if(type === 'cancelled') { await updateDoc(chatRef, { status: 'cancelled' }); showMessage("Trato cancelado."); }
+                    } else { showMessage("Esperando confirmación..."); }
+                } else if(type === 'cancelled') { 
+                    await updateDoc(chatRef, { status: 'cancelled' }); 
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'offers', chatData.offerId), { status: 'cancelled' });
+                    showMessage("Trato cancelado."); 
+                }
             } catch (e) {}
         };
+
+        // Notifications
+        function updateNotifBadge() {
+            if(!currentUser) return; 
+            const pending = allOffers.some(o => o.status === 'negotiating' && (o.initiatorId === currentUser.uid || o.receiverId === currentUser.uid));
+            document.getElementById('notifBadge').style.display = pending ? 'block' : 'none';
+        }
+        function renderNotifList() {
+            const list = document.getElementById('notifList'); list.innerHTML = '';
+            const visibleOffers = allOffers.filter(o => o.status === 'negotiating');
+            visibleOffers.forEach(o => {
+                const otherUid = o.initiatorId === currentUser.uid ? o.receiverId : o.initiatorId; 
+                const name = allUsers[otherUid]?.displayName || 'Alguien';
+                const div = document.createElement('div');
+                div.className = `p-4 neo-brutal cursor-pointer relative bg-white`;
+                div.innerHTML = `
+                    <p class="font-black text-lg uppercase">Trato con ${name}</p>
+                    <p class="text-sm font-bold">Abre la mesa para negociar</p>
+                `;
+                div.onclick = () => { toggleNotifications(); currentTradeOfferId = o.id; document.getElementById('tradeModal').classList.remove('hidden'); renderTradeModal(o.id); };
+                list.appendChild(div);
+            });
+            if(list.innerHTML === '') list.innerHTML = '<p class="font-bold text-center mt-4">No hay tratos activos.</p>';
+        }
     </script>
 </body>
 </html>
