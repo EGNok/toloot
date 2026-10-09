@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#181b22" />
+  <title>Toloot</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <section id="screen-login" class="screen">
+    <div class="login-box">
+      <h1>Toloot</h1>
+      <p>Ordená tu caos, controlá tu espacio, negociá tu zona.</p>
+      <button id="btn-google" class="btn primary">Entrar con Google</button>
+      <button id="btn-anon" class="btn ghost">Entrar como invitado</button>
+      <p id="login-error" class="error"></p>
+    </div>
+  </section>
+
+  <!-- APP -->
+  <section id="screen-app" class="hidden">
+    <header class="topbar">
+      <div><strong id="my-name">…</strong><span id="my-level" class="chip"></span></div>
+      <button id="btn-logout" class="icon-btn" title="Salir">⎋</button>
+    </header>
+
+    <main class="views">
+      <!-- MERCADO -->
+      <section id="view-market" class="view active">
+        <div class="market-head">
+          <input id="search" type="search" placeholder="Buscar en el mercado…" autocomplete="off" />
+          <div id="cats" class="pills"></div>
+          <div class="radar">
+            <div class="radar-top">
+              <span>📡 Radar · <b id="radar-label"></b></span>
+              <button id="btn-loc" class="chip-btn">Mi ubicación</button>
+            </div>
+            <input id="radar" type="range" min="1" max="4" step="1" value="2" />
+            <div class="radar-ticks"><span>Barrio</span><span>Ciudad</span><span>Zona</span><span>Nacional</span></div>
+          </div>
+        </div>
+        <div id="feed" class="feed"></div>
+        <div id="results" class="results hidden"></div>
+      </section>
+
+      <!-- TRUEQUES -->
+      <section id="view-trades" class="view">
+        <div class="section-title">Ofertas y tratos</div>
+        <div id="trade-list" class="trade-list"></div>
+      </section>
+
+      <!-- MOCHILA -->
+      <section id="view-inventory" class="view">
+        <div class="section-title">
+          <span>Mochila pública</span><small id="grid-count"></small>
+        </div>
+        <div class="grid-wrap" id="grid-wrap">
+          <div id="grid"></div>
+          <div id="preview" class="hidden"></div>
+        </div>
+        <p class="hint">Arrastrá a la mochila para publicar (necesitás tener ubicación activa) · tocá un ítem publicado para rotarlo · arrastralo fuera para devolverlo al depósito.</p>
+        <div class="drawer" id="drawer">
+          <button id="drawer-toggle" class="drawer-handle">
+            <span>Depósito privado (Stash) <span id="stash-count"></span></span><span>▾</span>
+          </button>
+          <div id="stash" class="stash"></div>
+        </div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav">
+      <button data-view="market" class="active">🛒<span>Mercado</span></button>
+      <button data-view="trades">🤝<span>Trueques</span><i id="trade-badge" class="badge hidden">0</i></button>
+      <button data-view="inventory">🎒<span>Mochila</span></button>
+    </nav>
+
+    <button id="fab" class="fab hidden" title="Nuevo producto">+</button>
+  </section>
+
+  <!-- MODAL: nuevo producto -->
+  <div id="modal-new" class="modal hidden">
+    <form id="form-new" class="sheet">
+      <div class="sheet-head"><strong>Nuevo producto</strong><button type="button" class="icon-btn" data-close>✕</button></div>
+      <label>Título <input name="title" maxlength="80" required /></label>
+      <label>Descripción <textarea name="description" maxlength="1000" rows="3"></textarea></label>
+      <label>Categoría <select name="category"></select></label>
+      <label>Condición <select name="condition"></select></label>
+      <label>Fotos (hasta 3) <input name="photos" type="file" accept="image/*" multiple /></label>
+      <span class="field-title">Tamaño: define puntos y cuántas celdas ocupa</span>
+      <div id="tier-list" class="tiers"></div>
+      <button class="btn primary" type="submit">Guardar en el depósito</button>
+    </form>
+  </div>
+
+  <!-- MODAL: detalle -->
+  <div id="modal-detail" class="modal hidden"><div class="sheet" id="detail-body"></div></div>
+
+  <!-- MODAL: mesa de negociación -->
+  <div id="modal-trade" class="modal hidden">
+    <div class="sheet sheet-tall">
+      <div class="sheet-head"><strong>Mesa de negociación</strong><button class="icon-btn" data-close>✕</button></div>
+      <div id="trade-body"></div>
+    </div>
+  </div>
+
+  <!-- MODAL: selector de ítems (oferta / lado de la mesa) -->
+  <div id="modal-pick" class="modal hidden">
+    <div class="sheet">
+      <div class="sheet-head"><strong id="pick-title"></strong><button class="icon-btn" data-close>✕</button></div>
+      <div id="pick-list" class="pick-list"></div>
+      <button id="pick-ok" class="btn primary"></button>
+    </div>
+  </div>
+
+  <div id="celebrate" class="celebrate hidden"><div class="celebrate-box">🤝<strong>TRATO CERRADO</strong></div></div>
+  <div id="toast" class="toast hidden"></div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
